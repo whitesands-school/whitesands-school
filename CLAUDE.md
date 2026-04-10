@@ -112,7 +112,6 @@ Two files were modified (neither was created new):
 * Thin 6px scrollbar styled in `#2C246B` (deep purple)
 * `::selection` highlights in lemon yellow with dark text
 
-
 The `Navbar` is a fixed, two-tier header:
 
 1. **Utility bar** (`bg-deep`, 36px) — motto in PT Serif italic left; Parent Portal + 25th Anniversary links right, `hover:text-lemon`.
@@ -120,7 +119,6 @@ The `Navbar` is a fixed, two-tier header:
 3. **Logo** — inline shield SVG placeholder (deep + lemon coloring) + "Whitesands / School" wordmark. Colors invert with the scroll state.
 4. **Mega dropdown** — hover-triggered on About, What We Offer, and Our People. Full-width white panel, `opacity 0→1 + y -8→0` in 150ms. Each link has a lemon left-border that scales in on hover. A 120ms close timer prevents the panel from snapping shut when the cursor moves between the trigger and the panel.
 5. **Mobile menu** — hamburger (Menu/X icons, animated swap) opens a full-screen `bg-deep` overlay. Nav items with dropdowns expand accordion-style with animated chevrons and lemon dot bullets. Body scroll locks while open; menu closes automatically on route change.
-
 
 ### Footer — [src/components/layout/Footer.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/components/layout/Footer.tsx) *(created)*
 
@@ -134,7 +132,6 @@ A three-row footer:
 
 * **[src/components/layout/Navbar.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/components/layout/Navbar.tsx)** — Replaced the hand-drawn `ShieldLogo` SVG component with the real logo from `public/images/logos/whitesands-school-logo.svg`. Removed the text labels beside it once it was clear the logo image already contains the school name.
 * **[src/app/layout.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/layout.tsx)** — Added `<Footer />` below `<main>` so it renders on every page alongside the existing `<Navbar />`.
-
 
 ## Home Page — First 3 Sections
 
@@ -162,7 +159,6 @@ A three-row footer:
 **Welcome Block** — White section, centred, max-w-3xl. Uses `SectionLabel` and `AnimatedSection` for a scroll-triggered stagger reveal. A `text-deep` underlined link leads to the About page.
 
 **Stats Strip** — `bg-deep` band with 6 stats (Years, Students, WAEC Pass Rate, Staff, Ratio, Campuses). Each number counts up from 0 using `useMotionValue` + `animate()` triggered once by `useInView` on scroll entry.
-
 
 Four sections appended to the Whitesands homepage (`src/app/page.tsx`):
 
@@ -197,7 +193,6 @@ Radix UI `Tabs.Root` driving three panels (Students / Staff / Parents). Active t
 | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | [src/app/page.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/page.tsx) | Added 4 imports + rendered the new sections in order |
 
-
 Here's what was built in [src/app/about/page.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/about/page.tsx):
 
 **Sticky Sub-Nav** — `sticky top-[88px] z-30`, white background with `border-b border-gray-200`. Active link gets `text-deep border-b-2 border-lemon`. Uses `IntersectionObserver` (`rootMargin: '-30% 0px -60% 0px'`) to track which section is in view. Click handlers manually offset scroll by `157px` (nav + sub-nav height) so the section title isn't hidden.
@@ -229,7 +224,6 @@ Built the new Our People page with a sticky Radix tab layout, live staff filteri
 
 Files created for this feature were [page.tsx](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html). No other new files were needed for this page
 
-
 Builds clean — `/25th-anniversary` is statically prerendered with no errors.
 
 Here's what was built in [src/app/25th-anniversary/page.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/25th-anniversary/page.tsx):
@@ -249,7 +243,6 @@ Here's what was built in [src/app/25th-anniversary/page.tsx](vscode-webview://0e
 **Alumni Tributes** — `bg-white` auto-advancing carousel at 4s. `AnimatePresence mode="wait"` slides quotes in/out. Decorative large quote mark in gold. Clickable dot indicators.
 
 **CTA Strip** — `bg-bold`, 48px PT Serif heading, `Button variant="secondary"` (`bg-deep`), anchored to `#rsvp` from event cards.
-
 
 Clean build. Both pages are statically generated — `/news` as a static page and all 7 `/news/[slug]` routes via `generateStaticParams`.
 
@@ -273,8 +266,6 @@ Here's what was built:
 * "Back to News" link at the bottom
 * `bg-offwhite` related posts section: 3 cards (all posts except current, first 3), same hover lift pattern using Tailwind `group-hover` instead of Framer Motion (server-compatible)
 
-
-
 **Contact** — [src/app/contact/page.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/contact/page.tsx)
 
 * `bg-deep` hero with `SectionLabel` + `font-serif` H1
@@ -290,8 +281,6 @@ Here's what was built:
 * `bg-bold` CTA strip with secondary Button
 * White card parent login — email + password with show/hide toggle, Roboto labels, "Forgot password?" link
 * `bg-deep` contact strip with `accounts@whitesandsschool.edu.ng` and phone number
-
-
 
 ## Admin Panel — Complete
 
@@ -333,3 +322,26 @@ Here's what was built:
 | `staff/`               | Table with avatar, slide-in drawer form for add/edit, qualifications list manager                |
 
 **Setup:** Add `ADMIN_PASSWORD=your_password` to `.env.local` before running.
+
+
+**1. Page Transitions** — [PageTransition.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/components/layout/PageTransition.tsx) — `motion.div` keyed to `usePathname()` wraps all non-admin page content in the root layout, giving a 300ms fade-in on every route change.
+
+**2. Announcement Banner** — Already existed in Navbar. Fixed the dismiss to persist in `sessionStorage` (`ws-banner-dismissed`) so it survives client-side navigation within a session.
+
+**3. Loading States** — Skeleton loaders created for [/news/loading.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/news/loading.tsx) and [/our-people/loading.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/our-people/loading.tsx), each matching the real page layout with animated `bg-gray-100 animate-pulse` placeholders.
+
+**4. Error Boundary** — [src/app/error.tsx](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/error.tsx) — uses the Next.js 16 `unstable_retry` API with a "Try Again" + "Back to Home" button pair.
+
+**5. SEO Metadata**
+
+* Root `layout.tsx` — updated to use a `title.template` (`"%s — Whitesands School"`) + full description + OG defaults
+* `layout.tsx` files added for: [about](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/about/layout.tsx), [news](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/news/layout.tsx), [our-people](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/our-people/layout.tsx), [admissions](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/admissions/layout.tsx), [contact](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/contact/layout.tsx), [fees-portal](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/fees-portal/layout.tsx), [25th-anniversary](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/25th-anniversary/layout.tsx), [what-we-offer](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/what-we-offer/layout.tsx)
+* [news/[slug]](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/news/%5Bslug%5D/page.tsx) — `generateMetadata()` added with post title, excerpt, OG image, and `article` type
+
+**6. Accessibility**
+
+* Skip-to-main link in root layout (sr-only, appears on focus with lemon background)
+* `<main id="main-content">` target added
+* Global `focus-visible` ring in [globals.css](vscode-webview://0e8og3g19mjm63sc8k2l3p0fdsstb2v8hi8s83n8a1g59bq9fn44/src/app/globals.css) — 2px `#2C246B` outline on all keyboard-navigable elements
+
+**7. No raw `<img>` tags found** — all images already use `next/image`.

@@ -40,3 +40,10 @@ html {
   background-color: #FFF700;
   color: #1A1530;
 }
+
+/* Global keyboard focus rings */
+:focus-visible {
+  outline: 2px solid #2C246B;
+  outline-offset: 2px;
+  border-radius: 2px;
+}

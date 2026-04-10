@@ -91,7 +91,10 @@ export function Navbar({ announcement }: { announcement?: Announcement }) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
-  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return sessionStorage.getItem('ws-banner-dismissed') === '1';
+  });
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Track scroll position
@@ -175,7 +178,10 @@ export function Navbar({ announcement }: { announcement?: Announcement }) {
               </>
             )}
             <button
-              onClick={() => setBannerDismissed(true)}
+              onClick={() => {
+                sessionStorage.setItem('ws-banner-dismissed', '1');
+                setBannerDismissed(true);
+              }}
               aria-label="Dismiss banner"
               className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded opacity-60 hover:opacity-100 transition-opacity ${BANNER_TEXT[announcement.color]}`}
             >

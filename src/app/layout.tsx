@@ -11,6 +11,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { BfcacheFix } from "@/components/layout/BfcacheFix";
 import { PopoverModal } from "@/components/layout/PopoverModal";
+import { PageTransition } from "@/components/layout/PageTransition";
 import type { Announcement, SitePopover } from "@/types";
 
 const ptSerif = PT_Serif({
@@ -33,8 +34,17 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Whitesands School",
-  description: "Duc in Altum — Launch into the Deep",
+  title: {
+    default: "Whitesands School",
+    template: "%s — Whitesands School",
+  },
+  description: "Duc in Altum — Launch into the Deep. A Catholic school in Nigeria committed to academic excellence and holistic formation.",
+  openGraph: {
+    siteName: "Whitesands School",
+    locale: "en_NG",
+    type: "website",
+    images: [{ url: "/images/logos/whitesands-school-logo.svg", width: 1200, height: 630 }],
+  },
 };
 
 export default async function RootLayout({
@@ -71,12 +81,21 @@ export default async function RootLayout({
       className={`${ptSerif.variable} ${ptSans.variable} ${roboto.variable} h-full scroll-smooth`}
     >
       <body className="min-h-full flex flex-col font-sans text-dark bg-white antialiased">
+        {/* Skip to main content — accessibility */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-200 focus:px-4 focus:py-2 focus:bg-lemon focus:text-dark focus:font-roboto focus:font-semibold focus:rounded focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         {!isAdmin && <Navbar announcement={announcement} />}
         {isAdmin ? (
           children
         ) : (
           <BfcacheFix>
-            <main className="flex-1 pt-25">{children}</main>
+            <main id="main-content" className="flex-1 pt-25">
+              <PageTransition>{children}</PageTransition>
+            </main>
           </BfcacheFix>
         )}
         {!isAdmin && <Footer />}
