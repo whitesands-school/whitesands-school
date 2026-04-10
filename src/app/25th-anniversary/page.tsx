@@ -530,7 +530,7 @@ export default function AnniversaryPage() {
           </AnimatedSection>
 
           {/* Quote display */}
-          <div className="relative min-h-[220px] flex items-center justify-center">
+          <div className="relative min-h-55 flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={slide}
