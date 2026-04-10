@@ -1,0 +1,74 @@
+[
+  {
+    "id": "gallery-001",
+    "src": "/images/gallery/campus-aerial.jpg",
+    "alt": "Aerial view of the Whitesands School campus showing the main building, sports fields, and surrounding landscape",
+    "category": "Campus"
+  },
+  {
+    "id": "gallery-002",
+    "src": "/images/gallery/stem-hub-robotics.jpg",
+    "alt": "Students working on a robotics project in the STEM Innovation Hub",
+    "category": "Academics"
+  },
+  {
+    "id": "gallery-003",
+    "src": "/images/gallery/anniversary-gala.jpg",
+    "alt": "Guests and alumni gathered at the 25th Anniversary Gala on the school grounds",
+    "category": "Events"
+  },
+  {
+    "id": "gallery-004",
+    "src": "/images/gallery/inter-house-athletics.jpg",
+    "alt": "Students competing in the 100m sprint during Inter-House Sports Week",
+    "category": "Sports"
+  },
+  {
+    "id": "gallery-005",
+    "src": "/images/gallery/chapel-mass.jpg",
+    "alt": "Students and staff gathered for the weekly school Mass in the chapel",
+    "category": "Faith"
+  },
+  {
+    "id": "gallery-006",
+    "src": "/images/gallery/arts-festival-drama.jpg",
+    "alt": "Senior students performing on stage at the Annual Arts Festival",
+    "category": "Arts"
+  },
+  {
+    "id": "gallery-007",
+    "src": "/images/gallery/science-olympiad-winners.jpg",
+    "alt": "The Whitesands National Science Olympiad gold medal team holding their trophies",
+    "category": "Academics"
+  },
+  {
+    "id": "gallery-008",
+    "src": "/images/gallery/library-reading.jpg",
+    "alt": "Students reading and researching in the school library",
+    "category": "Campus"
+  },
+  {
+    "id": "gallery-009",
+    "src": "/images/gallery/football-match.jpg",
+    "alt": "Whitesands football team in action during the regional championship",
+    "category": "Sports"
+  },
+  {
+    "id": "gallery-010",
+    "src": "/images/gallery/virtue-assembly.jpg",
+    "alt": "Principal addressing students at the Virtue of the Month assembly",
+    "category": "Events"
+  },
+  {
+    "id": "gallery-011",
+    "src": "/images/gallery/graduation-ceremony.jpg",
+    "alt": "Upper Sixth students receiving their certificates at the Graduation Ceremony",
+    "category": "Events"
+  },
+  {
+    "id": "gallery-012",
+    "src": "/images/gallery/girls-in-tech.jpg",
+    "alt": "Girls in Tech club members coding in the computer science lab",
+    "category": "Academics"
+  }
+]

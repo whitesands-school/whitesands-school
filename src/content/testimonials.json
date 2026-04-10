@@ -1,0 +1,59 @@
+[
+  {
+    "id": "testimonial-001",
+    "quote": "Whitesands didn't just prepare me for university — it formed me as a person. The values I carry into my medical career were shaped right there in those classrooms and those chapel pews.",
+    "name": "Dr. Chisom Eze",
+    "role": "Cardiologist, London — Class of 2005",
+    "type": "student"
+  },
+  {
+    "id": "testimonial-002",
+    "quote": "As a parent, you want a school that sees your child whole — not just their grades. Whitesands has been exactly that. My daughter has grown into a confident, thoughtful young woman, and I credit this community for much of that.",
+    "name": "Mrs. Amaka Okafor",
+    "role": "Parent of a Year 11 student",
+    "type": "parent"
+  },
+  {
+    "id": "testimonial-003",
+    "quote": "I have taught at three schools in my career, and Whitesands is singular. The culture of excellence is real — not performative. Students genuinely want to learn, and that makes teaching here a joy.",
+    "name": "Mrs. Blessing Okwu",
+    "role": "Head of English & Literature",
+    "type": "staff"
+  },
+  {
+    "id": "testimonial-004",
+    "quote": "The STEM Hub changed everything for me. I came into Year 7 thinking I hated science. By Year 9, I was building a water-filtration robot. Now I'm studying Engineering at the University of Lagos.",
+    "name": "Chukwudi Obi",
+    "role": "Alumni — Class of 2024",
+    "type": "student",
+    "videoUrl": "https://www.youtube.com/embed/example-chukwudi"
+  },
+  {
+    "id": "testimonial-005",
+    "quote": "The pastoral care at Whitesands is exceptional. When my son was going through a difficult period in Year 9, the school wrapped around our family. Mrs. Eze and Fr. Patrick were there every step of the way.",
+    "name": "Mr. Femi Adeleke",
+    "role": "Parent of two Whitesands students",
+    "type": "parent"
+  },
+  {
+    "id": "testimonial-006",
+    "quote": "I graduated twelve years ago and I still come back every year for the Carol Service. That tells you everything. Whitesands doesn't just educate you — it becomes part of who you are.",
+    "name": "Adaora Mensah",
+    "role": "Architect — Class of 2014",
+    "type": "student"
+  },
+  {
+    "id": "testimonial-007",
+    "quote": "Teaching here for ten years has been the privilege of my professional life. The students push me to be better every single day. That energy is rare.",
+    "name": "Fr. Patrick Umeh",
+    "role": "School Chaplain",
+    "type": "staff"
+  },
+  {
+    "id": "testimonial-008",
+    "quote": "We chose Whitesands for its values, but what surprised us was the quality of the academics. Our daughter went from average grades to distinction in her WAEC exams. The teachers truly invest in every child.",
+    "name": "Dr. and Mrs. Okoye",
+    "role": "Parents of a Year 12 student",
+    "type": "parent"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ann-001",
+    "message": "Admissions for 2026/2027 are now open. Entrance assessments on 25 April & 9 May.",
+    "color": "blue",
+    "linkText": "Apply Now",
+    "linkUrl": "/admissions",
+    "active": true
+  },
+  {
+    "id": "ann-002",
+    "message": "Open Day — Saturday 19 April 2026. Tour the campus and meet our faculty.",
+    "color": "yellow",
+    "linkText": "Register to Attend",
+    "linkUrl": "/admissions#open-day",
+    "active": false
+  },
+  {
+    "id": "ann-003",
+    "message": "25th Anniversary Gala recap and photos are now available in the News section.",
+    "color": "blue",
+    "linkText": "View Photos",
+    "linkUrl": "/news/25th-anniversary-gala",
+    "active": false
+  },
+  {
+    "id": "ann-004",
+    "message": "Second term fees deadline: 30 April 2026. Late payments attract a 5% surcharge.",
+    "color": "red",
+    "linkText": "Pay Fees",
+    "linkUrl": "/fees-portal",
+    "active": false
+  },
+  {
+    "id": "ann-005",
+    "message": "New STEM Innovation Hub is now open to all students. Book a lab session today.",
+    "color": "blue",
+    "linkText": "Learn More",
+    "linkUrl": "/what-we-offer#stem-hub",
+    "active": false
+  }
+]

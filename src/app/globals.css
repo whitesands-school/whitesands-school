@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Brand colors */
+  --color-deep: #2C246B;
+  --color-lemon: #FFF700;
+  --color-bold: #DD251D;
+  --color-offwhite: #F8F8F4;
+  --color-dark: #1A1530;
+  --color-muted: #6B6490;
+
+  /* Fonts — fallback stacks; next/font overrides these on <html> at runtime */
+  --font-serif: "PT Serif", Georgia, serif;
+  --font-sans: "PT Sans", system-ui, sans-serif;
+  --font-roboto: "Roboto", system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #2C246B;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #1A1530;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Selection highlight */
+::selection {
+  background-color: #FFF700;
+  color: #1A1530;
 }
