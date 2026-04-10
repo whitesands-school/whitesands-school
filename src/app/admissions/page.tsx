@@ -234,7 +234,7 @@ export default function AdmissionsPage() {
           <h1 className="font-serif font-bold text-white" style={{ fontSize: '64px', lineHeight: 1.1 }}>
             Begin the Journey.
           </h1>
-          <div className="w-16 h-[3px] bg-lemon mx-auto mt-6" />
+          <div className="w-16 h-0.75 bg-lemon mx-auto mt-6" />
           <p className="font-sans text-white/70 text-lg mt-8 max-w-2xl mx-auto">
             We welcome families who share our vision of integral education.
           </p>

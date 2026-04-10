@@ -106,7 +106,7 @@ function AboutSubNav({ active }: { active: string }) {
   };
 
   return (
-    <nav className="sticky top-[88px] z-30 bg-white border-b border-gray-200">
+    <nav className="sticky top-22 z-30 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 flex overflow-x-auto">
         {SUB_NAV.map(({ label, id }) => (
           <a
@@ -297,7 +297,7 @@ export default function AboutPage() {
             </AnimatedSection>
 
             <AnimatedSection delay={0.1}>
-              <div className="relative rounded-sm overflow-hidden shadow-xl aspect-[4/5]">
+              <div className="relative rounded-sm overflow-hidden shadow-xl aspect-4/5">
                 <Image
                   src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop"
                   alt="Students at Whitesands School"
@@ -305,7 +305,7 @@ export default function AboutPage() {
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-deep/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-deep/40 to-transparent" />
               </div>
             </AnimatedSection>
           </div>
