@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -31,6 +32,27 @@ function formatDate(dateStr: string) {
 
 export async function generateStaticParams() {
   return getNews().map((post) => ({ slug: post.slug }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const post = getNewsBySlug(slug)
+  if (!post) return {}
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      images: [{ url: post.coverImage }],
+      type: 'article',
+      publishedTime: post.date,
+    },
+  }
 }
 
 export default function NewsPostPage({ params }: { params: { slug: string } }) {
