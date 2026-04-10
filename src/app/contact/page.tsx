@@ -100,7 +100,7 @@ export default function ContactPage() {
           <h1 className="font-serif font-bold text-white" style={{ fontSize: '58px', lineHeight: 1.1 }}>
             We&apos;d Love to Hear From You.
           </h1>
-          <div className="w-16 h-[3px] bg-lemon mx-auto mt-6" />
+          <div className="w-16 h-0.75 bg-lemon mx-auto mt-6" />
           <p className="font-sans text-white/60 text-lg mt-6 max-w-xl mx-auto">
             Whether you have a question, a comment, or simply want to learn more about Whitesands — we&apos;re here.
           </p>
