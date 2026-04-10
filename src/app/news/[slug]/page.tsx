@@ -66,7 +66,7 @@ export default function NewsPostPage({ params }: { params: { slug: string } }) {
   return (
     <>
       {/* ── Cover image ───────────────────────────────────────────── */}
-      <div className="relative h-[480px] bg-deep/20 mt-[88px]">
+      <div className="relative h-120 bg-deep/20 mt-22">
         <Image
           src={post.coverImage}
           alt={post.title}
@@ -75,7 +75,7 @@ export default function NewsPostPage({ params }: { params: { slug: string } }) {
           priority
           unoptimized
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-dark/50 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-dark/50 to-transparent" />
       </div>
 
       {/* ── Article body ──────────────────────────────────────────── */}
