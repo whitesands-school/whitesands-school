@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import Link from 'next/link'
 import type { SitePopover } from '@/types'
+import { media } from '@/lib/media'
 
 // Shown once per session — dismissed state lives in sessionStorage
 const SESSION_KEY = 'ws_popover_dismissed'
@@ -51,7 +52,7 @@ export function PopoverModal({ popover }: { popover: SitePopover }) {
         {popover.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={popover.imageUrl}
+            src={media(popover.imageUrl)}
             alt={popover.title}
             className="w-full h-44 object-cover"
           />

@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as Tabs from '@radix-ui/react-tabs';
 import { Building2, CreditCard, UserRound, Eye, EyeOff } from 'lucide-react';
 import { AnimatedSection, SectionLabel, Button } from '@/components/ui';
+import { PageHero } from '@/components/sections/PageHero';
+import { media } from '@/lib/media';
 
 // ---------------------------------------------------------------------------
 // Fee data
@@ -82,19 +84,13 @@ export default function FeesPortalPage() {
 
   return (
     <>
-      {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="bg-deep py-28 text-white text-center">
-        <AnimatedSection>
-          <SectionLabel label="Fees Portal" light className="justify-center mb-6" />
-          <h1 className="font-serif font-bold text-white" style={{ fontSize: '58px', lineHeight: 1.1 }}>
-            Fees &amp; Payments
-          </h1>
-          <div className="w-16 h-[3px] bg-lemon mx-auto mt-6" />
-          <p className="font-sans text-white/60 text-lg mt-6 max-w-xl mx-auto">
-            Transparent fee schedules and multiple convenient payment options for Whitesands families.
-          </p>
-        </AnimatedSection>
-      </section>
+      <PageHero
+        eyebrow="Fees Portal"
+        title={<>Honest fees, <span className="italic text-lemon">clearly published</span>.</>}
+        subtitle="Termly fee schedules, multiple payment options, and a parent portal for managing payments and receipts."
+        image={media('/images/students/students-in-computer-lab.JPG')}
+        size="short"
+      />
 
       {/* ── FEE SCHEDULE TABLE ───────────────────────────────── */}
       <section className="bg-white py-16">

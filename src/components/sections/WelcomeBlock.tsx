@@ -1,30 +1,69 @@
-import { AnimatedSection, SectionLabel } from '@/components/ui';
 import Link from 'next/link';
+import { AnimatedSection } from '@/components/ui';
 
 export function WelcomeBlock() {
   return (
-    <section className="bg-white py-24">
-      <AnimatedSection className="max-w-3xl mx-auto text-center px-6">
-        <div className="flex justify-center mb-5">
-          <SectionLabel label="Welcome to Whitesands" />
+    <section id="welcome" className="bg-white py-24">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+          {/* Left — eyebrow + serif headline */}
+          <AnimatedSection className="lg:col-span-5">
+            <p
+              className="font-roboto text-xs uppercase text-deep"
+              style={{ letterSpacing: '0.28em' }}
+            >
+              Welcome
+            </p>
+            <h2
+              className="mt-5 font-serif text-dark"
+              style={{
+                fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                lineHeight: 1.05,
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Welcome to{' '}
+              <span className="italic text-deep">Whitesands.</span>
+            </h2>
+          </AnimatedSection>
+
+          {/* Right — body copy + link */}
+          <AnimatedSection delay={0.12} className="lg:col-span-7">
+            <div className="space-y-6 font-sans text-lg text-dark/80 leading-relaxed max-w-2xl">
+              <p>
+                Whitesands opened its doors in October 2000, with a small intake
+                of boys and a single conviction — that a school is, first, a
+                community of parents, teachers and students working towards the
+                same end.
+              </p>
+              <p>
+                Twenty-five years later, we have grown into one of the most
+                respected schools in Lagos. Our classrooms are full, our
+                academic results consistently rank among the strongest in the
+                country, and our chapel still sits at the centre of the
+                campus.
+              </p>
+              <p>
+                More than a thousand boys have graduated from Whitesands. They
+                are doctors, engineers, lawyers, founders and fathers. What
+                they share is a formation — intellectual, moral and
+                spiritual — that began here.
+              </p>
+            </div>
+
+            <Link
+              href="/about"
+              className="group mt-10 inline-flex items-center gap-2 font-roboto uppercase text-sm text-deep hover:text-bold transition-colors"
+              style={{ letterSpacing: '0.2em' }}
+            >
+              Read our story
+              <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </AnimatedSection>
         </div>
-        <h2 className="font-serif text-4xl text-dark leading-snug mb-6">
-          A School That Launches You Into the Deep
-        </h2>
-        <p className="font-sans text-lg text-muted leading-relaxed mb-8">
-          Founded on the Catholic conviction that every child is made for greatness, Whitesands
-          School has spent twenty-five years nurturing curious minds and faithful hearts in the
-          heart of Nigeria. We believe education is never merely academic — it is the whole
-          formation of a person: intellect, character, and soul, shaped by a community that
-          genuinely cares.
-        </p>
-        <Link
-          href="/about"
-          className="font-sans text-base font-medium text-deep underline underline-offset-4 hover:text-bold transition-colors duration-200"
-        >
-          Find Out More →
-        </Link>
-      </AnimatedSection>
+      </div>
     </section>
   );
 }

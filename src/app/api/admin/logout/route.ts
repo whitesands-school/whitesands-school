@@ -1,9 +1,8 @@
+import { NextResponse } from 'next/server'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
+
 export async function POST() {
-  return new Response(null, {
-    status: 302,
-    headers: {
-      'Set-Cookie': 'admin_auth=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0',
-      Location: '/admin/login',
-    },
-  })
+  const supabase = await createSupabaseServerClient()
+  await supabase.auth.signOut()
+  return NextResponse.json({ ok: true })
 }

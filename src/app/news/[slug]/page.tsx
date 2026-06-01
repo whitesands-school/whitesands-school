@@ -1,163 +1,224 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Calendar, ArrowLeft } from 'lucide-react'
-import { getNews, getNewsBySlug } from '@/lib/content'
-import { Badge } from '@/components/ui'
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { getNews, getNewsBySlug } from '@/lib/content';
+import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
+import { media } from '@/lib/media';
+import type { NewsPost } from '@/types';
 
-type BadgeCategory = 'Academic' | 'Sport' | 'Events' | 'Community' | 'Spiritual'
-
-function categoryToBadge(category: string): BadgeCategory {
-  const map: Record<string, BadgeCategory> = {
-    Academics: 'Academic',
-    Academic: 'Academic',
-    Events: 'Events',
-    Facilities: 'Community',
-    Values: 'Spiritual',
-    Admissions: 'Academic',
-    Sports: 'Sport',
-    Staff: 'Community',
-  }
-  return map[category] ?? 'Community'
+interface Props {
+  params: Promise<{ slug: string }>;
 }
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-GB', {
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function formatLongDate(iso: string) {
+  return new Date(iso).toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-  })
+  });
 }
+
+function formatShortMeta(category: string, iso: string) {
+  const date = new Date(iso)
+    .toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
+    .toUpperCase();
+  return `${category.toUpperCase()} · ${date}`;
+}
+
+// ---------------------------------------------------------------------------
+// Static params + metadata
+// ---------------------------------------------------------------------------
 
 export async function generateStaticParams() {
-  return getNews().map((post) => ({ slug: post.slug }))
+  return getNews().map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}): Promise<Metadata> {
-  const { slug } = await params
-  const post = getNewsBySlug(slug)
-  if (!post) return {}
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getNewsBySlug(slug);
+  if (!post) return {};
   return {
     title: post.title,
     description: post.excerpt,
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      images: [{ url: post.coverImage }],
+      images: [{ url: media(post.coverImage) }],
       type: 'article',
       publishedTime: post.date,
     },
-  }
+  };
 }
 
-export default function NewsPostPage({ params }: { params: { slug: string } }) {
-  const post = getNewsBySlug(params.slug)
-  if (!post) notFound()
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
 
-  const allPosts = getNews()
-  const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
-  const paragraphs = post.content.split('\n\n').filter(Boolean)
+export default async function NewsPostPage({ params }: Props) {
+  const { slug } = await params;
+  const post = getNewsBySlug(slug);
+  if (!post) notFound();
+
+  const related = getNews()
+    .filter((p) => p.slug !== post.slug)
+    .slice(0, 3);
+
+  const paragraphs = post.content
+    .split('\n\n')
+    .map((p) => p.trim())
+    .filter(Boolean);
 
   return (
-    <>
-      {/* ── Cover image ───────────────────────────────────────────── */}
-      <div className="relative h-120 bg-deep/20 mt-22">
+    <article>
+      <ArticleJsonLd post={post} />
+
+      {/* ── Header ───────────────────────────────────────────── */}
+      <header className="bg-white pt-20 lg:pt-24 pb-12 lg:pb-16">
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12">
+          <p
+            className="font-roboto text-[11px] uppercase text-deep"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            {post.category}
+          </p>
+          <h1
+            className="mt-5 font-serif text-deep leading-[1.05]"
+            style={{
+              fontSize: 'clamp(2.25rem, 4.8vw, 3.75rem)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            {post.title}
+          </h1>
+          <p className="mt-6 font-sans text-lg text-dark/70 leading-relaxed">
+            {post.excerpt}
+          </p>
+          <p
+            className="mt-8 font-roboto text-[11px] uppercase text-muted"
+            style={{ letterSpacing: '0.22em' }}
+          >
+            {formatLongDate(post.date)} · Whitesands Communications
+          </p>
+        </div>
+      </header>
+
+      {/* ── Full-bleed cover ─────────────────────────────────── */}
+      <figure className="relative w-full aspect-video lg:aspect-21/9 bg-deep/5">
         <Image
-          src={post.coverImage}
+          src={media(post.coverImage)}
           alt={post.title}
           fill
-          className="object-cover"
+          sizes="100vw"
           priority
-          unoptimized
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-dark/50 to-transparent" />
-      </div>
+      </figure>
 
-      {/* ── Article body ──────────────────────────────────────────── */}
-      <article className="max-w-3xl mx-auto px-6 py-14">
-        {/* Meta */}
-        <div className="flex items-center gap-3 mb-5">
-          <Badge category={categoryToBadge(post.category)}>{post.category}</Badge>
-          <span className="text-muted text-sm font-roboto flex items-center gap-1.5">
-            <Calendar size={13} />
-            {formatDate(post.date)}
-          </span>
-        </div>
-
-        {/* Headline */}
-        <h1 className="font-serif text-5xl text-dark leading-tight mb-8">
-          {post.title}
-        </h1>
-
-        <hr className="border-gray-200 mb-8" />
-
-        {/* Body */}
-        <div className="space-y-6">
-          {paragraphs.map((para, i) => (
-            <p key={i} className="font-sans text-lg leading-relaxed text-dark">
-              {para}
-            </p>
-          ))}
-        </div>
-
-        {/* Back link */}
-        <div className="mt-14 pt-8 border-t border-gray-100">
-          <Link
-            href="/news"
-            className="inline-flex items-center gap-2 font-roboto font-medium text-sm text-muted hover:text-deep transition-colors"
-          >
-            <ArrowLeft size={15} />
-            Back to News
-          </Link>
-        </div>
-      </article>
-
-      {/* ── Related posts ─────────────────────────────────────────── */}
-      <section className="bg-offwhite py-16">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <h2 className="font-roboto font-bold text-2xl text-dark mb-8">Related Posts</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {related.map((p) => (
-              <Link key={p.id} href={`/news/${p.slug}`} className="group">
-                <article className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 h-full flex flex-col transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
-                  <div className="relative aspect-video bg-deep/10">
-                    <Image
-                      src={p.coverImage}
-                      alt={p.title}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Badge category={categoryToBadge(p.category)}>{p.category}</Badge>
-                      <span className="text-muted text-xs font-roboto flex items-center gap-1">
-                        <Calendar size={11} />
-                        {formatDate(p.date)}
-                      </span>
-                    </div>
-                    <h3 className="font-roboto font-bold text-lg text-dark leading-snug line-clamp-2 mb-2 flex-1">
-                      {p.title}
-                    </h3>
-                    <p className="font-sans text-sm text-muted leading-relaxed line-clamp-2 mb-4">
-                      {p.excerpt}
-                    </p>
-                    <span className="inline-flex items-center gap-1 font-roboto font-semibold text-sm text-deep group-hover:text-bold transition-colors">
-                      Read More →
-                    </span>
-                  </div>
-                </article>
-              </Link>
+      {/* ── Body ─────────────────────────────────────────────── */}
+      <section className="bg-white pt-16 lg:pt-20 pb-20 lg:pb-24">
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="space-y-7">
+            {paragraphs.map((para, i) => (
+              <p
+                key={i}
+                className="font-serif text-lg lg:text-xl text-dark/85 leading-[1.7]"
+              >
+                {para}
+              </p>
             ))}
+          </div>
+
+          {/* Back to news */}
+          <div className="mt-16 pt-8 border-t border-deep/10">
+            <Link
+              href="/news"
+              className="font-roboto uppercase text-xs text-deep hover:text-bold transition-colors inline-flex items-center gap-2"
+              style={{ letterSpacing: '0.22em' }}
+            >
+              ← All news
+            </Link>
           </div>
         </div>
       </section>
-    </>
-  )
+
+      {/* ── Related ──────────────────────────────────────────── */}
+      {related.length > 0 && (
+        <section className="bg-offwhite py-20 lg:py-24">
+          <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
+              <h2
+                className="font-serif text-deep"
+                style={{
+                  fontSize: 'clamp(1.5rem, 2.8vw, 2.25rem)',
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.15,
+                }}
+              >
+                More from{' '}
+                <span className="italic">Whitesands.</span>
+              </h2>
+              <Link
+                href="/news"
+                className="font-roboto uppercase text-xs text-deep hover:text-bold transition-colors inline-flex items-center gap-2 group"
+                style={{ letterSpacing: '0.22em' }}
+              >
+                All news
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            </div>
+
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-10">
+              {related.map((p) => (
+                <li key={p.id}>
+                  <RelatedCard post={p} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+    </article>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Related card
+// ---------------------------------------------------------------------------
+
+function RelatedCard({ post }: { post: NewsPost }) {
+  return (
+    <Link href={`/news/${post.slug}`} className="group flex flex-col h-full">
+      <div className="relative aspect-3/2 overflow-hidden rounded-sm bg-deep/5">
+        <Image
+          src={media(post.coverImage)}
+          alt={post.title}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+      </div>
+      <div className="mt-5">
+        <p
+          className="font-roboto text-[10px] uppercase text-muted"
+          style={{ letterSpacing: '0.22em' }}
+        >
+          {formatShortMeta(post.category, post.date)}
+        </p>
+        <h3 className="mt-3 font-serif text-xl text-deep leading-snug group-hover:text-bold transition-colors line-clamp-2">
+          {post.title}
+        </h3>
+      </div>
+    </Link>
+  );
 }

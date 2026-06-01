@@ -1,62 +1,107 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
-import { AnimatedSection } from '@/components/ui';
+import { useEffect, useRef, useState } from 'react';
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  animate,
+  useInView,
+} from 'framer-motion';
 
-const stats = [
-  { number: 25, suffix: '+', label: 'Years of Excellence' },
-  { number: 600, suffix: '+', label: 'Students Enrolled' },
-  { number: 100, suffix: '%', label: 'WAEC Pass Rate' },
-  { number: 80, suffix: '+', label: 'Dedicated Staff' },
-  { number: 15, suffix: ':1', label: 'Student–Teacher Ratio' },
-  { number: 3, suffix: '', label: 'Campuses' },
+interface Stat {
+  value: number;
+  format: (n: number) => string;
+  label: string;
+}
+
+const stats: Stat[] = [
+  {
+    value: 25,
+    format: (n) => String(n),
+    label: 'Years of Whitesands',
+  },
+  {
+    value: 1000,
+    format: (n) => `${n.toLocaleString()}+`,
+    label: 'Graduates',
+  },
+  {
+    value: 70,
+    format: (n) => `${n}%`,
+    label: 'Studies Abroad',
+  },
+  {
+    value: 6,
+    format: (n) => String(n),
+    label: 'House Teams',
+  },
 ];
 
-function CountUpNumber({ target, suffix }: { target: number; suffix: string }) {
+function CountUp({ target, format }: { target: number; format: (n: number) => string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(0);
   const rounded = useTransform(motionValue, (v) => Math.round(v));
-  const inView = useInView(ref, { once: true, amount: 0.1 });
+  const inView = useInView(ref, { once: true, amount: 0.4 });
+  const [display, setDisplay] = useState(format(0));
+
+  useEffect(() => {
+    const unsub = rounded.on('change', (v) => setDisplay(format(v)));
+    return unsub;
+  }, [rounded, format]);
 
   useEffect(() => {
     if (!inView) return;
     const controls = animate(motionValue, target, {
       duration: 2,
-      ease: 'easeOut',
+      ease: [0.22, 1, 0.36, 1],
     });
     return controls.stop;
   }, [inView, motionValue, target]);
 
   return (
-    <span ref={ref} className="font-roboto font-black text-6xl text-white tabular-nums">
-      <motion.span>{rounded}</motion.span>
-      {suffix}
+    <span
+      ref={ref}
+      className="font-serif text-deep tabular-nums leading-none"
+      style={{
+        fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
+        letterSpacing: '-0.02em',
+      }}
+    >
+      {display}
     </span>
   );
 }
 
 export function StatsStrip() {
   return (
-    <section className="bg-deep py-16">
-      <AnimatedSection className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-y md:divide-y-0 divide-white/20">
+    <section className="bg-white py-20">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 lg:divide-x lg:divide-deep/15">
           {stats.map((stat, i) => (
-            <div
-              key={i}
-              className={[
-                'flex flex-col items-center justify-center py-8 px-4 text-center',
-                i > 0 ? 'lg:border-l lg:border-white/20' : '',
-              ].join(' ')}
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{
+                duration: 0.6,
+                delay: i * 0.08,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="flex flex-col items-center text-center px-4 lg:px-8"
             >
-              <CountUpNumber target={stat.number} suffix={stat.suffix} />
-              <span className="font-sans text-sm text-lemon tracking-wide mt-2 uppercase">
+              <CountUp target={stat.value} format={stat.format} />
+              <span
+                className="mt-4 font-roboto text-xs uppercase text-muted max-w-[16ch]"
+                style={{ letterSpacing: '0.22em' }}
+              >
                 {stat.label}
               </span>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </AnimatedSection>
+      </div>
     </section>
   );
 }

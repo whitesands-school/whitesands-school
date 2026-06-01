@@ -1,600 +1,666 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import * as Accordion from '@radix-ui/react-accordion';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, Heart, Users, ChevronDown, CheckCircle } from 'lucide-react';
-import { AnimatedSection, SectionLabel, Button } from '@/components/ui';
+import { CheckCircle, Compass, Cross, Users } from 'lucide-react';
+import { PageHero } from '@/components/sections/PageHero';
+import { media } from '@/lib/media';
 
 // ---------------------------------------------------------------------------
-// Data
+// Constants
 // ---------------------------------------------------------------------------
 
-const BENEFITS = [
-  {
-    icon: Award,
-    title: 'Academic Excellence',
-    body: 'Consistently high WAEC pass rates, a rigorous curriculum, and dedicated teachers who treat every student as an individual learner capable of reaching their full potential.',
-  },
-  {
-    icon: Heart,
-    title: 'Faith & Character',
-    body: 'Rooted in the Catholic tradition, our school forms young people of deep conscience, moral courage, and genuine compassion — virtues that outlast any examination result.',
-  },
+const APPLICATIONS_URL = 'https://applications.whitesands.org.ng/';
+const APPLICATION_CLOSE_DATE = '9 May 2026';
+
+const FIT_BULLETS = [
   {
     icon: Users,
-    title: 'Holistic Formation',
-    body: 'Sport, music, drama, service learning, and leadership programmes ensure that every student discovers and develops their unique gifts beyond the walls of the classroom.',
+    title: 'Parents who believe they are the first educators',
+    body: 'We work in partnership with families. Mentoring conversations, regular tutorials, and a shared formation programme keep the school and the home pulling in the same direction.',
+  },
+  {
+    icon: Cross,
+    title: 'Families who want Christian values actively pursued at school',
+    body: 'Daily prayer, weekly Mass, and a serious formation in virtue are not extras here — they sit at the centre of the school day, woven into how we teach and how the boys are mentored.',
+  },
+  {
+    icon: Compass,
+    title: 'Boys ready to launch into the deep',
+    body: 'Whitesands is for boys who are willing to be stretched — academically, personally and spiritually — and for families who want them to grow into men of conviction.',
   },
 ];
 
 const STEPS = [
-  { number: 1, label: 'Submit Application', description: 'Complete the online form below or collect a physical form at our admissions office.' },
-  { number: 2, label: 'Documents', description: 'Submit birth certificate, last school report cards, passport photographs, and health records.' },
-  { number: 3, label: 'Assessment', description: 'Sit our entrance assessment in English, Mathematics, and General Knowledge.' },
-  { number: 4, label: 'Interview', description: 'Shortlisted candidates and a parent or guardian attend a brief interview with the Principal.' },
-  { number: 5, label: 'Offer', description: 'Successful candidates receive an offer letter within five working days of the interview.' },
-];
-
-const KEY_DATES = [
-  { date: 'September 1, 2025', event: 'Applications Open — 2026 Academic Year', notes: 'Forms available online and at the admissions office' },
-  { date: 'November 28, 2025', event: 'Application Deadline', notes: 'Late applications considered only if spaces remain' },
-  { date: 'December 6–7, 2025', event: 'Entrance Assessments', notes: 'Venue: Main Campus, Lagos. 9:00 a.m. – 12:00 noon' },
-  { date: 'December 15–19, 2025', event: 'Candidate Interviews', notes: 'By appointment — confirmed via email after assessment' },
-  { date: 'January 9, 2026', event: 'Offer Letters Issued', notes: 'Acceptance fee due within 14 days of offer' },
-  { date: 'January 30, 2026', event: 'New Student Orientation', notes: 'Mandatory for all newly admitted students and parents' },
-];
-
-const REQUIREMENTS = [
   {
-    trigger: 'Age Requirements',
-    content: 'Junior Secondary One (JSS 1): Applicant must be between 10 and 13 years old at the start of the academic year. Senior Secondary One (SSS 1): Applicant must have completed JSS 3 or its equivalent and be between 14 and 17 years old. We do not make exceptions outside these age brackets.',
+    n: '01',
+    title: 'Start Online Submission',
+    body: 'Begin the application at applications.whitesands.org.ng. Fill in the candidate and family details.',
   },
   {
-    trigger: 'Documents Required',
-    content: 'Two recent passport photographs; original and photocopy of birth certificate or declaration of age; last two years of school report cards (originals); immunisation/medical record from a registered health practitioner; letter of good conduct from most recent school; completed admission form (signed by parent or guardian).',
+    n: '02',
+    title: 'Application Fee',
+    body: 'Pay the non-refundable application fee to confirm your submission.',
   },
   {
-    trigger: 'Entrance Exam Details',
-    content: 'The entrance assessment tests competency in English Language, Mathematics, and a General Knowledge paper. It is a two-hour, paper-based examination administered at our main campus. No special materials are required beyond a pen and pencil. Results are not disclosed individually — shortlisted candidates are contacted directly.',
+    n: '03',
+    title: 'Examination',
+    body: 'Your son sits the Whitesands entrance examination on the scheduled date.',
   },
   {
-    trigger: 'Interview Process',
-    content: 'Shortlisted candidates will be invited for a 20-minute interview with a member of the senior leadership team. The interview is informal and developmental in nature: we look for curiosity, self-awareness, and good character. Parents or guardians must accompany the candidate. It is not necessary to prepare formal answers — we simply want to know the child.',
+    n: '04',
+    title: 'Further Testing',
+    body: 'Shortlisted candidates may be invited for additional subject-specific assessments.',
   },
   {
-    trigger: 'Acceptance & Enrolment Process',
-    content: 'Successful candidates receive an offer letter via email and post. Acceptance must be confirmed within 14 calendar days by paying the non-refundable acceptance fee and returning the signed acceptance form. Full fees for the first term are due by the date specified in the offer letter. Failure to meet either deadline may result in the place being offered to a waitlisted candidate.',
-  },
-];
-
-const FAQS = [
-  {
-    trigger: 'Is Whitesands a boarding school?',
-    content: 'No, Whitesands School is a day school. We operate Monday to Friday. Students are expected to be on campus by 7:30 a.m. and formal school hours end at 3:30 p.m. After-school clubs and supervised study run until 5:30 p.m.',
+    n: '05',
+    title: 'Interviewing',
+    body: 'Parents and candidate meet with the admissions team and a member of the leadership.',
   },
   {
-    trigger: 'Do you accept students mid-year?',
-    content: 'Mid-year admissions are considered on a case-by-case basis and are subject to space availability. Families who need to transfer their child outside the regular admissions cycle should contact our admissions office directly.',
+    n: '06',
+    title: 'Levy Payment',
+    body: 'On offer, the development levy secures your son’s place for the new academic year.',
   },
   {
-    trigger: "What is the school's policy on scholarship and bursaries?",
-    content: 'Whitesands operates a merit-based scholarship programme for exceptional candidates who demonstrate outstanding academic ability combined with financial need. Details are available from the admissions office and applications are considered alongside the general admissions process.',
+    n: '07',
+    title: 'Family Participation',
+    body: 'Parents complete the family formation sessions before the school year begins.',
   },
   {
-    trigger: 'Is prior Catholic schooling a requirement for admission?',
-    content: 'No. While we are a Catholic school and our ethos is explicitly faith-based, we welcome families of all Christian backgrounds and those who respect and embrace our values. We ask all families to read and agree to our ethos statement as part of the admissions process.',
-  },
-  {
-    trigger: 'Can my child retake the entrance assessment if unsuccessful?',
-    content: 'Candidates who are unsuccessful may reapply in a subsequent admissions cycle. We encourage families to request informal feedback from the admissions office to help with preparation for a future application.',
-  },
-  {
-    trigger: 'What are the school fees and how are they structured?',
-    content: "Fees are published annually and are structured as three equal termly payments. A fee schedule is available on our Fees Portal. We do not publish fees publicly to allow for annual review. Please contact the admissions office or visit the Fees Portal for the current year's schedule.",
+    n: '08',
+    title: 'School Fees',
+    body: 'First-term school fees are due before the start of the academic session.',
   },
 ];
 
-const CLASS_OPTIONS = [
-  'JSS 1 (Year 7)',
-  'JSS 2 (Year 8)',
-  'JSS 3 (Year 9)',
-  'SSS 1 (Year 10)',
-  'SSS 2 (Year 11)',
-  'SSS 3 (Year 12)',
+const SCHEDULE = [
+  { category: 'JS1', opens: '1 October 2025', exam: '9 May 2026' },
+  { category: 'Transfer', opens: '1 October 2025', exam: '9 May 2026' },
 ];
 
-const REFERRAL_OPTIONS = [
-  'A current Whitesands parent',
-  'Online search',
-  'Social media',
-  'Newspaper / magazine',
-  'Open Day or school event',
-  'Other',
+const SON_CLASSES = [
+  'Primary 4',
+  'Primary 5',
+  'Primary 6',
+  'JS1',
+  'JS2',
+  'JS3',
+  'SS1',
 ];
 
 // ---------------------------------------------------------------------------
-// Sub-components
+// Form schema (mirrors /api/visit-inquiry's server schema)
 // ---------------------------------------------------------------------------
 
-function BenefitCard({
-  icon: Icon,
-  title,
-  body,
-}: {
-  icon: React.ElementType;
-  title: string;
-  body: string;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="bg-white rounded-sm p-8 shadow-sm border border-gray-100 border-t-4 border-t-white hover:border-t-bold hover:shadow-md transition-shadow duration-200"
-    >
-      <Icon size={28} className="text-bold mb-5" />
-      <h3 className="font-roboto font-bold text-xl text-dark mb-3">{title}</h3>
-      <p className="font-sans text-base text-muted leading-relaxed">{body}</p>
-    </motion.div>
-  );
-}
+const VisitFormSchema = z.object({
+  parentName: z.string().min(2, 'Please enter your full name'),
+  email: z.email('Please enter a valid email'),
+  phone: z
+    .string()
+    .min(7, 'Phone number is required')
+    .regex(/^\+?[\d\s()-]+$/, 'Use digits only, e.g. +234 802 000 0000'),
+  sonClass: z.string().min(1, 'Please select a class'),
+  preferredWeek: z.string().min(1, 'Please pick a week'),
+  message: z.string().max(2000).optional(),
+});
 
-function AdmissionsAccordion({
-  items,
-  id,
-}: {
-  items: { trigger: string; content: string }[];
-  id: string;
-}) {
-  return (
-    <Accordion.Root type="single" collapsible className="divide-y divide-gray-200">
-      {items.map((item, i) => (
-        <Accordion.Item key={`${id}-${i}`} value={`${id}-${i}`}>
-          <Accordion.Trigger asChild>
-            <button className="w-full flex items-center justify-between py-5 text-left group">
-              <span className="font-roboto font-bold text-dark text-base pr-4">{item.trigger}</span>
-              <motion.span
-                className="shrink-0 text-muted group-data-[state=open]:text-deep transition-colors"
-                initial={false}
-                animate={{ rotate: 0 }}
-              >
-                <ChevronDownIcon />
-              </motion.span>
-            </button>
-          </Accordion.Trigger>
-          <Accordion.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-            <p className="font-sans text-base text-muted leading-relaxed pb-6 pr-4">{item.content}</p>
-          </Accordion.Content>
-        </Accordion.Item>
-      ))}
-    </Accordion.Root>
-  );
-}
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="transition-transform duration-200 group-data-[state=open]:rotate-180"
-    >
-      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+type VisitFormValues = z.infer<typeof VisitFormSchema>;
 
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 export default function AdmissionsPage() {
-  const [formState, setFormState] = useState<'idle' | 'success'>('idle');
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    classApplying: '',
-    referral: '',
-    message: '',
-  });
-  const formSectionRef = useRef<HTMLDivElement>(null);
-  const [formInView, setFormInView] = useState(false);
-
-  useEffect(() => {
-    const el = formSectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setFormInView(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setFormState('success');
-  }
-
   return (
     <>
-      {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="bg-deep py-32 text-white text-center">
-        <AnimatedSection>
-          <h1 className="font-serif font-bold text-white" style={{ fontSize: '64px', lineHeight: 1.1 }}>
-            Begin the Journey.
-          </h1>
-          <div className="w-16 h-0.75 bg-lemon mx-auto mt-6" />
-          <p className="font-sans text-white/70 text-lg mt-8 max-w-2xl mx-auto">
-            We welcome families who share our vision of integral education.
-          </p>
-        </AnimatedSection>
-      </section>
-
-      {/* ── BENEFIT CARDS ────────────────────────────────────── */}
-      <section className="bg-offwhite py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-10">
-            <SectionLabel label="Why Whitesands" className="mb-4" />
-          </AnimatedSection>
-          <div className="grid md:grid-cols-3 gap-6">
-            {BENEFITS.map((b) => (
-              <BenefitCard key={b.title} {...b} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── ADMISSIONS STEPS ─────────────────────────────────── */}
-      <section className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-14">
-            <SectionLabel label="How to Apply" className="mb-4" />
-            <h2 className="font-serif text-4xl font-bold text-dark mt-2">Five Steps to Joining Us</h2>
-          </AnimatedSection>
-
-          {/* Desktop: horizontal stepper */}
-          <div className="hidden md:block">
-            <div className="relative">
-              {/* Connecting line */}
-              <div className="absolute top-6 left-[10%] right-[10%] h-0.5 bg-gray-200 z-0" />
-              <div className="relative z-10 flex justify-between">
-                {STEPS.map((step, i) => (
-                  <div key={step.number} className="flex flex-col items-center text-center w-1/5 px-2">
-                    <div
-                      className={[
-                        'w-12 h-12 rounded-full flex items-center justify-center font-roboto font-bold text-base mb-4 shrink-0',
-                        i === 0
-                          ? 'bg-bold text-white'
-                          : i < 3
-                          ? 'bg-deep text-white'
-                          : 'border-2 border-gray-200 text-muted bg-white',
-                      ].join(' ')}
-                    >
-                      {step.number}
-                    </div>
-                    <p className="font-roboto font-bold text-sm text-dark mb-1">{step.label}</p>
-                    <p className="font-sans text-xs text-muted leading-relaxed">{step.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile: vertical stepper */}
-          <div className="md:hidden flex flex-col gap-0">
-            {STEPS.map((step, i) => (
-              <div key={step.number} className="flex gap-5">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={[
-                      'w-10 h-10 rounded-full flex items-center justify-center font-roboto font-bold text-sm shrink-0',
-                      i === 0
-                        ? 'bg-bold text-white'
-                        : i < 3
-                        ? 'bg-deep text-white'
-                        : 'border-2 border-gray-200 text-muted bg-white',
-                    ].join(' ')}
-                  >
-                    {step.number}
-                  </div>
-                  {i < STEPS.length - 1 && (
-                    <div className="w-0.5 flex-1 bg-gray-200 my-1" />
-                  )}
-                </div>
-                <div className="pb-8">
-                  <p className="font-roboto font-bold text-sm text-dark mb-1 mt-2.5">{step.label}</p>
-                  <p className="font-sans text-sm text-muted leading-relaxed">{step.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── KEY DATES TABLE ───────────────────────────────────── */}
-      <section className="bg-offwhite py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-10">
-            <SectionLabel label="Important Dates" className="mb-4" />
-            <h2 className="font-serif text-4xl font-bold text-dark mt-2">Admissions Calendar</h2>
-          </AnimatedSection>
-
-          <AnimatedSection>
-            <div className="overflow-x-auto rounded-sm shadow-sm border border-gray-100">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-deep text-white">
-                    <th className="text-left font-roboto font-bold px-6 py-4 whitespace-nowrap">Date</th>
-                    <th className="text-left font-roboto font-bold px-6 py-4">Event</th>
-                    <th className="text-left font-roboto font-bold px-6 py-4 hidden sm:table-cell">Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {KEY_DATES.map((row, i) => (
-                    <tr
-                      key={i}
-                      className={i % 2 === 0 ? 'bg-white' : 'bg-offwhite'}
-                    >
-                      <td className="px-6 py-4 font-roboto font-medium text-dark whitespace-nowrap align-top">
-                        {row.date}
-                      </td>
-                      <td className="px-6 py-4 font-sans text-dark align-top">{row.event}</td>
-                      <td className="px-6 py-4 font-sans text-muted hidden sm:table-cell align-top">{row.notes}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="mt-6">
-              <Button variant="outline" size="md">
-                Download Calendar
-              </Button>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* ── REQUIREMENTS ACCORDION ───────────────────────────── */}
-      <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-10">
-            <SectionLabel label="Admissions Requirements" className="mb-4" />
-            <h2 className="font-serif text-4xl font-bold text-dark mt-2">What You Need to Know</h2>
-          </AnimatedSection>
-
-          <div className="max-w-3xl">
-            <AdmissionsAccordion items={REQUIREMENTS} id="requirements" />
-          </div>
-        </div>
-      </section>
-
-      {/* ── APPLICATION FORM ─────────────────────────────────── */}
-      <section ref={formSectionRef} id="application-form" className="bg-deep py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="text-center mb-10">
-            <SectionLabel label="Apply Now" light className="justify-center mb-4" />
-            <h2 className="font-serif text-4xl font-bold text-white mt-2">Ready to Take the First Step?</h2>
-            <p className="font-sans text-white/70 mt-4 max-w-xl mx-auto">
-              Fill in the form below and our admissions team will be in touch within two working days.
-            </p>
-          </AnimatedSection>
-
-          <div className="max-w-2xl mx-auto bg-white rounded-xl p-10 shadow-2xl">
-            <AnimatePresence mode="wait">
-              {formState === 'success' ? (
-                <motion.div
-                  key="success"
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="flex flex-col items-center text-center py-8"
-                >
-                  <CheckCircle size={56} className="text-green-500 mb-5" />
-                  <h3 className="font-serif text-2xl font-bold text-dark mb-3">
-                    Thank you!
-                  </h3>
-                  <p className="font-sans text-muted">
-                    We&apos;ll be in touch within 48 hours.
-                  </p>
-                </motion.div>
-              ) : (
-                <motion.form
-                  key="form"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                >
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <FormField
-                      label="First Name"
-                      name="firstName"
-                      type="text"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      required
-                    />
-                    <FormField
-                      label="Last Name"
-                      name="lastName"
-                      type="text"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <FormField
-                      label="Email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                    />
-                    <FormField
-                      label="Phone"
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <label className="font-roboto text-xs uppercase tracking-widest text-muted">
-                      Class Applying For
-                    </label>
-                    <select
-                      name="classApplying"
-                      value={formData.classApplying}
-                      onChange={handleChange}
-                      required
-                      className="border-b-2 border-gray-200 focus:border-deep focus:outline-none py-2 font-sans text-base text-dark bg-transparent transition-colors duration-200"
-                    >
-                      <option value="" disabled>Select a class…</option>
-                      {CLASS_OPTIONS.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <label className="font-roboto text-xs uppercase tracking-widest text-muted">
-                      How Did You Hear About Us?
-                    </label>
-                    <select
-                      name="referral"
-                      value={formData.referral}
-                      onChange={handleChange}
-                      className="border-b-2 border-gray-200 focus:border-deep focus:outline-none py-2 font-sans text-base text-dark bg-transparent transition-colors duration-200"
-                    >
-                      <option value="" disabled>Select an option…</option>
-                      {REFERRAL_OPTIONS.map((r) => (
-                        <option key={r} value={r}>{r}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <label className="font-roboto text-xs uppercase tracking-widest text-muted">
-                      Message (optional)
-                    </label>
-                    <textarea
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows={4}
-                      placeholder="Any additional context or questions…"
-                      className="border-b-2 border-gray-200 focus:border-deep focus:outline-none py-2 font-sans text-base text-dark bg-transparent resize-none transition-colors duration-200 placeholder:text-gray-300"
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    className="w-full"
-                  >
-                    Send Application →
-                  </Button>
-                </motion.form>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ACCORDION ────────────────────────────────────── */}
-      <section className="bg-offwhite py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-10">
-            <SectionLabel label="FAQs" className="mb-4" />
-            <h2 className="font-serif text-4xl font-bold text-dark mt-2">Common Questions</h2>
-          </AnimatedSection>
-
-          <div className="max-w-3xl">
-            <AdmissionsAccordion items={FAQS} id="faqs" />
-          </div>
-        </div>
-      </section>
-
-      {/* ── STICKY MOBILE CTA ────────────────────────────────── */}
-      <AnimatePresence>
-        {!formInView && (
-          <motion.div
-            initial={{ y: 56 }}
-            animate={{ y: 0 }}
-            exit={{ y: 56 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="md:hidden fixed bottom-0 left-0 right-0 z-50"
+      {/* 1 ── PAGE HERO ─────────────────────────────────────── */}
+      <PageHero
+        size="tall"
+        image={media('/images/students/graduands-walking.jpg')}
+        imageAlt="Whitesands graduands walking in procession"
+        overlay={0.6}
+        eyebrow="Admissions"
+        title={<>Apply to <span className="italic text-lemon">Whitesands.</span></>}
+        subtitle={`Open for 2026/2027. Applications close ${APPLICATION_CLOSE_DATE}. Limited slots.`}
+        ctas={
+          <Link
+            href="#visit"
+            className="inline-flex items-center justify-center bg-lemon text-deep font-roboto uppercase text-sm px-8 py-3.5 hover:bg-white transition-colors"
+            style={{ letterSpacing: '0.18em' }}
           >
-            <a
-              href="#application-form"
-              onClick={(e) => {
-                e.preventDefault();
-                const el = document.getElementById('application-form');
-                if (!el) return;
-                const top = el.getBoundingClientRect().top + window.scrollY - 88;
-                window.scrollTo({ top, behavior: 'smooth' });
-              }}
-              className="flex items-center justify-center bg-bold text-white font-roboto font-medium text-base h-14 w-full"
-            >
-              Apply for Admission →
-            </a>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            Book a Visit
+          </Link>
+        }
+      />
+
+      {/* 3 ── WHO WHITESANDS IS FOR ─────────────────────────── */}
+      <section className="bg-white py-24">
+        <div className="max-w-4xl mx-auto px-6 sm:px-10 lg:px-12">
+          <p
+            className="font-roboto text-xs uppercase text-deep"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            Before you apply
+          </p>
+          <h2
+            className="mt-5 font-serif text-deep"
+            style={{
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              lineHeight: 1.12,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Whitesands is the right fit for a particular kind of{' '}
+            <span className="italic">family.</span>
+          </h2>
+
+          <ul className="mt-14 flex flex-col gap-10">
+            {FIT_BULLETS.map(({ icon: Icon, title, body }) => (
+              <li key={title} className="flex gap-5 sm:gap-7">
+                <span
+                  aria-hidden
+                  className="shrink-0 mt-1 w-11 h-11 rounded-sm bg-deep/[0.06] flex items-center justify-center"
+                >
+                  <Icon className="w-5 h-5 text-deep" strokeWidth={1.5} />
+                </span>
+                <div>
+                  <h3 className="font-serif text-xl lg:text-2xl text-deep leading-snug">
+                    {title}
+                  </h3>
+                  <p className="mt-3 font-sans text-base text-dark/75 leading-relaxed">
+                    {body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 4 ── ADMISSION PROCESS ─────────────────────────────── */}
+      <section className="bg-offwhite py-28 lg:py-32">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12">
+          {/* Header */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end mb-16 lg:mb-20">
+            <div className="lg:col-span-7">
+              <p
+                className="font-roboto text-xs uppercase text-deep"
+                style={{ letterSpacing: '0.28em' }}
+              >
+                How it works
+              </p>
+              <h2
+                className="mt-5 font-serif text-deep"
+                style={{
+                  fontSize: 'clamp(2rem, 4.4vw, 3.25rem)',
+                  lineHeight: 1.08,
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                Eight steps from interest to{' '}
+                <span className="italic">first day.</span>
+              </h2>
+            </div>
+            <p className="lg:col-span-5 font-sans text-base text-dark/65 leading-relaxed lg:max-w-sm lg:ml-auto">
+              The process is deliberate. We are looking for boys and families
+              who are a real fit for the school — and we want you to find that
+              out about us too.
+            </p>
+          </div>
+
+          {/* Steps — editorial rows with massive numerals */}
+          <ol>
+            {STEPS.map((step, i) => (
+              <motion.li
+                key={step.n}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{
+                  duration: 0.65,
+                  delay: i * 0.05,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="group grid grid-cols-12 gap-x-6 sm:gap-x-10 lg:gap-x-16 gap-y-3 py-10 lg:py-12 border-t border-deep/15 first:border-t-0 first:pt-0 last:pb-0"
+              >
+                {/* Massive serif numeral */}
+                <div className="col-span-3 sm:col-span-2">
+                  <span
+                    aria-hidden
+                    className="block font-serif text-deep tabular-nums leading-none transition-colors duration-300 group-hover:text-bold"
+                    style={{
+                      fontSize: 'clamp(2.75rem, 5vw, 4.5rem)',
+                      letterSpacing: '-0.04em',
+                    }}
+                  >
+                    {step.n}
+                  </span>
+                </div>
+
+                {/* Title + body */}
+                <div className="col-span-9 sm:col-span-7 lg:col-span-6">
+                  <h3
+                    className="font-serif text-deep leading-tight"
+                    style={{
+                      fontSize: 'clamp(1.375rem, 1.8vw, 1.75rem)',
+                      letterSpacing: '-0.01em',
+                    }}
+                  >
+                    {step.title}
+                  </h3>
+                </div>
+                <div className="col-span-12 sm:col-start-3 sm:col-span-7 lg:col-start-9 lg:col-span-4">
+                  <p className="font-sans text-base text-dark/70 leading-relaxed lg:mt-1">
+                    {step.body}
+                  </p>
+                </div>
+              </motion.li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* 5 ── WHEN TO APPLY ─────────────────────────────────── */}
+      <section className="bg-white py-20">
+        <div className="max-w-4xl mx-auto px-6 sm:px-10 lg:px-12">
+          <p
+            className="font-roboto text-xs uppercase text-deep"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            When to apply
+          </p>
+          <h2
+            className="mt-5 font-serif text-deep"
+            style={{
+              fontSize: 'clamp(1.75rem, 3.4vw, 2.5rem)',
+              lineHeight: 1.12,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Key dates for 2026/2027.
+          </h2>
+
+          <div className="mt-10 overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-deep/15">
+                  {['Category', 'Applications Open', 'Exam Date'].map((h) => (
+                    <th
+                      key={h}
+                      className="py-4 pr-6 font-roboto text-[11px] uppercase text-muted"
+                      style={{ letterSpacing: '0.22em' }}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {SCHEDULE.map((row) => (
+                  <tr key={row.category} className="border-b border-deep/10">
+                    <td className="py-5 pr-6 font-serif text-lg text-deep">
+                      {row.category}
+                    </td>
+                    <td className="py-5 pr-6 font-sans text-base text-dark/80">
+                      {row.opens}
+                    </td>
+                    <td className="py-5 pr-6 font-sans text-base text-dark/80">
+                      {row.exam}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p
+            className="mt-5 font-roboto text-[11px] uppercase text-muted"
+            style={{ letterSpacing: '0.22em' }}
+          >
+            Admission is on a first-come, first-served basis.
+          </p>
+        </div>
+      </section>
+
+      {/* 6 ── VISIT FORM ────────────────────────────────────── */}
+      <VisitSection />
+
+      {/* 7 ── FINAL APPLY NOW CTA ───────────────────────────── */}
+      <section className="bg-white py-20 border-t border-deep/10">
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 text-center">
+          <p
+            className="font-roboto text-xs uppercase text-deep"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            Ready
+          </p>
+          <h2
+            className="mt-5 font-serif text-deep"
+            style={{
+              fontSize: 'clamp(1.75rem, 3.4vw, 2.5rem)',
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Begin your application{' '}
+            <span className="italic">today.</span>
+          </h2>
+          <a
+            href={APPLICATIONS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex items-center justify-center bg-deep text-white font-roboto uppercase text-sm px-10 py-4 hover:bg-bold transition-colors"
+            style={{ letterSpacing: '0.2em' }}
+          >
+            Apply Now
+          </a>
+          <p className="mt-4 font-sans text-sm text-muted break-all">
+            applications.whitesands.org.ng
+          </p>
+        </div>
+      </section>
     </>
   );
 }
 
 // ---------------------------------------------------------------------------
-// FormField helper
+// Visit section — id="visit" anchor target for BookVisitTab and the hero CTA.
 // ---------------------------------------------------------------------------
 
-function FormField({
+function VisitSection() {
+  return (
+    <section
+      id="visit"
+      className="bg-deep py-32 scroll-mt-28"
+    >
+      <div className="max-w-4xl mx-auto px-6 sm:px-10 lg:px-12">
+        <div className="text-center">
+          <p
+            className="font-roboto text-xs uppercase text-lemon"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            Book a visit
+          </p>
+          <h2
+            className="mt-5 font-serif text-offwhite"
+            style={{
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              lineHeight: 1.12,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Book a parent{' '}
+            <span className="italic">visit.</span>
+          </h2>
+          <p className="mt-5 font-sans text-base sm:text-lg text-offwhite/75 leading-relaxed max-w-xl mx-auto">
+            Pick a week, we will reach out within 48 hours to confirm a date.
+          </p>
+        </div>
+
+        <div className="mt-12">
+          <VisitForm />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Visit form — react-hook-form + zod, POST to /api/visit-inquiry
+// ---------------------------------------------------------------------------
+
+function VisitForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<VisitFormValues>({
+    resolver: zodResolver(VisitFormSchema),
+    defaultValues: {
+      parentName: '',
+      email: '',
+      phone: '',
+      sonClass: '',
+      preferredWeek: '',
+      message: '',
+    },
+  });
+
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  // Weeks are computed client-side to avoid SSR/CSR date mismatch. The select
+  // is rendered with a placeholder option until weeks populate.
+  const weekOptions = useNextWeeks(4);
+
+  async function onSubmit(values: VisitFormValues) {
+    setServerError(null);
+    try {
+      const res = await fetch('/api/visit-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error ?? 'Something went wrong. Please try again.');
+      }
+      setSubmitted(true);
+      reset();
+    } catch (err) {
+      setServerError(err instanceof Error ? err.message : 'Network error');
+    }
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+      {submitted ? (
+        <motion.div
+          key="thanks"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="bg-white/5 border border-white/15 rounded-md p-10 text-center"
+        >
+          <CheckCircle
+            className="mx-auto w-10 h-10 text-lemon"
+            strokeWidth={1.25}
+          />
+          <h3 className="mt-5 font-serif text-2xl text-offwhite">
+            Thank you — request received.
+          </h3>
+          <p className="mt-3 font-sans text-base text-offwhite/75 max-w-md mx-auto">
+            Admissions will reach out within 48 hours to confirm a date for your
+            visit.
+          </p>
+        </motion.div>
+      ) : (
+        <motion.form
+          key="form"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className="bg-white/4 border border-white/10 rounded-md p-6 sm:p-10"
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <Field
+              label="Parent name"
+              error={errors.parentName?.message}
+              input={
+                <input
+                  type="text"
+                  autoComplete="name"
+                  {...register('parentName')}
+                  className={inputClass}
+                />
+              }
+            />
+            <Field
+              label="Email"
+              error={errors.email?.message}
+              input={
+                <input
+                  type="email"
+                  autoComplete="email"
+                  {...register('email')}
+                  className={inputClass}
+                />
+              }
+            />
+            <Field
+              label="Phone (+234 …)"
+              error={errors.phone?.message}
+              input={
+                <input
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+234 802 000 0000"
+                  {...register('phone')}
+                  className={inputClass}
+                />
+              }
+            />
+            <Field
+              label="Son's current class"
+              error={errors.sonClass?.message}
+              input={
+                <select {...register('sonClass')} className={inputClass}>
+                  <option value="">Select…</option>
+                  {SON_CLASSES.map((c) => (
+                    <option key={c} value={c} className="text-dark">
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              }
+            />
+            <div className="sm:col-span-2">
+              <Field
+                label="Preferred week"
+                error={errors.preferredWeek?.message}
+                input={
+                  <select
+                    {...register('preferredWeek')}
+                    className={inputClass}
+                  >
+                    <option value="">Select…</option>
+                    {weekOptions.map((w) => (
+                      <option key={w} value={w} className="text-dark">
+                        {w}
+                      </option>
+                    ))}
+                  </select>
+                }
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Field
+                label="A short message (optional)"
+                error={errors.message?.message}
+                input={
+                  <textarea
+                    rows={3}
+                    {...register('message')}
+                    className={`${inputClass} resize-none`}
+                  />
+                }
+              />
+            </div>
+          </div>
+
+          {serverError && (
+            <p className="mt-6 font-sans text-sm text-bold">
+              {serverError}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="mt-8 w-full sm:w-auto inline-flex items-center justify-center bg-lemon text-deep font-roboto uppercase text-sm px-10 py-4 hover:bg-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            style={{ letterSpacing: '0.18em' }}
+          >
+            {isSubmitting ? 'Sending…' : 'Request my visit'}
+          </button>
+        </motion.form>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const inputClass =
+  'w-full bg-transparent border-b border-white/20 focus:border-lemon focus:outline-none py-2.5 font-sans text-base text-offwhite placeholder:text-offwhite/40 transition-colors';
+
+function Field({
   label,
-  name,
-  type,
-  value,
-  onChange,
-  required,
+  input,
+  error,
 }: {
   label: string;
-  name: string;
-  type: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
+  input: React.ReactNode;
+  error?: string;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="font-roboto text-xs uppercase tracking-widest text-muted">
+    <label className="flex flex-col gap-2">
+      <span
+        className="font-roboto text-[11px] uppercase text-lemon/80"
+        style={{ letterSpacing: '0.22em' }}
+      >
         {label}
-      </label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className="border-b-2 border-gray-200 focus:border-deep focus:outline-none py-2 font-sans text-base text-dark bg-transparent transition-colors duration-200"
-      />
-    </div>
+      </span>
+      {input}
+      {error && (
+        <span className="font-sans text-xs text-bold mt-1">{error}</span>
+      )}
+    </label>
   );
+}
+
+/**
+ * Returns labels for the next N Mondays as strings like "Week of 26 May 2026".
+ * Empty on first render (server) and populates after mount to avoid SSR
+ * hydration mismatch from Date().
+ */
+function useNextWeeks(count: number): string[] {
+  const [weeks, setWeeks] = useState<string[]>([]);
+  useEffect(() => {
+    setWeeks(computeNextMondays(count));
+  }, [count]);
+  return useMemo(() => weeks, [weeks]);
+}
+
+function computeNextMondays(count: number): string[] {
+  const out: string[] = [];
+  const now = new Date();
+  const day = now.getDay(); // 0 Sun … 6 Sat
+  const daysUntilMonday = ((8 - day) % 7) || 7;
+  const firstMonday = new Date(now);
+  firstMonday.setDate(now.getDate() + daysUntilMonday);
+  firstMonday.setHours(0, 0, 0, 0);
+
+  for (let i = 0; i < count; i++) {
+    const d = new Date(firstMonday);
+    d.setDate(firstMonday.getDate() + i * 7);
+    out.push(
+      `Week of ${d.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })}`
+    );
+  }
+  return out;
 }

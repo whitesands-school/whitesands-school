@@ -1,95 +1,66 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Mail, MapPin, FileText } from 'lucide-react';
 import Link from 'next/link';
-import { SectionLabel } from '@/components/ui';
-import type { ElementType } from 'react';
-
-interface CTABlock {
-  icon: ElementType;
-  heading: string;
-  sub: string;
-  href: string;
-}
-
-const blocks: CTABlock[] = [
-  {
-    icon: Mail,
-    heading: 'INQUIRE',
-    sub: 'Get in touch with us',
-    href: '/contact',
-  },
-  {
-    icon: MapPin,
-    heading: 'VISIT',
-    sub: 'Come see the school',
-    href: '/contact#visit',
-  },
-  {
-    icon: FileText,
-    heading: 'APPLY',
-    sub: 'Start your application',
-    href: '/admissions',
-  },
-];
-
-const blockVariants = {
-  rest: { backgroundColor: 'rgba(255,255,255,0)' },
-  hover: { backgroundColor: 'rgba(255,255,255,0.05)' },
-};
-
-const iconVariants = {
-  rest: { y: 0 },
-  hover: { y: -4 },
-};
+import { motion } from 'framer-motion';
 
 export function CTAStrip() {
   return (
-    <section className="bg-deep py-16">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-10">
-          <div className="flex justify-center">
-            <SectionLabel label="TAKE THE NEXT STEP" light />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3">
-          {blocks.map((block, i) => {
-            const Icon = block.icon;
-            return (
-              <motion.div
-                key={block.heading}
-                initial="rest"
-                whileHover="hover"
-                animate="rest"
-                variants={blockVariants}
-                transition={{ duration: 0.2 }}
-                className={[
-                  'flex flex-col items-center text-center px-8 py-8',
-                  i < blocks.length - 1 ? 'border-b md:border-b-0 md:border-r border-white/20' : '',
-                ].join(' ')}
-              >
-                <motion.div
-                  variants={iconVariants}
-                  transition={{ duration: 0.2 }}
-                  className="mb-4"
-                >
-                  <Icon className="w-8 h-8 text-lemon" />
-                </motion.div>
-                <h3 className="font-roboto font-black text-xl text-white mb-1">
-                  {block.heading}
-                </h3>
-                <p className="font-sans text-white/60 text-sm mb-4">{block.sub}</p>
-                <Link
-                  href={block.href}
-                  className="font-roboto font-medium text-lemon text-sm hover:underline"
-                >
-                  Learn more →
-                </Link>
-              </motion.div>
-            );
-          })}
-        </div>
+    <section className="bg-deep py-32">
+      <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 text-center">
+        <motion.h2
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="font-serif text-offwhite"
+          style={{
+            fontSize: 'clamp(2.25rem, 4.8vw, 3.75rem)',
+            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
+          }}
+        >
+          Come and see for{' '}
+          <span className="italic">yourself.</span>
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-7 font-sans text-base sm:text-lg text-offwhite/80 leading-relaxed max-w-2xl mx-auto"
+        >
+          The best way to understand the school is to walk the corridors during
+          a school day. Book a parent visit and we will arrange it for a date
+          that suits you.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-10 flex flex-col items-center gap-6"
+        >
+          <Link
+            href="/admissions#visit"
+            className="inline-flex items-center justify-center bg-lemon text-deep font-roboto uppercase text-sm px-10 py-4 hover:bg-white transition-colors duration-200"
+            style={{ letterSpacing: '0.18em' }}
+          >
+            Book a Visit
+          </Link>
+
+          <Link
+            href="/admissions"
+            className="group inline-flex items-center gap-2 font-roboto uppercase text-xs text-offwhite/70 hover:text-lemon transition-colors"
+            style={{ letterSpacing: '0.22em' }}
+          >
+            Or read the 2026 admissions process
+            <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

@@ -53,6 +53,7 @@ export interface Testimonial {
   role: string
   type: 'student' | 'staff' | 'parent'
   videoUrl?: string
+  posterUrl?: string
 }
 
 export interface SitePopover {

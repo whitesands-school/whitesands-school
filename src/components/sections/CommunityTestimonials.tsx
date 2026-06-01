@@ -1,91 +1,200 @@
 'use client';
 
-import { useState } from 'react';
-import * as Tabs from '@radix-ui/react-tabs';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Play } from 'lucide-react';
-import { getTestimonials } from '@/lib/content';
-import { AnimatedSection, SectionLabel } from '@/components/ui';
-import type { Testimonial } from '@/types';
+import { PlayCircle, X } from 'lucide-react';
+import { media } from '@/lib/media';
 
-const TABS: { id: Testimonial['type']; label: string }[] = [
-  { id: 'student', label: 'Students' },
-  { id: 'staff', label: 'Staff' },
-  { id: 'parent', label: 'Parents' },
+interface ParentTestimonial {
+  id: string;
+  name: string;
+  sonYear: string;
+  quote: string;
+  poster: string;
+  video: string;
+}
+
+const parents: ParentTestimonial[] = [
+  {
+    id: 'abu',
+    name: 'Mr. & Mrs. Abu',
+    sonYear: 'Year 12',
+    quote:
+      'What surprised us was how well the teachers know our son — not just his grades, but his temperament.',
+    poster: '/videos/web/poster-mr-mrs-abu-parents-review.jpg',
+    video: '/videos/Mr. & Mrs. Abu Parents Review.mp4',
+  },
+  {
+    id: 'shok',
+    name: 'Engineer Shok Julius',
+    sonYear: 'Year 10',
+    quote:
+      'The formation is serious. Our son comes home with conviction, not just homework.',
+    poster: '/videos/web/poster-engineer-shok-julius-parents-review.jpg',
+    video: '/videos/Engineer Shok Julius Parents Review.mp4',
+  },
+  {
+    id: 'amos-penda',
+    name: 'Mrs. Amos-Penda',
+    sonYear: 'Year 8',
+    quote:
+      'The school treats parents like partners. We are consulted, kept close, and respected.',
+    poster: '/videos/web/poster-mrs-amos-penda-parents-review.jpg',
+    video: '/videos/Mrs. Amos-Penda Parents Review.mp4',
+  },
 ];
 
 export function CommunityTestimonials() {
-  const [activeTab, setActiveTab] = useState<Testimonial['type']>('student');
-  const allTestimonials = getTestimonials();
+  const [active, setActive] = useState<ParentTestimonial | null>(null);
 
-  const byType = (type: Testimonial['type']) =>
-    allTestimonials.filter((t) => t.type === type);
-
-  const current = byType(activeTab)[0];
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActive(null);
+    };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [active]);
 
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-7xl mx-auto px-6">
-        <AnimatedSection className="mb-10">
-          <SectionLabel label="THE WHITESANDS COMMUNITY" />
-        </AnimatedSection>
+    <section className="bg-white py-24">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+        {/* Header */}
+        <div className="max-w-3xl mb-14">
+          <p
+            className="font-roboto text-xs uppercase text-deep"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            Parents on Whitesands
+          </p>
+          <h2
+            className="mt-5 font-serif text-deep"
+            style={{
+              fontSize: 'clamp(2.25rem, 4.4vw, 3.5rem)',
+              lineHeight: 1.1,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            What families say after a few{' '}
+            <span className="italic">years.</span>
+          </h2>
+        </div>
 
-        <Tabs.Root
-          value={activeTab}
-          onValueChange={(v) => setActiveTab(v as Testimonial['type'])}
-        >
-          <Tabs.List className="flex gap-2 mb-12">
-            {TABS.map((tab) => (
-              <Tabs.Trigger
-                key={tab.id}
-                value={tab.id}
-                className={[
-                  'font-roboto font-medium px-5 py-2 rounded transition-colors duration-200 cursor-pointer',
-                  activeTab === tab.id
-                    ? 'bg-deep text-white'
-                    : 'text-muted hover:text-deep',
-                ].join(' ')}
-              >
-                {tab.label}
-              </Tabs.Trigger>
-            ))}
-          </Tabs.List>
+        {/* Cards — vertical 9:16 posters (source is 800×1420 phone videos).
+            Constrained to max-w-5xl so the row reads cinematic, not oversized. */}
+        <ul className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+          {parents.map((p, i) => (
+            <motion.li
+              key={p.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 0.6,
+                delay: i * 0.1,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="mx-auto w-full max-w-[320px] sm:max-w-none"
+            >
+              <article className="group flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => setActive(p)}
+                  aria-label={`Play testimonial from ${p.name}`}
+                  className="relative block aspect-9/16 w-full overflow-hidden rounded-md cursor-pointer bg-deep/5 shadow-[0_18px_40px_-22px_rgba(44,36,107,0.45)]"
+                >
+                  <Image
+                    src={media(p.poster)}
+                    alt={`${p.name} — parent testimonial`}
+                    fill
+                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 28vw"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  {/* Soft top-to-bottom darken so the play icon and bottom name area stay legible */}
+                  <div className="absolute inset-0 bg-linear-to-t from-deep/55 via-deep/10 to-deep/25 group-hover:from-deep/65 group-hover:via-deep/15 group-hover:to-deep/35 transition-colors duration-500" />
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <PlayCircle
+                      strokeWidth={1.25}
+                      className="w-16 h-16 lg:w-20 lg:h-20 text-lemon drop-shadow-[0_4px_18px_rgba(0,0,0,0.45)] transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </span>
+                </button>
 
-          <AnimatePresence mode="wait">
-            {current && (
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
-              >
-                {/* LEFT: video thumbnail placeholder */}
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-deep/10 flex items-center justify-center">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-16 h-16 rounded-full bg-deep/20 flex items-center justify-center">
-                      <Play className="w-6 h-6 text-deep" fill="currentColor" />
-                    </div>
-                    <span className="font-sans text-sm text-deep/50">Watch testimonial</span>
-                  </div>
-                </div>
-
-                {/* RIGHT: quote */}
-                <div className="flex flex-col gap-6">
-                  <blockquote className="font-serif italic text-deep text-3xl leading-snug">
-                    &ldquo;{current.quote}&rdquo;
+                <div className="mt-5">
+                  <p className="font-serif text-lg lg:text-xl text-deep leading-tight">
+                    {p.name}
+                  </p>
+                  <p
+                    className="mt-1 font-roboto text-[11px] uppercase text-muted"
+                    style={{ letterSpacing: '0.22em' }}
+                  >
+                    Parent of {p.sonYear}
+                  </p>
+                  <blockquote className="mt-3 font-sans italic text-sm lg:text-base text-dark/75 leading-relaxed line-clamp-2">
+                    &ldquo;{p.quote}&rdquo;
                   </blockquote>
-                  <div>
-                    <p className="font-roboto font-bold text-dark">{current.name}</p>
-                    <p className="font-sans text-muted text-sm">{current.role}</p>
-                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Tabs.Root>
+              </article>
+            </motion.li>
+          ))}
+        </ul>
       </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-100 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8"
+            onClick={() => setActive(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.96, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.96, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              // Vertical 9:16 player capped to viewport so the entire frame is
+              // visible on phones and laptops alike.
+              className="relative flex flex-col items-center w-auto max-h-[85vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setActive(null)}
+                aria-label="Close video"
+                className="absolute -top-12 right-0 text-white/80 hover:text-white p-2 inline-flex items-center gap-2 font-roboto text-sm"
+              >
+                Close <X size={20} />
+              </button>
+              <video
+                src={media(active.video)}
+                poster={media(active.poster)}
+                controls
+                autoPlay
+                playsInline
+                className="h-[80vh] max-h-180 w-auto aspect-9/16 bg-black rounded-md shadow-2xl"
+              />
+              <div className="mt-4 text-white text-center">
+                <p className="font-serif text-lg">{active.name}</p>
+                <p
+                  className="mt-1 font-roboto text-xs uppercase text-white/60"
+                  style={{ letterSpacing: '0.22em' }}
+                >
+                  Parent of {active.sonYear}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

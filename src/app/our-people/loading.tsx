@@ -11,7 +11,7 @@ export default function OurPeopleLoading() {
       </div>
 
       {/* Tab bar skeleton */}
-      <div className="sticky top-[88px] z-30 bg-white border-b border-gray-200 shadow-sm">
+      <div className="sticky top-28 z-30 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-3 flex gap-4">
           {['Staff', 'Students', 'Parents', 'Alumni'].map((label) => (
             <div key={label} className="h-8 w-20 bg-gray-100 rounded animate-pulse" />

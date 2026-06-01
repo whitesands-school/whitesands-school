@@ -1,502 +1,532 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Star, Heart, Shield, Users, Lightbulb, BookOpen } from 'lucide-react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { AnimatedSection, SectionLabel } from '@/components/ui';
+import { motion } from 'framer-motion';
+import { PageHero } from '@/components/sections/PageHero';
+import { HouseTeamsScroll } from '@/components/sections/HouseTeamsScroll';
+import { media } from '@/lib/media';
 
 // ---------------------------------------------------------------------------
 // Data
 // ---------------------------------------------------------------------------
 
 const SUB_NAV = [
-  { label: 'Who We Are', id: 'who-we-are' },
-  { label: 'Our History', id: 'history' },
-  { label: 'Vision & Mission', id: 'vision-mission' },
-  { label: 'Educational Philosophy', id: 'educational-philosophy' },
+  { label: 'Story', id: 'story' },
+  { label: 'Who we are', id: 'who-we-are' },
+  { label: 'Philosophy', id: 'philosophy' },
+  { label: 'Houses', id: 'houses' },
+  { label: 'Virtues', id: 'virtues' },
+  { label: 'Campus', id: 'campus' },
 ];
 
-const MILESTONES = [
-  {
-    year: '1999',
-    title: 'The School is Founded',
-    description:
-      'Whitesands School opens its doors in Lagos, Nigeria, with a founding cohort of 40 pupils and a vision rooted in Catholic values. The motto Duc in Altum — Launch into the Deep — is adopted from the very first day.',
-  },
-  {
-    year: '2002',
-    title: 'First WAEC Cohort Excels',
-    description:
-      'The pioneer set of senior secondary students records a 100% pass rate in the West African Senior School Certificate Examination, establishing a standard the school has strived to maintain ever since.',
-  },
-  {
-    year: '2007',
-    title: 'Expansion & Accreditation',
-    description:
-      'A second campus is commissioned to accommodate growing enrolment. The school receives full accreditation from the Ministry of Education and is recognised as one of Lagos State\'s top independent secondary schools.',
-  },
-  {
-    year: '2010',
-    title: 'Science & Technology Block Opens',
-    description:
-      'A state-of-the-art Science and ICT facility is inaugurated, providing fully equipped laboratories and a computer suite that brings 21st-century learning tools into the heart of the curriculum.',
-  },
-  {
-    year: '2015',
-    title: 'Centre of Excellence Designation',
-    description:
-      'Following fifteen years of sustained results and community impact, Whitesands receives the Centre of Excellence designation by the Association of Catholic Schools of Nigeria, affirming its leadership in faith-based education.',
-  },
-  {
-    year: '2024',
-    title: '25th Anniversary Jubilee',
-    description:
-      'Whitesands celebrates twenty-five years of transforming lives. Alumni from across the globe return for the Silver Jubilee gala, and the school launches a landmark scholarship fund to honour the occasion.',
-  },
-];
-
-const CORE_VALUES = [
-  {
-    icon: Star,
-    name: 'Excellence',
-    description: 'Pursuing the highest standard in academic work, character, and every endeavour undertaken.',
-  },
-  {
-    icon: Heart,
-    name: 'Faith',
-    description: 'Grounded in Catholic tradition, guided by prayer, and formed by a deep moral conscience.',
-  },
-  {
-    icon: Shield,
-    name: 'Integrity',
-    description: 'Upholding honesty, transparency, and ethical conduct in all relationships and responsibilities.',
-  },
-  {
-    icon: Users,
-    name: 'Community',
-    description: 'Fostering a spirit of belonging, unity, and mutual care across students, staff, and families.',
-  },
-  {
-    icon: BookOpen,
-    name: 'Service',
-    description: 'Cultivating a lifelong commitment to serving others — in school, in Nigeria, and in the world.',
-  },
-  {
-    icon: Lightbulb,
-    name: 'Innovation',
-    description: 'Embracing curiosity and forward-thinking approaches to learning, teaching, and growth.',
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
-
-function AboutSubNav({ active }: { active: string }) {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault();
-    const el = document.getElementById(id);
-    if (!el) return;
-    // offset = main nav (100px) + sub-nav height (~49px) + 8px breathing room
-    const offset = 157;
-    const top = el.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
-  };
-
-  return (
-    <nav className="sticky top-22 z-30 bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-6 flex overflow-x-auto">
-        {SUB_NAV.map(({ label, id }) => (
-          <a
-            key={id}
-            href={`#${id}`}
-            onClick={(e) => handleClick(e, id)}
-            className={[
-              'shrink-0 px-5 py-4 text-sm font-roboto font-medium transition-colors duration-200 border-b-2',
-              active === id
-                ? 'text-deep border-lemon'
-                : 'text-muted border-transparent hover:text-deep',
-            ].join(' ')}
-          >
-            {label}
-          </a>
-        ))}
-      </div>
-    </nav>
-  );
+interface PhilosophyBlock {
+  label: string;
+  body: string[];
 }
 
-function TimelineMilestone({
-  year,
-  title,
-  description,
-  index,
-}: {
-  year: string;
-  title: string;
-  description: string;
-  index: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
-  const isLeft = index % 2 === 0;
+const PHILOSOPHY: PhilosophyBlock[] = [
+  {
+    label: 'Integral Education',
+    body: [
+      'We educate the whole person, not isolated faculties. Intellect, character and faith are formed together, in the same school day, by the same staff.',
+      'Academic excellence and a serious life of virtue belong together. Either one without the other is incomplete.',
+    ],
+  },
+  {
+    label: 'Personalised Attention',
+    body: [
+      'Every boy meets one-on-one with a personal mentor throughout his time at the school. Class sizes are kept small. Teachers know each child by name and follow his growth closely.',
+      'Formation is never a one-size-fits-all programme. It is tailored to the boy in front of us.',
+    ],
+  },
+  {
+    label: 'Parental Involvement',
+    body: [
+      'Parents are the first and primary educators of their children. The school complements that work, it does not replace it.',
+      'We work in close partnership with families through regular tutorials, mentoring conversations, and a shared formation programme. The home and the school pull in the same direction.',
+    ],
+  },
+  {
+    label: 'School Personnel',
+    body: [
+      'Our staff are chosen for character as much as for credentials. The men who teach here are themselves committed to the formation we offer the boys.',
+      'A teacher who lives what he teaches is the most important resource the school has.',
+    ],
+  },
+];
 
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}
-      className="relative flex items-start md:gap-0 gap-6"
-    >
-      {/* Desktop: left content or spacer */}
-      <div
-        className={[
-          'hidden md:block md:w-[calc(50%-2rem)]',
-          isLeft ? 'md:pr-12 md:text-right' : '',
-        ].join(' ')}
-      >
-        {isLeft && (
-          <>
-            <span className="font-roboto font-black text-4xl text-bold leading-none block">{year}</span>
-            <h3 className="font-roboto font-bold text-xl text-dark mt-2 mb-3">{title}</h3>
-            <p className="font-sans text-muted text-sm leading-relaxed">{description}</p>
-          </>
-        )}
-      </div>
-
-      {/* Center connector dot (desktop) */}
-      <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-1.5 w-5 h-5 rounded-full bg-deep border-4 border-offwhite z-10 shrink-0" />
-
-      {/* Desktop: right content or spacer */}
-      <div
-        className={[
-          'hidden md:block md:w-[calc(50%-2rem)]',
-          !isLeft ? 'md:pl-12' : '',
-        ].join(' ')}
-      >
-        {!isLeft && (
-          <>
-            <span className="font-roboto font-black text-4xl text-bold leading-none block">{year}</span>
-            <h3 className="font-roboto font-bold text-xl text-dark mt-2 mb-3">{title}</h3>
-            <p className="font-sans text-muted text-sm leading-relaxed">{description}</p>
-          </>
-        )}
-      </div>
-
-      {/* Mobile layout */}
-      <div className="md:hidden shrink-0 w-5 h-5 rounded-full bg-deep border-4 border-offwhite mt-1.5" />
-      <div className="md:hidden">
-        <span className="font-roboto font-black text-4xl text-bold leading-none block">{year}</span>
-        <h3 className="font-roboto font-bold text-xl text-dark mt-2 mb-3">{title}</h3>
-        <p className="font-sans text-muted text-sm leading-relaxed">{description}</p>
-      </div>
-    </motion.div>
-  );
-}
-
-function CoreValueCard({
-  icon: Icon,
-  name,
-  description,
-}: {
-  icon: React.ElementType;
+interface Virtue {
+  month: string;
   name: string;
-  description: string;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="bg-white rounded-sm p-6 shadow-sm border border-gray-100 border-t-4 border-t-white hover:border-t-lemon hover:shadow-md transition-shadow duration-200"
-    >
-      <div className="w-10 h-10 rounded-full bg-deep/10 flex items-center justify-center mb-4">
-        <Icon size={20} className="text-deep" />
-      </div>
-      <h4 className="font-roboto font-bold text-dark mb-2">{name}</h4>
-      <p className="font-sans text-sm text-muted leading-relaxed">{description}</p>
-    </motion.div>
-  );
+  line: string;
 }
+
+const VIRTUES: Virtue[] = [
+  { month: 'September', name: 'Integrity', line: 'Doing what is right even when no one is watching.' },
+  { month: 'October', name: 'Gratitude', line: 'Recognising the goodness already in your life.' },
+  { month: 'November', name: 'Courage', line: 'Acting rightly in the face of fear or difficulty.' },
+  { month: 'December', name: 'Generosity', line: 'Freely giving your time, talents, and resources.' },
+  { month: 'January', name: 'Discipline', line: 'Consistent self-control in service of a higher end.' },
+  { month: 'February', name: 'Kindness', line: 'Choosing warmth and concern for those around you.' },
+  { month: 'March', name: 'Perseverance', line: 'Continuing steadfastly despite difficulty.' },
+  { month: 'April', name: 'Humility', line: 'An honest, accurate view of yourself before God and others.' },
+  { month: 'May', name: 'Hope', line: 'Trusting that the work of formation will bear fruit.' },
+  { month: 'June', name: 'Wisdom', line: 'Knowing how to apply knowledge well, in the moment.' },
+  { month: 'July', name: 'Magnanimity', line: 'The greatness of soul to launch into the deep.' },
+];
+
+interface CampusTile {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+const CAMPUS: CampusTile[] = [
+  {
+    src: '/images/students/choir-in-chapel.jpg',
+    alt: 'The school chapel during a service',
+    caption: 'The Chapel · Seats 300',
+  },
+  {
+    src: '/images/students/students-in-computer-lab.JPG',
+    alt: 'Students in the computer lab',
+    caption: 'Science & Tech Building · 4 Dedicated Suites',
+  },
+  {
+    src: '/images/students/high-jump-purple-house.jpg',
+    alt: 'Inter-house athletics on the school field',
+    caption: 'Athletics Field · Full-Size Pitch',
+  },
+  {
+    src: '/images/students/student-drawing.JPG',
+    alt: 'A student in the library',
+    caption: 'Library & Arts Block · 2,000+ Volumes',
+  },
+];
 
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 export default function AboutPage() {
-  const [activeSection, setActiveSection] = useState('who-we-are');
+  const [active, setActive] = useState<string>('story');
 
   useEffect(() => {
-    const ids = SUB_NAV.map((n) => n.id);
     const observers: IntersectionObserver[] = [];
-
-    ids.forEach((id) => {
+    SUB_NAV.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (!el) return;
-      const observer = new IntersectionObserver(
+      const obs = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(id);
+          if (entry.isIntersecting) setActive(id);
         },
         { rootMargin: '-30% 0px -60% 0px' }
       );
-      observer.observe(el);
-      observers.push(observer);
+      obs.observe(el);
+      observers.push(obs);
     });
-
     return () => observers.forEach((o) => o.disconnect());
   }, []);
 
   return (
     <>
-      <AboutSubNav active={activeSection} />
+      <PageHero
+        size="medium"
+        image={media('/images/students/graduands-in-a-file-walking.jpg')}
+        imageAlt="Whitesands graduands in procession across the campus"
+        overlay={0.55}
+        eyebrow="About"
+        title={
+          <>
+            Twenty-five years of{' '}
+            <span className="italic text-lemon">one idea.</span>
+          </>
+        }
+        subtitle="Parents first, teachers second, students in the third place."
+      />
 
-      {/* ── SECTION 1: Who We Are ─────────────────────────────── */}
-      <section id="who-we-are">
-        {/* Hero banner */}
-        <div className="bg-deep py-32 text-white text-center">
-          <AnimatedSection>
-            <h1 className="font-serif text-6xl font-bold text-white">Who We Are</h1>
-            <p className="font-serif italic text-xl text-white/70 mt-4">Duc in Altum</p>
-          </AnimatedSection>
+      {/* Sticky sub-nav */}
+      <SubNav active={active} />
+
+      {/* 1 ── THE STORY ─────────────────────────────────────── */}
+      <section
+        id="story"
+        className="bg-white pt-24 lg:pt-32 pb-0 scroll-mt-40"
+      >
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12">
+          <Eyebrow>How it started</Eyebrow>
+          <h2 className="mt-5 font-serif text-deep" style={SERIF_H}>
+            Lagos in the late 1990s had no school{' '}
+            <span className="italic">like this.</span>
+          </h2>
+
+          <Prose>
+            <p>
+              The Ikota Educational Foundation was set up by a group of
+              Catholic parents in Lagos who wanted a school where the
+              formation of their sons in the faith would be a serious
+              enterprise, not a token assembly on Monday mornings.
+            </p>
+            <p>
+              They found a two-hectare plot of land in Lekki and acquired it
+              in 1996, before the area became what it is today. At the time
+              the road outside was untarred. The site sat quietly among palm
+              trees, waiting.
+            </p>
+          </Prose>
         </div>
 
-        {/* 2-column body */}
-        <div className="bg-white py-20">
-          <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-start">
-            <AnimatedSection>
-              <SectionLabel label="About the School" className="mb-6" />
-              <p className="font-sans text-lg text-dark leading-relaxed mb-6">
-                Whitesands School is a Catholic co-educational institution in the heart of Lagos, Nigeria.
-                Since our founding in 1999, we have committed ourselves to one purpose: the integral
-                formation of young men and women — intellectually, spiritually, and morally — prepared
-                to launch into the deep of life.
-              </p>
-              <p className="font-sans text-base text-muted leading-relaxed mb-6">
-                We are a community where faith and reason are not in tension but in harmony. Our
-                classrooms are spaces of rigorous academic enquiry; our chapel is a space of reflection
-                and encounter. Together, they form the complete education Whitesands has always stood for.
-              </p>
-              <p className="font-sans text-base text-muted leading-relaxed mb-10">
-                Guided by our motto — <em>Duc in Altum</em>, Latin for "Launch into the Deep," drawn
-                from Luke 5:4 — we invite every student to leave the safety of the shore and venture
-                boldly into deeper waters: deeper knowledge, deeper faith, deeper service.
-              </p>
+        {/* Full-bleed photo 1 */}
+        <Figure
+          src={media('/images/students/graduands-walking.jpg')}
+          alt="Class of 2024 in procession on graduation day"
+          caption="The Class of 2024 in procession on graduation day."
+          className="mt-16 lg:mt-20"
+        />
 
-              {/* Pull quote */}
-              <blockquote className="border-l-4 border-lemon bg-lemon/10 py-4 pl-8 pr-4">
-                <p className="font-serif italic text-2xl text-deep leading-snug">
-                  "We do not merely educate minds — we form persons of conscience, courage, and
-                  compassion."
-                </p>
-                <cite className="block mt-3 font-roboto text-xs uppercase tracking-widest text-muted not-italic">
-                  — The Principal, Whitesands School
-                </cite>
-              </blockquote>
-            </AnimatedSection>
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 mt-16 lg:mt-20">
+          <Prose>
+            <p>
+              The first building opened in 2000 and welcomed a pioneer cohort
+              of seventy-five boys. The plan was deliberate. The school would
+              grow slowly, one year group at a time, so the formation could
+              not be diluted by speed.
+            </p>
+            <p>
+              Twenty-five years later, eighteen graduating classes have come
+              through the gates. More than one thousand alumni are now
+              doctors, engineers, lawyers, founders, fathers and priests, in
+              Lagos and across the world. The conviction that founded the
+              school has not changed.
+            </p>
+          </Prose>
+        </div>
 
-            <AnimatedSection delay={0.1}>
-              <div className="relative rounded-sm overflow-hidden shadow-xl aspect-4/5">
-                <Image
-                  src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop"
-                  alt="Students at Whitesands School"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-deep/40 to-transparent" />
-              </div>
-            </AnimatedSection>
-          </div>
+        {/* Full-bleed photo 2 */}
+        <Figure
+          src={media('/images/students/choir-in-chapel.jpg')}
+          alt="The chapel choir during a service"
+          caption="The chapel choir at the centre of the school day."
+          className="mt-16 lg:mt-20 mb-24 lg:mb-32"
+        />
+      </section>
+
+      {/* 2 ── WHO WE ARE ────────────────────────────────────── */}
+      <section
+        id="who-we-are"
+        className="bg-offwhite py-24 lg:py-32 scroll-mt-40"
+      >
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12">
+          <Eyebrow>Who we are</Eyebrow>
+          <h2 className="mt-5 font-serif text-deep" style={SERIF_H}>
+            A Catholic school in{' '}
+            <span className="italic">Lekki.</span>
+          </h2>
+
+          <Prose>
+            <p>
+              Whitesands is a Catholic school for boys in Lekki, Lagos. It
+              exists to form young men who are intellectually capable,
+              morally grounded and prepared to lead, in that order.
+            </p>
+            <p>
+              Faith and reason belong together here. The classrooms are
+              spaces of serious academic work. The chapel sits at the centre
+              of the campus and at the centre of the school day. Together
+              they form the complete education the school has stood for
+              since the first cohort.
+            </p>
+          </Prose>
+
+          {/* Pull quote */}
+          <blockquote className="my-16 border-y border-deep/20 py-12 lg:py-14">
+            <p
+              className="font-serif italic text-deep text-center"
+              style={{
+                fontSize: 'clamp(1.5rem, 2.6vw, 2rem)',
+                lineHeight: 1.3,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              The school is, first, a community of parents, teachers and
+              students working towards the same end.
+            </p>
+          </blockquote>
+
+          <Prose>
+            <p>
+              Guided by the motto Duc in Altum, drawn from Luke 5:4, the
+              school invites every boy to leave the safety of the shore and
+              venture into deeper waters. Deeper knowledge, deeper faith,
+              deeper service.
+            </p>
+          </Prose>
         </div>
       </section>
 
-      {/* ── SECTION 2: Our History ────────────────────────────── */}
-      <section id="history" className="bg-offwhite py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-16 text-center">
-            <SectionLabel label="Our History" className="justify-center mb-4" />
-            <h2 className="font-serif text-5xl font-bold text-dark mt-2">
-              25 Years of Duc in Altum
+      {/* 3 ── PHILOSOPHY ────────────────────────────────────── */}
+      <section
+        id="philosophy"
+        className="bg-white py-24 lg:py-32 scroll-mt-40"
+      >
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="max-w-3xl">
+            <Eyebrow>Educational philosophy</Eyebrow>
+            <h2 className="mt-5 font-serif text-deep" style={SERIF_H}>
+              Four convictions hold the philosophy{' '}
+              <span className="italic">together.</span>
             </h2>
-            <p className="font-sans text-muted text-lg mt-4 max-w-2xl mx-auto">
-              From a modest founding vision to a recognised centre of Catholic education in Nigeria —
-              the story of Whitesands School.
-            </p>
-          </AnimatedSection>
-
-          {/* Timeline */}
-          <div className="relative">
-            {/* Vertical spine (desktop only) */}
-            <div className="hidden md:block absolute left-1/2 -translate-x-px top-0 bottom-0 w-0.5 bg-deep/20" />
-
-            <div className="flex flex-col gap-16">
-              {MILESTONES.map((m, i) => (
-                <TimelineMilestone key={m.year} {...m} index={i} />
-              ))}
-            </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── SECTION 3: Vision & Mission ──────────────────────── */}
-      <section id="vision-mission" className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-16">
-            <SectionLabel label="Vision & Mission" className="mb-4" />
-          </AnimatedSection>
-
-          {/* Vision */}
-          <AnimatedSection className="mb-20">
-            <div className="bg-deep text-white py-16 px-8 text-center rounded-sm">
-              <p className="font-roboto text-xs uppercase tracking-widest text-white/50 mb-6">
-                Our Vision
-              </p>
-              <p className="font-serif italic text-5xl text-white leading-snug max-w-4xl mx-auto">
-                "To be Nigeria's foremost Catholic school — forming graduates who are academically
-                excellent, morally grounded, and boldly prepared to serve humanity."
-              </p>
-            </div>
-          </AnimatedSection>
-
-          {/* Mission */}
-          <AnimatedSection className="mb-20">
-            <SectionLabel label="Our Mission" className="mb-8" />
-            <div className="grid md:grid-cols-2 gap-12">
-              <div>
-                <p className="font-sans text-lg text-dark leading-relaxed mb-6">
-                  Whitesands School exists to provide a holistic, faith-integrated education that
-                  equips students to excel academically, develop strong moral character, and contribute
-                  meaningfully to society. We do this through a rigorous curriculum, a nurturing
-                  environment, and a community deeply rooted in Catholic values.
-                </p>
-                <p className="font-sans text-base text-muted leading-relaxed">
-                  Our teachers are not merely instructors — they are mentors, models, and ministers of
-                  formation. Every lesson plan, every pastoral intervention, every extracurricular
-                  programme is ordered toward one end: the full development of the human person.
-                </p>
-              </div>
-              <div>
-                <p className="font-sans text-base text-muted leading-relaxed mb-6">
-                  We partner with parents as the primary educators of their children, recognising that
-                  the school's role is to complement and extend the formation that begins at home.
-                  Through open communication and shared accountability, we build a tri-partite covenant:
-                  student, school, and family — all working toward the same horizon.
-                </p>
-                <p className="font-sans text-base text-muted leading-relaxed">
-                  Our programmes span nursery through senior secondary, ensuring continuity of care
-                  and curriculum across every stage of a child's journey with us — from the first days
-                  in our nursery classrooms to the final WAEC examinations.
-                </p>
-              </div>
-            </div>
-          </AnimatedSection>
-
-          {/* Core Values */}
-          <AnimatedSection>
-            <SectionLabel label="Core Values" className="mb-8" />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {CORE_VALUES.map((v) => (
-                <CoreValueCard key={v.name} {...v} />
-              ))}
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* ── SECTION 4: Educational Philosophy ────────────────── */}
-      <section id="educational-philosophy" className="bg-offwhite">
-        {/* Top content */}
-        <div className="py-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <AnimatedSection className="mb-16">
-              <SectionLabel label="Educational Philosophy" className="mb-4" />
-              <h2 className="font-serif text-5xl font-bold text-dark mt-2 max-w-2xl">
-                Forming the Whole Person
-              </h2>
-            </AnimatedSection>
-
-            <AnimatedSection>
-              <div className="grid md:grid-cols-2 gap-12">
-                <div>
-                  <p className="font-sans text-lg text-dark leading-relaxed mb-6">
-                    The educational philosophy of Whitesands School is rooted in the Catholic
-                    intellectual tradition — a tradition that holds that faith and reason are
-                    complementary paths toward truth. Our curriculum is designed not merely to
-                    transmit knowledge but to form habits of mind: the capacity for deep inquiry,
-                    careful reasoning, and courageous wonder.
-                  </p>
-                  <p className="font-sans text-base text-muted leading-relaxed mb-6">
-                    We draw on the best of classical and contemporary pedagogy. The humanities form the
-                    spine of our academic programme, cultivating an appreciation for literature,
-                    history, and the arts as windows into the human condition. The sciences are taught
-                    with rigour and imagination, emphasising observation, hypothesis, and the joy of
-                    discovery.
-                  </p>
-                  <p className="font-sans text-base text-muted leading-relaxed">
-                    Character development is not an add-on — it is woven into the fabric of every
-                    school day. Our pastoral care system ensures that no student is invisible; every
-                    child is known by name, known in their struggles, and celebrated in their progress.
-                  </p>
-                </div>
-                <div>
-                  <p className="font-sans text-base text-muted leading-relaxed mb-6">
-                    Spiritual formation runs alongside intellectual formation. Daily prayers, weekly
-                    Masses, the sacraments, and service learning opportunities ensure that students
-                    encounter the living God not as an abstract doctrine but as a personal reality
-                    that shapes how they see themselves and the world.
-                  </p>
-                  <p className="font-sans text-base text-muted leading-relaxed mb-6">
-                    We recognise the dignity of every learner. Our teachers differentiate instruction,
-                    meet students where they are, and draw out what is best in each child. We believe
-                    that intelligence is multifaceted — that the student who excels in music, sport,
-                    or compassion is just as valuable as the student who tops the class in mathematics.
-                  </p>
-                  <p className="font-sans text-base text-muted leading-relaxed">
-                    Ultimately, our philosophy is best captured by the words of Pope John Paul II:
-                    "Do not be afraid." We form students who are unafraid to think deeply, to love
-                    freely, to serve generously, and to launch — always — into the deep.
-                  </p>
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-
-        {/* Full-width pull quote band */}
-        <div className="bg-deep py-20">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <p className="font-serif italic text-3xl md:text-4xl text-white leading-snug">
-              "The goal of education is not the transmission of information but the transformation
-              of the person — mind, heart, and soul."
-            </p>
-            <p className="font-roboto text-xs uppercase tracking-widest text-white/50 mt-8">
-              Whitesands School — Educational Philosophy
-            </p>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="py-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <AnimatedSection>
-              <div className="text-center">
-                <p className="font-sans text-muted mb-6 max-w-xl mx-auto">
-                  Discover the dedicated educators who bring this philosophy to life every day in our
-                  classrooms.
-                </p>
-                <Link
-                  href="/our-people"
-                  className="inline-flex items-center gap-2 font-roboto font-medium text-deep border-b-2 border-lemon pb-1 hover:text-bold transition-colors duration-200"
+          <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-14">
+            {PHILOSOPHY.map((p, i) => (
+              <motion.div
+                key={p.label}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.6,
+                  delay: i * 0.08,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <p
+                  className="font-roboto text-xs uppercase text-deep"
+                  style={{ letterSpacing: '0.28em' }}
                 >
-                  Meet Our People →
-                </Link>
-              </div>
-            </AnimatedSection>
+                  {p.label}
+                </p>
+                <div className="mt-5 space-y-4 font-sans text-base text-dark/75 leading-relaxed max-w-md">
+                  {p.body.map((para, j) => (
+                    <p key={j}>{para}</p>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* 4 ── HOUSES ────────────────────────────────────────── */}
+      <section id="houses" className="scroll-mt-40">
+        <div className="bg-offwhite pt-24 lg:pt-32">
+          <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+            <p className="font-sans text-base sm:text-lg text-dark/70 leading-relaxed max-w-2xl">
+              The six houses are named after mountain ranges. The colours are
+              primary and their first derivatives. The mascots are animals
+              that signify strength.
+            </p>
+          </div>
+        </div>
+        <HouseTeamsScroll />
+      </section>
+
+      {/* 5 ── VIRTUES ───────────────────────────────────────── */}
+      <section
+        id="virtues"
+        className="bg-white py-24 lg:py-32 scroll-mt-40"
+      >
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="max-w-3xl">
+            <Eyebrow>Virtues of the month</Eyebrow>
+            <h2 className="mt-5 font-serif text-deep" style={SERIF_H}>
+              Eleven virtues. One{' '}
+              <span className="italic">year.</span>
+            </h2>
+            <p className="mt-5 font-sans text-base text-dark/70 leading-relaxed">
+              Each month of the academic year carries a virtue. The boys
+              hear it in assembly, see it in their mentor conversations,
+              and read it on the chapel notice board.
+            </p>
+          </div>
+
+          {/* Horizontal scroll on small/tablet, 4-col grid on lg */}
+          <div className="mt-14 -mx-6 sm:-mx-10 lg:mx-0 overflow-x-auto lg:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <ul
+              className="flex lg:grid lg:grid-cols-4 gap-4 lg:gap-5 px-6 sm:px-10 lg:px-0"
+              style={{ scrollSnapType: 'x mandatory' }}
+            >
+              {VIRTUES.map((v, i) => (
+                <motion.li
+                  key={v.month}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: i * 0.04,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{ scrollSnapAlign: 'start' }}
+                  className="shrink-0 w-[72vw] max-w-75 lg:w-auto lg:max-w-none"
+                >
+                  <article className="h-full bg-offwhite p-6 lg:p-7 rounded-sm border-t-2 border-lemon">
+                    <p
+                      className="font-roboto text-[10px] uppercase text-muted"
+                      style={{ letterSpacing: '0.28em' }}
+                    >
+                      {v.month}
+                    </p>
+                    <h3 className="mt-3 font-serif text-2xl text-deep leading-tight">
+                      {v.name}
+                    </h3>
+                    <p className="mt-3 font-sans text-sm text-dark/75 leading-relaxed">
+                      {v.line}
+                    </p>
+                  </article>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* 6 ── CAMPUS ────────────────────────────────────────── */}
+      <section
+        id="campus"
+        className="bg-offwhite py-24 lg:py-32 scroll-mt-40"
+      >
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="max-w-3xl">
+            <Eyebrow>Campus</Eyebrow>
+            <h2 className="mt-5 font-serif text-deep" style={SERIF_H}>
+              Two hectares in{' '}
+              <span className="italic">Lekki.</span>
+            </h2>
+          </div>
+
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+            {CAMPUS.map((c, i) => (
+              <motion.figure
+                key={c.src}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{
+                  duration: 0.6,
+                  delay: i * 0.08,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <div className="relative aspect-3/2 overflow-hidden rounded-sm bg-deep/5">
+                  <Image
+                    src={c.src}
+                    alt={c.alt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover"
+                  />
+                </div>
+                <figcaption
+                  className="mt-4 font-roboto text-[11px] uppercase text-muted"
+                  style={{ letterSpacing: '0.22em' }}
+                >
+                  {c.caption}
+                </figcaption>
+              </motion.figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/*
+        Closing CTA intentionally omitted — the global Footer's first row
+        (bg-deep "Come and see · Book a visit") already serves this purpose
+        on every page, so adding one here stacked two deep-purple blocks
+        with the same message.
+      */}
     </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
+
+const SERIF_H: React.CSSProperties = {
+  fontSize: 'clamp(2rem, 4.2vw, 3rem)',
+  lineHeight: 1.12,
+  letterSpacing: '-0.02em',
+};
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="font-roboto text-xs uppercase text-deep"
+      style={{ letterSpacing: '0.28em' }}
+    >
+      {children}
+    </p>
+  );
+}
+
+function Prose({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-10 space-y-6 font-serif text-lg text-dark/85 leading-[1.65]">
+      {children}
+    </div>
+  );
+}
+
+function Figure({
+  src,
+  alt,
+  caption,
+  className = '',
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+  className?: string;
+}) {
+  return (
+    <figure className={className}>
+      <div className="relative aspect-video lg:aspect-21/9">
+        <Image src={src} alt={alt} fill sizes="100vw" className="object-cover" />
+      </div>
+      <figcaption className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 mt-3 font-roboto text-[11px] uppercase text-muted" style={{ letterSpacing: '0.22em' }}>
+        {caption}
+      </figcaption>
+    </figure>
+  );
+}
+
+function SubNav({ active }: { active: string }) {
+  const handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    id: string
+  ) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (!el) return;
+    // Heritage strip + main nav (~108px) + sub-nav (~50px) + a touch of breathing room
+    const offset = 168;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  };
+
+  return (
+    <nav className="sticky top-28 z-30 bg-white/85 backdrop-blur supports-backdrop-filter:bg-white/70 border-b border-deep/10">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {SUB_NAV.map(({ label, id }) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            onClick={(e) => handleClick(e, id)}
+            className={[
+              'shrink-0 px-5 py-4 font-roboto text-[11px] uppercase border-b-2 transition-colors duration-200',
+              active === id
+                ? 'text-deep border-lemon'
+                : 'text-muted border-transparent hover:text-deep',
+            ].join(' ')}
+            style={{ letterSpacing: '0.22em' }}
+          >
+            {label}
+          </a>
+        ))}
+      </div>
+    </nav>
   );
 }
