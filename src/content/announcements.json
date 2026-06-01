@@ -2,10 +2,10 @@
   {
     "id": "ann-001",
     "message": "Admissions for 2026/2027 are now open. Entrance assessments on 25 April & 9 May.",
-    "color": "blue",
+    "color": "yellow",
     "linkText": "Apply Now",
     "linkUrl": "/admissions",
-    "active": true
+    "active": false
   },
   {
     "id": "ann-002",
@@ -34,7 +34,7 @@
   {
     "id": "ann-005",
     "message": "New STEM Innovation Hub is now open to all students. Book a lab session today.",
-    "color": "blue",
+    "color": "red",
     "linkText": "Learn More",
     "linkUrl": "/what-we-offer#stem-hub",
     "active": false

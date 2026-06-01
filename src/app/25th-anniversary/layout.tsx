@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: '25th Anniversary',
-  description: 'Celebrating 25 years of excellence at Whitesands School — 1999 to 2024. Join us for a year of events, tributes, and thanksgiving.',
+  description: 'Twenty-five years of Whitesands School, from the first cohort of seventy-five boys in 2000 to more than one thousand alumni today.',
 };
 
 export default function AnniversaryLayout({ children }: { children: React.ReactNode }) {

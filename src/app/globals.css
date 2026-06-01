@@ -47,3 +47,27 @@ html {
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* ---------------------------------------------------------------------------
+ * Brand utility classes
+ *
+ * These wrap the repeated section-label and display-accent patterns used
+ * across the site, so a designer can lean on .eyebrow / .display-italic
+ * instead of restating the long Tailwind chain each time.
+ * ------------------------------------------------------------------------- */
+@layer components {
+  .eyebrow {
+    @apply inline-flex items-center gap-3 font-roboto text-xs uppercase text-deep;
+    letter-spacing: 0.28em;
+  }
+  .eyebrow-lemon {
+    @apply inline-flex items-center gap-3 font-roboto text-xs uppercase text-lemon;
+    letter-spacing: 0.28em;
+  }
+  .display-italic {
+    @apply italic text-lemon font-serif;
+  }
+  .display-italic-deep {
+    @apply italic text-deep font-serif;
+  }
+}

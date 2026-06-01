@@ -1,21 +1,33 @@
-import { HeroSlideshow } from '@/components/sections/HeroSlideshow';
+import { HeroVideo } from '@/components/sections/HeroVideo';
 import { WelcomeBlock } from '@/components/sections/WelcomeBlock';
+import { OutcomesStatement } from '@/components/sections/OutcomesStatement';
+import { HouseTeamsScroll } from '@/components/sections/HouseTeamsScroll';
+import { PillarsStrip } from '@/components/sections/PillarsStrip';
+import { LifeAtSchool } from '@/components/sections/LifeAtSchool';
 import { StatsStrip } from '@/components/sections/StatsStrip';
 import { LatestNews } from '@/components/sections/LatestNews';
 import { CommunityTestimonials } from '@/components/sections/CommunityTestimonials';
-import { CTAStrip } from '@/components/sections/CTAStrip';
-import { AnniversaryTeaser } from '@/components/sections/AnniversaryTeaser';
+import { SchoolJsonLd } from '@/components/seo/SchoolJsonLd';
 
 export default function Home() {
   return (
     <>
-      <HeroSlideshow />
+      <SchoolJsonLd />
+      <HeroVideo />
       <WelcomeBlock />
+      <OutcomesStatement />
+      <HouseTeamsScroll />
+      <PillarsStrip />
+      <LifeAtSchool />
       <StatsStrip />
       <LatestNews />
       <CommunityTestimonials />
-      <CTAStrip />
-      <AnniversaryTeaser />
+      {/*
+        CTAStrip intentionally omitted — the global Footer's first row
+        ("Come and see · Book a visit", bg-deep) serves as the universal
+        closing CTA and was stacking with CTAStrip's identical bg-deep
+        treatment and similar copy.
+      */}
     </>
   );
 }

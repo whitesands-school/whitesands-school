@@ -1,290 +1,237 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { AnimatedSection, SectionLabel } from '@/components/ui';
 import Image from 'next/image';
-import Link from 'next/link';
-import {
-  Microscope,
-  BookOpen,
-  Dumbbell,
-  Utensils,
-  Laptop,
-  Music,
-  Trees,
-  Home,
-  Wifi,
-  Leaf,
-  Users,
-  Building2,
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PageHero } from '@/components/sections/PageHero';
+import { media } from '@/lib/media';
 
-const FACILITIES = [
+// ---------------------------------------------------------------------------
+// Data
+// ---------------------------------------------------------------------------
+
+interface Stat {
+  value: string;
+  label: string;
+}
+
+const STATS: Stat[] = [
+  { value: '2', label: 'Hectares of campus in Lekki' },
+  { value: '5,000+', label: 'Square metres of built-up space' },
+  { value: '2,000+', label: 'Volumes in the library' },
+  { value: '4', label: 'Dedicated science suites' },
+];
+
+interface Facility {
+  title: string;
+  body: string;
+  image: string;
+  alt: string;
+  caption: string;
+}
+
+const FACILITIES: Facility[] = [
   {
-    name: 'Classrooms',
-    icon: Home,
-    highlight: '32 classrooms across 2 campuses',
-    desc: 'Bright, tech-enabled learning spaces fitted with projectors, whiteboards, and acoustic panels. Each room is designed to make teaching and deep listening equally rewarding.',
-    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80',
+    title: 'The Chapel',
+    body: 'A purpose-built Catholic chapel at the centre of the campus, with seating for three hundred. Daily Mass for staff, weekly Mass for the whole school, sacraments through the year.',
+    image: '/images/students/choir-in-chapel.jpg',
+    alt: 'The school chapel during a service',
+    caption: 'The Chapel · Seats 300',
   },
   {
-    name: 'Science Laboratories',
-    icon: Microscope,
-    highlight: '6 specialist labs',
-    desc: 'Fully fitted Physics, Chemistry, and Biology labs with modern apparatus. Students conduct hands-on experiments from JSS1 through SS3 — science at Whitesands is always experiential.',
-    image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80',
+    title: 'Library',
+    body: 'Over two thousand titles across fiction, reference, and curriculum support. Quiet study desks for the seniors and a dedicated junior reading section. Librarian on duty all school hours.',
+    image: '/images/students/student-drawing.JPG',
+    alt: 'A boy at work in the library',
+    caption: 'Library · 2,000+ Volumes',
   },
   {
-    name: 'Library & Resource Centre',
-    icon: BookOpen,
-    highlight: '10,000+ volumes',
-    desc: 'Over 10,000 volumes across fiction, non-fiction, and academic texts. Digital cataloguing, quiet reading zones, and a dedicated research suite. Open before and after school hours.',
-    image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&q=80',
+    title: 'Science Laboratories',
+    body: 'Four dedicated science suites for Biology, Chemistry, Physics, and the Computer Studies programme. Equipped to deliver both the Nigerian National Curriculum and the Cambridge IGCSE practicals.',
+    image: '/images/students/students-in-computer-lab.JPG',
+    alt: 'Students working in the science and computer lab',
+    caption: 'Science Block · 4 Suites',
   },
   {
-    name: 'Sports Complex',
-    icon: Dumbbell,
-    highlight: '7 sports disciplines',
-    desc: 'A full-size football pitch, basketball and volleyball courts, a 200m running track, a swimming pool, and a gymnasium. Facilities maintain the standards needed for inter-school and state-level competition.',
-    image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80',
+    title: 'Athletics Field',
+    body: 'A full-size playing field used for football, athletics, and the annual inter-house competitions. The track is marked and lined throughout the year.',
+    image: '/images/students/high-jump-purple-house.jpg',
+    alt: 'Inter-house athletics on the school field',
+    caption: 'Athletics Field · Full Size',
   },
   {
-    name: 'ICT & Technology Labs',
-    icon: Laptop,
-    highlight: '80+ workstations',
-    desc: 'Two modern computer suites with high-speed fibre internet, a 3D printing station, and a robotics workbench. Students in all year groups have scheduled ICT time as well as open-access periods.',
-    image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&q=80',
+    title: 'Dining Hall',
+    body: 'A common dining hall where the whole school eats together. Lunch is prepared on site every school day and served at a single sitting.',
+    image: '/images/students/awarding-medals.jpg',
+    alt: 'Students gathered together',
+    caption: 'Dining Hall',
   },
   {
-    name: 'Arts Centre & Auditorium',
-    icon: Music,
-    highlight: '400-seat auditorium',
-    desc: 'A 400-seat auditorium for productions, assemblies, and concerts. Dedicated music practice rooms, a photography darkroom, and a visual arts studio with natural light and kiln.',
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80',
-  },
-  {
-    name: 'Dining Hall',
-    icon: Utensils,
-    highlight: 'Serves 600+ daily',
-    desc: 'Spacious and welcoming. Nutritious meals prepared daily with a rotating menu that includes vegetarian and dietary options. Students eat together — we believe the shared table is a school in itself.',
-    image: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=800&q=80',
-  },
-  {
-    name: 'Grounds & Green Spaces',
-    icon: Trees,
-    highlight: '25+ acres',
-    desc: 'Over 25 acres of thoughtfully landscaped grounds, including a prayer garden, reflection areas, and shaded outdoor classrooms. Our environmental club actively maintains and expands the greenery.',
-    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&q=80',
+    title: 'The Penthouse',
+    body: 'A multipurpose room on the upper floor used for senior seminars, parent meetings, and the Philosophical Anthropology elective. Quiet, with a view across the campus.',
+    image: '/images/students/students-playing-chess.JPG',
+    alt: 'Students playing chess in a quiet study room',
+    caption: 'The Penthouse',
   },
 ];
 
-const CAMPUS_FEATURES = [
-  { icon: Wifi,      label: 'Campus-wide\nHigh-speed Wi-Fi' },
-  { icon: Leaf,      label: 'Solar-powered\nEnergy Systems' },
-  { icon: Users,     label: 'Dedicated\nParent Meeting Rooms' },
-  { icon: Building2, label: 'Fully\nAccessible Buildings' },
-];
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
 
 export default function FacilitiesPage() {
   return (
-    <main className="pt-25">
-      {/* Hero */}
-      <section className="bg-deep py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <AnimatedSection>
-            <div className="max-w-3xl">
-              <SectionLabel label="What We Offer" light className="mb-6" />
-              <h1 className="font-serif text-5xl md:text-6xl text-white mb-6 leading-tight">
-                Facilities & Campus
-              </h1>
-              <p className="font-sans text-white/80 text-lg leading-relaxed">
-                Our campus is a carefully considered environment for learning, creativity, and
-                wellbeing. Every building, every space, and every piece of equipment reflects our
-                conviction that the environment forms the student as much as the curriculum does.
-              </p>
-            </div>
-          </AnimatedSection>
+    <>
+      <PageHero
+        size="medium"
+        image={media('/images/students/choir-in-chapel.jpg')}
+        imageAlt="The school chapel during a service"
+        overlay={0.6}
+        eyebrow="Facilities"
+        title={
+          <>
+            Two hectares in{' '}
+            <span className="italic text-lemon">Lekki.</span>
+          </>
+        }
+        subtitle="A campus built for the school. Every room used every day."
+      />
+
+      {/* INTRO */}
+      <section className="bg-white py-20 lg:py-28">
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12">
+          <Eyebrow>The campus</Eyebrow>
+          <h2 className="mt-5 font-serif text-deep" style={H2}>
+            The buildings serve the{' '}
+            <span className="italic">school.</span>
+          </h2>
+          <div className="mt-8 space-y-5 font-serif text-lg text-dark/85 leading-[1.65]">
+            <p>
+              The Whitesands campus sits on a two-hectare plot in Lekki,
+              acquired in 1996 before the area became what it is today.
+              Construction has been deliberate. Every building was added
+              when it was needed and built to last.
+            </p>
+            <p>
+              The campus today carries about five thousand square metres of
+              built-up space. The chapel sits at its centre. The library
+              and the science block flank the main academic wing. The
+              field stretches behind.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Stats strip */}
-      <section className="bg-lemon py-12">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { stat: '32', label: 'Classrooms' },
-              { stat: '8',  label: 'Specialist Labs' },
-              { stat: '25+', label: 'Acres of Green Space' },
-              { stat: '2',  label: 'Campuses' },
-            ].map((item, idx) => (
+      {/* STATS */}
+      <section className="bg-offwhite py-20">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 lg:divide-x lg:divide-deep/15">
+            {STATS.map((s, i) => (
               <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 10 }}
+                key={s.label}
+                initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.08 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{
+                  duration: 0.55,
+                  delay: i * 0.08,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="flex flex-col items-center text-center px-4 lg:px-8"
               >
-                <p className="font-roboto font-black text-4xl text-deep">{item.stat}</p>
-                <p className="font-sans text-sm text-dark/70 mt-2">{item.label}</p>
+                <span
+                  className="font-serif text-deep tabular-nums leading-none"
+                  style={{
+                    fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {s.value}
+                </span>
+                <span
+                  className="mt-4 font-roboto text-xs uppercase text-muted max-w-[16ch]"
+                  style={{ letterSpacing: '0.22em' }}
+                >
+                  {s.label}
+                </span>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Facilities grid */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <AnimatedSection className="mb-12">
-            <SectionLabel label="Our Campus" className="mb-4" />
-            <h2 className="font-serif text-5xl font-bold text-dark mt-2 max-w-2xl">
-              Built for Learning, Growth, and Discovery
+      {/* FACILITY GRID */}
+      <section className="bg-white py-24 lg:py-28">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="max-w-3xl mb-14">
+            <Eyebrow>Facilities</Eyebrow>
+            <h2 className="mt-5 font-serif text-deep" style={H2}>
+              Six rooms that run the{' '}
+              <span className="italic">school.</span>
             </h2>
-          </AnimatedSection>
+          </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {FACILITIES.map((fac, idx) => {
-              const Icon = fac.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -4 }}
-                  transition={{ duration: 0.2, ease: 'easeOut', delay: (idx % 4) * 0.05 }}
-                  className="bg-white border border-deep/10 rounded-sm overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300"
-                >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-8 gap-y-14 lg:gap-y-16">
+            {FACILITIES.map((f, i) => (
+              <motion.li
+                key={f.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{
+                  duration: 0.6,
+                  delay: i * 0.06,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <figure>
+                  <div className="relative aspect-3/2 overflow-hidden rounded-sm bg-deep/5">
                     <Image
-                      src={fac.image}
-                      alt={fac.name}
+                      src={f.image}
+                      alt={f.alt}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-deep/60 to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <span className="font-roboto font-semibold text-xs uppercase tracking-widest text-lemon bg-deep/80 px-3 py-1">
-                        {fac.highlight}
-                      </span>
-                    </div>
                   </div>
-                  {/* Content */}
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 rounded-full bg-deep/10 flex items-center justify-center shrink-0">
-                        <Icon size={16} className="text-deep" />
-                      </div>
-                      <h3 className="font-roboto font-bold text-deep text-lg">{fac.name}</h3>
-                    </div>
-                    <p className="font-sans text-sm text-muted leading-relaxed">{fac.desc}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                  <figcaption
+                    className="mt-4 font-roboto text-[11px] uppercase text-muted"
+                    style={{ letterSpacing: '0.22em' }}
+                  >
+                    {f.caption}
+                  </figcaption>
+                </figure>
+                <h3 className="mt-3 font-serif text-xl lg:text-2xl text-deep leading-snug">
+                  {f.title}
+                </h3>
+                <p className="mt-3 font-sans text-base text-dark/75 leading-relaxed">
+                  {f.body}
+                </p>
+              </motion.li>
+            ))}
+          </ul>
         </div>
       </section>
+    </>
+  );
+}
 
-      {/* Built with purpose */}
-      <section className="bg-deep py-20">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <AnimatedSection>
-              <SectionLabel label="Our Philosophy" light className="mb-6" />
-              <h2 className="font-serif text-5xl text-white mb-6 leading-tight">
-                Built with Purpose
-              </h2>
-              <p className="font-sans text-white/80 text-lg leading-relaxed mb-6">
-                Our facilities are not simply infrastructure — they are pedagogy made physical.
-                Energy-efficient classrooms with natural light, green spaces for outdoor reflection,
-                a prayer garden for quiet encounter with God — every design decision reflects what
-                we believe education is for.
-              </p>
-              <p className="font-sans text-white/70 text-base leading-relaxed mb-8">
-                We are currently developing Phase 2 of our campus expansion, which will include a
-                new performing arts wing, an innovation hub, and an expanded sports complex.
-                Construction begins in 2026.
-              </p>
-              <Link
-                href="/admissions"
-                className="inline-flex items-center gap-2 font-roboto font-medium text-lemon border-b border-lemon/50 pb-0.5 hover:border-lemon transition-colors duration-200"
-              >
-                Book a Campus Visit →
-              </Link>
-            </AnimatedSection>
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
-            <AnimatedSection delay={0.1}>
-              <div className="grid grid-cols-2 gap-4">
-                {CAMPUS_FEATURES.map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <div key={idx} className="bg-white/10 border border-white/10 p-5 rounded-sm">
-                      <Icon size={22} className="text-lemon mb-3" />
-                      <p className="font-sans text-sm text-white/80 leading-snug whitespace-pre-line">
-                        {item.label}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
+const H2: React.CSSProperties = {
+  fontSize: 'clamp(1.875rem, 4vw, 2.75rem)',
+  lineHeight: 1.12,
+  letterSpacing: '-0.02em',
+};
 
-      {/* Experience section */}
-      <section className="bg-offwhite py-20">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <AnimatedSection className="mb-12 text-center">
-            <SectionLabel label="See It Yourself" className="justify-center mb-4" />
-            <h2 className="font-serif text-4xl font-bold text-dark mt-2">
-              Come and See
-            </h2>
-            <p className="font-sans text-muted text-base mt-4 max-w-xl mx-auto">
-              The best way to understand a Whitesands education is to experience the campus in person.
-            </p>
-          </AnimatedSection>
-          <AnimatedSection>
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  title: 'Campus Tour',
-                  desc: 'A guided walk through classrooms, laboratories, the library, and our sports facilities. Tours run on weekdays by appointment.',
-                },
-                {
-                  title: 'Open Day',
-                  desc: 'Meet staff, current students, and experience campus life first-hand. Open Days are held each term — see the Admissions page for dates.',
-                },
-                {
-                  title: 'Virtual Tour',
-                  desc: 'Explore our campus from anywhere in the world with our 360° interactive tour — a useful first step before a physical visit.',
-                },
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  whileHover={{ y: -4 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
-                  className="bg-white p-6 rounded-sm border border-deep/5 border-t-4 border-t-white hover:border-t-lemon shadow-sm hover:shadow-md transition-shadow duration-200"
-                >
-                  <h3 className="font-roboto font-bold text-deep mb-2">{item.title}</h3>
-                  <p className="font-sans text-sm text-muted leading-relaxed">{item.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-            <div className="mt-10 text-center">
-              <Link
-                href="/admissions"
-                className="inline-flex items-center gap-2 font-roboto font-medium text-deep border-b-2 border-lemon pb-1 hover:text-bold transition-colors duration-200"
-              >
-                Contact Admissions to Book →
-              </Link>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-    </main>
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="font-roboto text-xs uppercase text-deep"
+      style={{ letterSpacing: '0.28em' }}
+    >
+      {children}
+    </p>
   );
 }

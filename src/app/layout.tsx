@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { connection } from "next/server";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
 export const dynamic = 'force-dynamic';
@@ -12,6 +13,9 @@ import { Footer } from "@/components/layout/Footer";
 import { BfcacheFix } from "@/components/layout/BfcacheFix";
 import { PopoverModal } from "@/components/layout/PopoverModal";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { AnnouncementBanner } from "@/components/layout/AnnouncementBanner";
+import { BookVisitTab } from "@/components/ui/BookVisitTab";
+import { HeritageStrip } from "@/components/ui/HeritageStrip";
 import type { Announcement, SitePopover } from "@/types";
 
 const ptSerif = PT_Serif({
@@ -34,16 +38,49 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
   title: {
-    default: "Whitesands School",
-    template: "%s — Whitesands School",
+    default: `${SITE.name} — ${SITE.motto}`,
+    template: `%s — ${SITE.name}`,
   },
-  description: "Duc in Altum — Launch into the Deep. A Catholic school in Nigeria committed to academic excellence and holistic formation.",
+  description: SITE.description,
+  applicationName: SITE.name,
+  authors: [{ name: SITE.name }],
+  keywords: [
+    "Catholic school Lagos",
+    "Whitesands School",
+    "secondary school Lagos",
+    "best school Lekki",
+    "Catholic secondary education Nigeria",
+    "WAEC results Lagos",
+    "Cambridge IGCSE Nigeria",
+    "Duc in Altum",
+  ],
   openGraph: {
-    siteName: "Whitesands School",
+    siteName: SITE.name,
     locale: "en_NG",
     type: "website",
-    images: [{ url: "/images/logos/whitesands-school-logo.svg", width: 1200, height: 630 }],
+    url: SITE.url,
+    title: `${SITE.name} — ${SITE.motto}`,
+    description: SITE.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE.name} — ${SITE.motto}`,
+    description: SITE.description,
+  },
+  alternates: {
+    canonical: SITE.url,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -78,7 +115,9 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${ptSerif.variable} ${ptSans.variable} ${roboto.variable} h-full scroll-smooth`}
+      style={{ ['--ws-banner-h' as string]: announcement ? '36px' : '0px' }}
     >
       <body className="min-h-full flex flex-col font-sans text-dark bg-white antialiased">
         {/* Skip to main content — accessibility */}
@@ -88,17 +127,38 @@ export default async function RootLayout({
         >
           Skip to main content
         </a>
-        {!isAdmin && <Navbar announcement={announcement} />}
+        {!isAdmin && (
+          <header className="fixed top-0 inset-x-0 z-50">
+            {announcement && (
+              <AnnouncementBanner announcement={announcement} />
+            )}
+            <HeritageStrip />
+            <Navbar />
+          </header>
+        )}
         {isAdmin ? (
           children
         ) : (
           <BfcacheFix>
-            <main id="main-content" className="flex-1 pt-25">
+            {/*
+              Header height = HeritageStrip (~36px) + Navbar (h-20 = 80px) = 116px ≈ pt-28.
+              Banner height (~36px) is tracked via --ws-banner-h so the padding
+              collapses in sync if the user dismisses the banner client-side.
+              data-with-banner = visual probe for child components that need to
+              know about the banner (e.g. HeroVideo's negative top margin).
+            */}
+            <main
+              id="main-content"
+              data-with-banner={!!announcement}
+              className="flex-1"
+              style={{ paddingTop: 'calc(7rem + var(--ws-banner-h, 0px))' }}
+            >
               <PageTransition>{children}</PageTransition>
             </main>
           </BfcacheFix>
         )}
         {!isAdmin && <Footer />}
+        {!isAdmin && <BookVisitTab />}
         {popover && <PopoverModal popover={popover} />}
       </body>
     </html>

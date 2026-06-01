@@ -1,161 +1,287 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { Trash2 } from 'lucide-react'
-import Image from 'next/image'
-import type { GalleryImage } from '@/types'
+import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
+import { Plus, Trash2 } from 'lucide-react';
+import {
+  PageHeader,
+  Card,
+  Button,
+  Field,
+  Toast,
+  useToast,
+  ConfirmInline,
+  LoadingState,
+  EmptyState,
+  inputClass,
+} from '@/components/admin/ui';
+import { media } from '@/lib/media';
+import type { GalleryImage } from '@/types';
 
-const CATEGORIES = ['Campus', 'Academics', 'Events', 'Sports', 'Faith', 'Arts']
+const CATEGORIES = [
+  'Campus',
+  'Academics',
+  'Events',
+  'Sports',
+  'Faith',
+  'Arts',
+];
 
-const EMPTY = { src: '', alt: '', category: 'Campus' }
+const EMPTY = { src: '', alt: '', category: 'Campus' };
+type FilterKey = 'all' | (typeof CATEGORIES)[number];
 
 export default function GalleryPage() {
-  const [images, setImages] = useState<GalleryImage[]>([])
-  const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState(EMPTY)
-  const [adding, setAdding] = useState(false)
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState(EMPTY);
+  const [adding, setAdding] = useState(false);
+  const [filter, setFilter] = useState<FilterKey>('all');
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [toast, setToast] = useToast();
 
   useEffect(() => {
     fetch('/api/admin/gallery')
       .then((r) => r.json())
       .then((data) => {
-        setImages(data)
-        setLoading(false)
+        setImages(data);
+        setLoading(false);
       })
-  }, [])
+      .catch(() => {
+        setLoading(false);
+        setToast({ kind: 'error', message: 'Could not load gallery.' });
+      });
+  }, [setToast]);
 
-  async function deleteImage(id: string) {
-    if (!confirm('Remove this image?')) return
-    await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' })
-    setImages((prev) => prev.filter((img) => img.id !== id))
-  }
+  const filtered = useMemo(
+    () => (filter === 'all' ? images : images.filter((i) => i.category === filter)),
+    [images, filter]
+  );
+
+  const counts = useMemo(() => {
+    const map: Record<string, number> = { all: images.length };
+    for (const i of images) map[i.category] = (map[i.category] ?? 0) + 1;
+    return map;
+  }, [images]);
 
   async function addImage(e: React.FormEvent) {
-    e.preventDefault()
-    if (!form.src) return
-    setAdding(true)
-    const id = `gallery-${Date.now()}`
-    const newImage: GalleryImage = { id, ...form }
-    const res = await fetch('/api/admin/gallery', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newImage),
-    })
-    if (res.ok) {
-      setImages((prev) => [...prev, newImage])
-      setForm(EMPTY)
+    e.preventDefault();
+    if (!form.src) return;
+    setAdding(true);
+    setToast({ kind: 'saving' });
+    const id = `gallery-${Date.now()}`;
+    const newImage: GalleryImage = { id, ...form };
+    try {
+      const res = await fetch('/api/admin/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newImage),
+      });
+      if (!res.ok) throw new Error();
+      setImages((prev) => [...prev, newImage]);
+      setForm(EMPTY);
+      setToast({ kind: 'saved', message: 'Image added' });
+    } catch {
+      setToast({ kind: 'error', message: 'Could not add image.' });
+    } finally {
+      setAdding(false);
     }
-    setAdding(false)
   }
 
-  if (loading) {
-    return <div className="text-sm text-muted font-sans">Loading…</div>
+  async function deleteImage(id: string) {
+    setConfirmId(null);
+    const previous = images;
+    setImages((prev) => prev.filter((img) => img.id !== id));
+    try {
+      const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      setToast({ kind: 'saved', message: 'Removed' });
+    } catch {
+      setImages(previous);
+      setToast({ kind: 'error', message: 'Could not remove image.' });
+    }
   }
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="font-roboto font-bold text-2xl text-dark">Gallery</h1>
-        <p className="font-sans text-sm text-muted mt-1">
-          {images.length} images across{' '}
-          {[...new Set(images.map((i) => i.category))].length} categories
-        </p>
-      </div>
+    <>
+      <PageHeader
+        eyebrow="Content"
+        title="Gallery"
+        description="Photos used across the public site. Add an image by pasting its path under /public."
+      />
 
       {/* Add form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-        <h2 className="font-roboto font-semibold text-sm uppercase tracking-wide text-muted mb-4">
-          Add Image
-        </h2>
-        <form onSubmit={addImage} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-          <div className="md:col-span-2">
-            <label className="block font-roboto text-xs font-semibold uppercase tracking-wide text-muted mb-1.5">
-              Image URL
-            </label>
-            <input
-              type="text"
-              value={form.src}
-              onChange={(e) => setForm((f) => ({ ...f, src: e.target.value }))}
-              placeholder="/images/gallery/photo.jpg"
+      <Card className="p-6 mb-8">
+        <p
+          className="font-roboto text-[11px] uppercase text-muted mb-5"
+          style={{ letterSpacing: '0.22em' }}
+        >
+          Add an image
+        </p>
+        <form onSubmit={addImage} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+          <div className="md:col-span-5">
+            <Field
+              label="Image path"
+              hint="e.g. /images/students/choir-in-chapel.jpg"
               required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm font-sans text-dark focus:outline-none focus:ring-2 focus:ring-deep/30 focus:border-deep transition"
-            />
+            >
+              <input
+                type="text"
+                value={form.src}
+                onChange={(e) => setForm((f) => ({ ...f, src: e.target.value }))}
+                placeholder="/images/..."
+                required
+                className={`${inputClass} font-mono text-xs`}
+              />
+            </Field>
           </div>
-          <div>
-            <label className="block font-roboto text-xs font-semibold uppercase tracking-wide text-muted mb-1.5">
-              Alt Text
-            </label>
-            <input
-              type="text"
-              value={form.alt}
-              onChange={(e) => setForm((f) => ({ ...f, alt: e.target.value }))}
-              placeholder="Description of image"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm font-sans text-dark focus:outline-none focus:ring-2 focus:ring-deep/30 focus:border-deep transition"
-            />
+          <div className="md:col-span-4">
+            <Field label="Alt text" hint="Describes the image for screen readers">
+              <input
+                type="text"
+                value={form.alt}
+                onChange={(e) => setForm((f) => ({ ...f, alt: e.target.value }))}
+                placeholder="Choir in the chapel"
+                className={inputClass}
+              />
+            </Field>
           </div>
-          <div>
-            <label className="block font-roboto text-xs font-semibold uppercase tracking-wide text-muted mb-1.5">
-              Category
-            </label>
-            <div className="flex gap-2">
+          <div className="md:col-span-2">
+            <Field label="Category">
               <select
                 value={form.category}
                 onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm font-sans text-dark focus:outline-none focus:ring-2 focus:ring-deep/30 focus:border-deep transition"
+                className={inputClass}
               >
                 {CATEGORIES.map((c) => (
                   <option key={c}>{c}</option>
                 ))}
               </select>
-              <button
-                type="submit"
-                disabled={adding}
-                className="px-4 py-2 bg-deep text-white font-roboto font-semibold text-sm rounded-lg hover:bg-deep/90 transition disabled:opacity-60 whitespace-nowrap"
-              >
-                Add
-              </button>
-            </div>
+            </Field>
+          </div>
+          <div className="md:col-span-1">
+            <Button type="submit" disabled={adding} className="w-full">
+              <Plus size={14} strokeWidth={2} />
+              Add
+            </Button>
           </div>
         </form>
-      </div>
+      </Card>
+
+      {/* Filter */}
+      {images.length > 0 && (
+        <div className="flex items-center gap-1 flex-wrap mb-5">
+          <FilterPill
+            label="All"
+            count={counts.all ?? 0}
+            active={filter === 'all'}
+            onClick={() => setFilter('all')}
+          />
+          {CATEGORIES.map((c) => (
+            <FilterPill
+              key={c}
+              label={c}
+              count={counts[c] ?? 0}
+              active={filter === c}
+              onClick={() => setFilter(c)}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {images.map((img) => (
-          <div
-            key={img.id}
-            className="group relative bg-gray-100 rounded-xl overflow-hidden aspect-square"
-          >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
-              className="object-cover"
-              unoptimized
-            />
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100">
-              <span className="inline-block px-2 py-0.5 bg-white/90 text-deep text-xs font-roboto font-semibold rounded mb-1 w-fit">
-                {img.category}
-              </span>
-              <p className="text-white text-xs font-sans line-clamp-2">{img.alt}</p>
-            </div>
-            {/* Delete button */}
-            <button
-              onClick={() => deleteImage(img.id)}
-              className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-lg text-bold hover:bg-white opacity-0 group-hover:opacity-100 transition shadow"
-            >
-              <Trash2 size={13} />
-            </button>
-          </div>
-        ))}
+      {loading ? (
+        <LoadingState />
+      ) : images.length === 0 ? (
+        <EmptyState
+          title="No images yet."
+          description="Use the form above to add a photo."
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title="Nothing in this category yet."
+          description="Switch filter or add an image."
+        />
+      ) : (
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+          {filtered.map((img) => (
+            <li key={img.id}>
+              <article className="group relative aspect-square overflow-hidden rounded-sm bg-deep/5 border border-deep/10">
+                <Image
+                  src={media(img.src)}
+                  alt={img.alt}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-deep/0 group-hover:bg-deep/40 transition-colors duration-200 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100">
+                  <span
+                    className="inline-block w-fit bg-white/90 backdrop-blur text-deep font-roboto text-[10px] uppercase px-2 py-0.5 rounded-sm"
+                    style={{ letterSpacing: '0.22em' }}
+                  >
+                    {img.category}
+                  </span>
+                  <p className="mt-1 text-white font-sans text-xs line-clamp-2">
+                    {img.alt}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setConfirmId(img.id)}
+                  className="absolute top-2 right-2 bg-white/90 backdrop-blur p-1.5 rounded-sm text-bold hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  aria-label="Remove image"
+                >
+                  <Trash2 size={12} strokeWidth={1.75} />
+                </button>
+              </article>
+            </li>
+          ))}
+        </ul>
+      )}
 
-        {images.length === 0 && (
-          <div className="col-span-4 py-12 text-center text-muted font-sans text-sm">
-            No images yet. Add one above.
-          </div>
-        )}
-      </div>
-    </div>
-  )
+      <ConfirmInline
+        open={!!confirmId}
+        message="Remove this image from the gallery?"
+        confirmLabel="Remove"
+        onConfirm={() => confirmId && deleteImage(confirmId)}
+        onCancel={() => setConfirmId(null)}
+      />
+
+      <Toast state={toast} />
+    </>
+  );
+}
+
+function FilterPill({
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        'px-3.5 py-2 font-roboto text-[10px] uppercase rounded-sm transition-colors cursor-pointer',
+        active ? 'bg-deep text-white' : 'text-muted hover:text-deep',
+      ].join(' ')}
+      style={{ letterSpacing: '0.22em' }}
+    >
+      {label}
+      <span
+        className={[
+          'ml-2 tabular-nums normal-case',
+          active ? 'text-white/60' : 'text-muted/60',
+        ].join(' ')}
+        style={{ letterSpacing: '0.06em' }}
+      >
+        {count}
+      </span>
+    </button>
+  );
 }

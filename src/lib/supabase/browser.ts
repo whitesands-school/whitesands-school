@@ -1,0 +1,17 @@
+import { createBrowserClient } from '@supabase/ssr';
+
+/**
+ * Supabase client for use inside Client Components (and browser-side code).
+ *
+ * Uses the publishable (anon) key, which is safe to expose to the browser.
+ * Reads via Row-Level Security policies are scoped at the database level.
+ *
+ * Server actions and route handlers should import from `./server` instead,
+ * which knows how to read auth cookies from the request.
+ */
+export function createSupabaseBrowserClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  );
+}

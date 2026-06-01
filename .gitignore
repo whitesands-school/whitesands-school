@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /out/
+.claude
 
 # production
 /build
@@ -39,3 +40,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Large source video files. Keep the small /web/ versions and the parent
+# review clips referenced by code; exclude the uncompressed originals.
+public/videos/*.mp4
+public/videos/*.MP4
+public/videos/*.mov
+public/videos/*.MOV
+# Whitelist the compressed clips the site actually uses:
+!public/videos/Mr. & Mrs. Abu Parents Review.mp4
+!public/videos/Mrs. Amos-Penda Parents Review.mp4
+!public/videos/Engineer Shok Julius Parents Review.mp4
+!public/videos/Parents as the 1st Educators.mp4
+!public/videos/web/

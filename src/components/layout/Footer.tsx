@@ -2,30 +2,51 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { SITE } from '@/lib/site';
+import { media } from '@/lib/media';
 // ---------------------------------------------------------------------------
 // Data
 // ---------------------------------------------------------------------------
 
-const ABOUT_LINKS = [
-  { label: 'Who We Are', href: '/about/who-we-are' },
-  { label: 'History', href: '/about/history' },
-  { label: 'Vision & Mission', href: '/about/vision-mission' },
-  { label: 'Philosophy', href: '/about/philosophy' },
-];
-
-const LEARN_LINKS = [
-  { label: 'Academics', href: '/what-we-offer/academics' },
-  { label: 'Extracurricular', href: '/what-we-offer/extracurricular' },
-  { label: 'Personal Formation', href: '/what-we-offer/personal-formation' },
-  { label: 'Facilities', href: '/what-we-offer/facilities' },
-];
-
-const CONNECT_LINKS = [
-  { label: 'Admissions', href: '/admissions' },
-  { label: 'Our People', href: '/our-people' },
-  { label: 'News', href: '/news' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'Fees Portal', href: '/fees-portal' },
+const COLUMN_GROUPS: { heading: string; links: { label: string; href: string }[] }[] = [
+  {
+    heading: 'The School',
+    links: [
+      { label: 'About Whitesands', href: '/about' },
+      { label: 'Our History', href: '/about#history' },
+      { label: 'Vision & Mission', href: '/about#vision-mission' },
+      { label: 'Educational Philosophy', href: '/about#educational-philosophy' },
+      { label: '25th Anniversary', href: '/25th-anniversary' },
+    ],
+  },
+  {
+    heading: 'What We Offer',
+    links: [
+      { label: 'Academics', href: '/what-we-offer/academics' },
+      { label: 'Extracurricular', href: '/what-we-offer/extracurricular' },
+      { label: 'Personal Formation', href: '/what-we-offer/personal-formation' },
+      { label: 'Facilities & Campus', href: '/what-we-offer/facilities' },
+    ],
+  },
+  {
+    heading: 'Our People',
+    links: [
+      { label: 'Staff & Leadership', href: '/our-people' },
+      { label: 'Students', href: '/our-people#students' },
+      { label: 'Parents', href: '/our-people#parents' },
+      { label: 'Alumni', href: '/our-people#alumni' },
+    ],
+  },
+  {
+    heading: 'Visit & Apply',
+    links: [
+      { label: 'Book a school visit', href: '/admissions#visit' },
+      { label: 'Apply for admission', href: '/admissions' },
+      { label: 'Fees Portal', href: '/fees-portal' },
+      { label: 'News & Stories', href: '/news' },
+      { label: 'Contact', href: '/contact' },
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -70,10 +91,10 @@ function IconYoutube({ size = 20 }: { size?: number }) {
 }
 
 const SOCIALS = [
-  { Icon: IconInstagram, label: 'Instagram', href: '#' },
-  { Icon: IconFacebook, label: 'Facebook', href: '#' },
-  { Icon: IconLinkedin, label: 'LinkedIn', href: '#' },
-  { Icon: IconYoutube, label: 'YouTube', href: '#' },
+  { Icon: IconInstagram, label: 'Instagram', href: SITE.sameAs[0] },
+  { Icon: IconFacebook, label: 'Facebook', href: SITE.sameAs[1] },
+  { Icon: IconLinkedin, label: 'LinkedIn', href: SITE.sameAs[2] },
+  { Icon: IconYoutube, label: 'YouTube', href: SITE.sameAs[3] },
 ];
 
 // ---------------------------------------------------------------------------
@@ -117,63 +138,109 @@ export function Footer() {
   return (
     <footer>
       {/* ------------------------------------------------------------------ */}
-      {/* ROW 1 — Main body                                                   */}
+      {/* ROW 0 — Closing call to action                                      */}
       {/* ------------------------------------------------------------------ */}
-      <div className="bg-dark py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Col 1 — Identity */}
-          <div className="flex flex-col gap-4">
-            {/* Logo */}
-            <Link href="/" className="w-fit">
-              <Image
-                src="/images/logos/whitesands-school-logo.svg"
-                alt="Whitesands School"
-                width={160}
-                height={51}
-                className="h-12 w-auto"
-              />
+      <div className="bg-deep">
+        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 py-24 lg:py-32 text-center">
+          <p
+            className="font-roboto text-xs uppercase text-lemon"
+            style={{ letterSpacing: '0.28em' }}
+          >
+            Come and see
+          </p>
+
+          <h2
+            className="mt-5 font-serif text-offwhite"
+            style={{
+              fontSize: 'clamp(2rem, 4.4vw, 3rem)',
+              lineHeight: 1.12,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            The best way to understand Whitesands is to{' '}
+            <span className="italic">visit.</span>
+          </h2>
+
+          <p className="mt-6 font-sans text-base sm:text-lg text-offwhite/70 leading-relaxed max-w-xl mx-auto">
+            Walk the corridors during a school day. We will arrange a visit
+            for a date that suits you.
+          </p>
+
+          <div className="mt-10 flex flex-col items-center gap-5">
+            <Link
+              href="/admissions#visit"
+              className="inline-flex items-center justify-center bg-lemon text-deep font-roboto uppercase text-sm px-10 py-4 hover:bg-white transition-colors"
+              style={{ letterSpacing: '0.18em' }}
+            >
+              Book a visit
             </Link>
 
-            {/* Motto */}
-            <p className="font-serif italic text-white/60 text-sm leading-relaxed">
-              &ldquo;Duc in Altum&rdquo; — Launch into the Deep
-            </p>
+            <Link
+              href="/admissions"
+              className="group inline-flex items-center gap-2 font-roboto uppercase text-xs text-offwhite/70 hover:text-lemon transition-colors"
+              style={{ letterSpacing: '0.22em' }}
+            >
+              Or read the 2026 admissions process
+              <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </div>
+        </div>
+      </div>
 
-            {/* Contact */}
-            <address className="not-italic flex flex-col gap-1.5 text-sm text-white/60">
-              <span>123 School Road, Abuja, Nigeria</span>
+      {/* ------------------------------------------------------------------ */}
+      {/* ROW 1 — Identity                                                    */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="bg-dark pt-16 pb-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+          <div className="flex flex-col gap-5 max-w-md">
+            <Link href="/" className="w-fit" aria-label="Whitesands School — Home">
+              <Image
+                src={media('/images/logos/whitesands-school-logo.png')}
+                alt="Whitesands School"
+                width={600}
+                height={189}
+                sizes="160px"
+                style={{ width: 'auto' }}
+                className="h-11 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
+              />
+            </Link>
+            <p className="font-serif italic text-white/60 text-base leading-relaxed">
+              &ldquo;{SITE.motto}&rdquo; — Launch into the Deep
+            </p>
+            <address className="not-italic flex flex-col gap-1.5 text-sm text-white/60 mt-2">
+              <span>
+                {SITE.address.street}, {SITE.address.locality}, {SITE.address.region}
+              </span>
               <a
-                href="tel:+2348000000000"
+                href={`tel:${SITE.phone.replace(/[^+\d]/g, '')}`}
                 className="hover:text-lemon transition-colors duration-200"
               >
-                +234 800 000 0000
+                {SITE.phone}
               </a>
               <a
-                href="mailto:info@whitesandsschool.edu.ng"
+                href={`mailto:${SITE.email}`}
                 className="hover:text-lemon transition-colors duration-200"
               >
-                info@whitesandsschool.edu.ng
+                {SITE.email}
               </a>
             </address>
           </div>
+        </div>
+      </div>
 
-          {/* Col 2 — About */}
-          <div>
-            <ColHeading>About</ColHeading>
-            <FooterLinks links={ABOUT_LINKS} />
-          </div>
-
-          {/* Col 3 — Learn */}
-          <div>
-            <ColHeading>Learn</ColHeading>
-            <FooterLinks links={LEARN_LINKS} />
-          </div>
-
-          {/* Col 4 — Connect */}
-          <div>
-            <ColHeading>Connect</ColHeading>
-            <FooterLinks links={CONNECT_LINKS} />
-          </div>
+      {/* ------------------------------------------------------------------ */}
+      {/* ROW 2 — Full sitemap of links                                       */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="bg-dark border-t border-white/10 py-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+          {COLUMN_GROUPS.map((col) => (
+            <div key={col.heading}>
+              <ColHeading>{col.heading}</ColHeading>
+              <FooterLinks links={col.links} />
+            </div>
+          ))}
         </div>
       </div>
 
@@ -205,7 +272,7 @@ export function Footer() {
       <div className="bg-deep">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span className="text-white/50 text-xs font-roboto">
-            &copy; 2025 Whitesands School. All rights reserved.
+            &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </span>
           <span className="text-white/50 text-xs font-roboto">
             Designed &amp; developed by Chukwudi Ofoma
