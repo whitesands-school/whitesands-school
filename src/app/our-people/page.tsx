@@ -731,6 +731,60 @@ function AlumniPanel() {
         </div>
       </section>
 
+      {/* Alumni Prizes feature */}
+      <section className="bg-deep py-20 lg:py-24">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-7">
+              <Eyebrow className="text-lemon">Giving back</Eyebrow>
+              <h2 className="mt-5 font-serif text-white" style={H2}>
+                The Alumni Prizes — old boys, investing in{' '}
+                <span className="italic text-lemon">new ones.</span>
+              </h2>
+              <p className="mt-6 font-sans text-base lg:text-lg text-white/75 leading-relaxed max-w-xl">
+                Every year, alumni sponsor prizes in Film, Coding, Visual Art,
+                Music, Mathematics and Sports — awarded at the Speech and
+                Prize-giving Ceremony. Free to enter, open to every Whitesands
+                boy.
+              </p>
+              <Link
+                href="/alumni-prizes"
+                className="group mt-8 inline-flex items-center gap-2 bg-lemon text-deep font-roboto uppercase text-sm px-8 py-3.5 hover:bg-white transition-colors duration-200"
+                style={{ letterSpacing: '0.14em' }}
+              >
+                Explore the prizes
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            </div>
+            <ul className="lg:col-span-5 grid grid-cols-2 gap-3">
+              {[
+                ['01', 'Film'],
+                ['02', 'Coding'],
+                ['03', 'Visual Art'],
+                ['04', 'Music'],
+                ['05', 'Mathematics'],
+                ['06', 'Sports'],
+              ].map(([n, label]) => (
+                <li
+                  key={label}
+                  className="flex items-baseline gap-3 border border-white/10 rounded-sm px-4 py-3.5"
+                >
+                  <span className="font-serif text-lemon/60 text-sm">{n}</span>
+                  <span
+                    className="font-roboto text-[11px] uppercase text-white/85"
+                    style={{ letterSpacing: '0.18em' }}
+                  >
+                    {label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* Alumni CTA */}
       <section className="bg-offwhite py-20 lg:py-24">
         <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 text-center">
@@ -752,11 +806,11 @@ function AlumniPanel() {
             <span className="italic">Join the alumni association.</span>
           </h3>
           <Link
-            href="mailto:alumni@whitesandsschool.edu.ng"
+            href="mailto:alumni@whitesands.org.ng"
             className="mt-8 inline-flex items-center gap-2 font-roboto uppercase text-sm text-deep hover:text-bold transition-colors"
             style={{ letterSpacing: '0.18em' }}
           >
-            alumni@whitesandsschool.edu.ng
+            alumni@whitesands.org.ng
             <span className="inline-block transition-transform duration-200 hover:translate-x-1">
               →
             </span>

@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/what-we-offer/personal-formation', priority: 0.8, freq: 'monthly' },
     { path: '/what-we-offer/facilities', priority: 0.8, freq: 'monthly' },
     { path: '/our-people', priority: 0.85, freq: 'monthly' },
+    { path: '/alumni-prizes', priority: 0.7, freq: 'yearly' },
     { path: '/news', priority: 0.75, freq: 'weekly' },
     { path: '/contact', priority: 0.8, freq: 'monthly' },
     { path: '/fees-portal', priority: 0.6, freq: 'yearly' },

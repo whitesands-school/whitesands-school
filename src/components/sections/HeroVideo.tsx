@@ -162,7 +162,7 @@ export function HeroVideo() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         whileHover="hover"
-        className="absolute left-1/2 -translate-x-1/2 bottom-10 sm:bottom-8 hidden sm:flex flex-col items-center gap-4 text-white/55 hover:text-lemon transition-colors duration-300"
+        className="absolute z-20 left-1/2 -translate-x-1/2 bottom-10 sm:bottom-8 hidden sm:flex flex-col items-center gap-4 text-white/55 hover:text-lemon transition-colors duration-300"
         aria-label="Scroll to next section"
       >
         <motion.span
@@ -224,7 +224,7 @@ export function HeroVideo() {
         whileHover={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.5 }}
         aria-label={muted ? 'Unmute hero video' : 'Mute hero video'}
-        className="absolute bottom-16 right-4 sm:bottom-6 sm:right-6 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/6 backdrop-blur-sm text-lemon hover:bg-white/12 transition-colors"
+        className="absolute z-20 bottom-16 right-4 sm:bottom-6 sm:right-6 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/6 backdrop-blur-sm text-lemon hover:bg-white/12 transition-colors cursor-pointer"
       >
         {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
       </motion.button>
