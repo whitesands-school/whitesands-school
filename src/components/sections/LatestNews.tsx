@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { getNews } from '@/lib/content';
 import { media } from '@/lib/media';
 import type { NewsPost } from '@/types';
 
@@ -110,8 +109,8 @@ function SecondaryCard({ post }: { post: NewsPost }) {
   );
 }
 
-export function LatestNews() {
-  const recent = getNews().slice(0, 3);
+export function LatestNews({ posts }: { posts: NewsPost[] }) {
+  const recent = posts.slice(0, 3);
   const [lead, ...secondaries] = recent;
 
   if (!lead) return null;

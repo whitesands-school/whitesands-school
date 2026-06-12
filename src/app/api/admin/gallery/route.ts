@@ -1,21 +1,14 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { readContent, writeContent } from '@/lib/content-store'
 import type { GalleryImage } from '@/types'
 
-const filePath = join(process.cwd(), 'src/content/gallery.json')
-
-function read(): GalleryImage[] {
-  return JSON.parse(readFileSync(filePath, 'utf-8'))
-}
-
 export async function GET() {
-  return Response.json(read())
+  return Response.json(await readContent<GalleryImage[]>('gallery'))
 }
 
 export async function POST(request: Request) {
   const body: GalleryImage = await request.json()
-  const images = read()
+  const images = await readContent<GalleryImage[]>('gallery')
   images.push(body)
-  writeFileSync(filePath, JSON.stringify(images, null, 2))
+  await writeContent('gallery', images)
   return Response.json(body, { status: 201 })
 }

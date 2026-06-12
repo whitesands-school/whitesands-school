@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
   // Persist to the admin inbox first — email is best-effort on top.
   try {
-    appendInboxEntry({
+    await appendInboxEntry({
       type: 'contact',
       name: msg.name,
       email: msg.email,
