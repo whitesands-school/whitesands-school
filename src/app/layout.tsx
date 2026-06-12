@@ -40,7 +40,7 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Catholic Secondary School for Boys in Lekki, Lagos`,
+    default: `${SITE.name} — Secondary School for Boys in Lekki, Lagos`,
     template: `%s — ${SITE.name}`,
   },
   description: SITE.description,
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     locale: "en_NG",
     type: "website",
     url: SITE.url,
-    title: `${SITE.name} — Catholic Boys' School in Lekki, Lagos`,
+    title: `${SITE.name} — Duc in Altum`,
     description: SITE.description,
   },
   twitter: {

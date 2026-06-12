@@ -75,7 +75,7 @@ export default function OG() {
               maxWidth: 880,
             }}
           >
-            A Catholic secondary school for boys in Lekki, Lagos · Est. 2000
+            A secondary school for boys in Lekki, Lagos · Est. 2000
           </div>
         </div>
 
