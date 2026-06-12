@@ -83,15 +83,7 @@ const SCHEDULE = [
   { category: 'Transfer', opens: '1 October 2025', exam: '9 May 2026' },
 ];
 
-const SON_CLASSES = [
-  'Primary 4',
-  'Primary 5',
-  'Primary 6',
-  'JS1',
-  'JS2',
-  'JS3',
-  'SS1',
-];
+const SON_CLASSES = ['JS1', 'JS2', 'JS3', 'SS1'];
 
 // ---------------------------------------------------------------------------
 // Form schema (mirrors /api/visit-inquiry's server schema)
@@ -530,7 +522,7 @@ function VisitForm() {
               }
             />
             <Field
-              label="Son's current class"
+              label="Class applying into"
               error={errors.sonClass?.message}
               input={
                 <select {...register('sonClass')} className={inputClass}>
@@ -623,7 +615,7 @@ function Field({
       </span>
       {input}
       {error && (
-        <span className="font-sans text-xs text-bold mt-1">{error}</span>
+        <span role="alert" className="font-sans text-sm text-bold mt-1">{error}</span>
       )}
     </label>
   );

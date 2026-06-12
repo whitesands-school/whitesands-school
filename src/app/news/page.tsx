@@ -85,7 +85,7 @@ export default function NewsPage() {
       {/* ── Mobile filter — horizontal scroll strip ──────────────
           Hidden on lg+, where the sidebar takes over. Sits flush
           beneath the hero so the lead story isn't pushed down. */}
-      <div className="lg:hidden sticky top-28 z-20 bg-white/85 backdrop-blur supports-backdrop-filter:bg-white/70 border-b border-deep/10">
+      <div className="lg:hidden sticky top-[calc(7rem+var(--ws-banner-h,0px))] z-20 bg-white/85 backdrop-blur supports-backdrop-filter:bg-white/70 border-b border-deep/10">
         <div className="max-w-7xl mx-auto px-6 sm:px-10">
           <ul className="flex items-center gap-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 sm:-mx-10 px-6 sm:px-10">
             {categories.map((cat) => {
@@ -124,7 +124,7 @@ export default function NewsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-16">
             {/* Sidebar — desktop only */}
             <aside className="hidden lg:block lg:col-span-1 lg:order-2">
-              <div className="lg:sticky lg:top-40">
+              <div className="lg:sticky lg:top-[calc(10rem+var(--ws-banner-h,0px))]">
                 <p
                   className="font-roboto text-[11px] uppercase text-deep"
                   style={{ letterSpacing: '0.28em' }}
@@ -214,7 +214,7 @@ export default function NewsPage() {
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="font-roboto text-xs uppercase text-deep hover:text-bold disabled:text-muted/40 disabled:cursor-not-allowed transition-colors"
+                    className="font-roboto text-xs uppercase text-deep hover:text-bold disabled:text-muted/60 disabled:cursor-not-allowed transition-colors"
                     style={{ letterSpacing: '0.22em' }}
                   >
                     ← Prev
@@ -229,7 +229,7 @@ export default function NewsPage() {
                     type="button"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
-                    className="font-roboto text-xs uppercase text-deep hover:text-bold disabled:text-muted/40 disabled:cursor-not-allowed transition-colors"
+                    className="font-roboto text-xs uppercase text-deep hover:text-bold disabled:text-muted/60 disabled:cursor-not-allowed transition-colors"
                     style={{ letterSpacing: '0.22em' }}
                   >
                     Next →

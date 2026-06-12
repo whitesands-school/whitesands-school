@@ -77,9 +77,12 @@ export function HouseTeamsScroll() {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    updateActive();
+    const raf = requestAnimationFrame(updateActive);
     el.addEventListener('scroll', updateActive, { passive: true });
-    return () => el.removeEventListener('scroll', updateActive);
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener('scroll', updateActive);
+    };
   }, [updateActive]);
 
   const scrollToIndex = (i: number) => {
@@ -147,7 +150,9 @@ export function HouseTeamsScroll() {
                 // (and small laptops) it never balloons.
                 className="shrink-0 w-[78vw] max-w-[320px] sm:w-70 lg:w-auto lg:max-w-none"
               >
-                <article className="group bg-white rounded-md overflow-hidden shadow-[0_12px_32px_-18px_rgba(44,36,107,0.22)] aspect-3/4 flex flex-col transition-all duration-300 lg:hover:-translate-y-1 lg:hover:shadow-lg">
+                {/* Mobile cards hug their content; the 3:4 frame only applies on
+                    the lg+ grid where cards are narrow enough to fill it. */}
+                <article className="group h-full bg-white rounded-md overflow-hidden shadow-[0_12px_32px_-18px_rgba(44,36,107,0.22)] lg:aspect-3/4 flex flex-col transition-all duration-300 lg:hover:-translate-y-1 lg:hover:shadow-lg">
                   <div className={`h-2 shrink-0 ${house.barClass}`} />
                   <div className="flex-1 p-7 lg:p-6 flex flex-col">
                     <h3 className="font-serif text-3xl lg:text-2xl text-deep leading-tight">

@@ -22,7 +22,11 @@ const SUPER_ADMIN_ROOT = '/super-admin'
 const API_ADMIN_ROOT = '/api/admin'
 const API_SUPER_ADMIN_ROOT = '/api/super-admin'
 
-const PUBLIC_ADMIN_PATHS = new Set(['/admin/login'])
+const PUBLIC_ADMIN_PATHS = new Set([
+  '/admin/login',
+  '/admin/forgot-password',
+  '/admin/reset-password',
+])
 const PUBLIC_ADMIN_APIS = new Set(['/api/admin/logout'])
 
 export async function proxy(request: NextRequest) {

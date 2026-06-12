@@ -75,15 +75,31 @@ If you ever change a user's role, **both** are updated atomically by `PATCH /api
 ## Day-to-day
 
 - **Add an admin** — Super-admin → Users & roles → Add user.
-- **Reset a forgotten password** — Super-admin → Users & roles → Reset. Share the new password securely; the admin can change it themselves once they sign in.
+- **Forgot password (self-service)** — On `/admin/login`, click **Forgot password?**. A reset link is emailed via Supabase Auth; it lands on `/admin/reset-password` where the user picks a new password and is signed straight in.
+- **Reset someone else's password** — Super-admin → Users & roles → Reset. Share the new password securely; the admin can change it themselves from **My account**.
+- **Change your own password while signed in** — `/admin/account` (all roles) or `/super-admin/account` (super-admins). Both verify the current password first.
 - **Demote a super-admin to admin** — Toggle the role on their row. (You cannot demote yourself; another super-admin has to do it.)
 - **Remove access** — Trash icon on the user row. The auth account and the `profiles` row are both removed.
-- **Forgot your own super-admin password** — Ask another super-admin to reset it. If you are the only super-admin, re-run `node scripts/seed-first-super-admin.mjs` to reset `ofoma.chudi@gmail.com` back to `chudi`.
+- **Break-glass** — If every super-admin is locked out, re-run `node scripts/seed-first-super-admin.mjs` to reset `ofoma.chudi@gmail.com` back to `chudi`. (Requires Node 22+, or run the equivalent curl calls against the auth admin API.)
+
+---
+
+## Reset-link email — two production checkboxes
+
+The forgot-password flow works out of the box in development, but check these before go-live (both in the Supabase Dashboard):
+
+1. **Authentication → URL Configuration** — set the Site URL to the production domain and add `https://<your-domain>/**` (and `http://localhost:3000/**` for dev) to the Redirect URLs allow-list, so the link may land on `/admin/reset-password`.
+2. **Project Settings → Auth → SMTP** — Supabase's built-in email service is rate-limited and, on newer projects, may only deliver to project team members. Plug in any SMTP provider (Resend has a free tier and a guided Supabase integration) so resets reach all admin inboxes reliably.
+
+---
+
+## Image uploads
+
+Admins upload images directly from any image field in the admin (staff photos, news covers, gallery, testimonial posters, popovers). Files go through `POST /api/admin/upload` into the public **`media`** bucket on Supabase Storage (10 MB max, images only), and the resulting public URL is stored in the content JSON. Pasting an external URL or an ImageKit path still works.
 
 ---
 
 ## Things deliberately not built
 
-- **Self-service password reset by email.** Requires Supabase to send mail, which means configuring SMTP. Add later via `supabase.auth.resetPasswordForEmail()`.
 - **Audit log.** Not in scope. If the school later wants "who created this user, when?" the `auth.audit_log_entries` table in Supabase already captures it.
 - **Per-content-type permissions.** Admins can edit everything under `/admin`. If you ever need finer granularity (e.g. someone who can only edit news), add a `permissions: text[]` column on `profiles` and check it in the API routes.

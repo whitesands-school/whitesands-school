@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { SITE } from '@/lib/site';
+import { appendInboxEntry } from '@/lib/inbox';
 
 const InquirySchema = z.object({
   parentName: z.string().min(2).max(120),
@@ -40,7 +41,21 @@ export async function POST(request: Request) {
 
   const inquiry = parsed.data;
 
-  // Always log — gives the team a paper trail even when email isn't wired.
+  // Persist to the admin inbox first — email is best-effort on top.
+  try {
+    appendInboxEntry({
+      type: 'visit',
+      name: inquiry.parentName,
+      email: inquiry.email,
+      phone: inquiry.phone,
+      message: inquiry.message || '',
+      sonClass: inquiry.sonClass,
+      preferredWeek: inquiry.preferredWeek,
+    });
+  } catch (err) {
+    console.error('[visit-inquiry] inbox write failed', err);
+  }
+
   console.info('[visit-inquiry]', {
     receivedAt: new Date().toISOString(),
     ...inquiry,

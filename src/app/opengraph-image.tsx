@@ -75,7 +75,7 @@ export default function OG() {
               maxWidth: 880,
             }}
           >
-            Twenty-five years of Catholic education in Lagos.
+            A Catholic secondary school for boys in Lekki, Lagos · Est. 2000
           </div>
         </div>
 
@@ -89,7 +89,7 @@ export default function OG() {
             color: 'rgba(255,255,255,0.55)',
           }}
         >
-          <div>whitesandsschool.edu.ng</div>
+          <div>whitesands.org.ng</div>
           <div style={{ fontStyle: 'italic', color: '#FFF700' }}>Duc in Altum</div>
         </div>
       </div>

@@ -13,9 +13,9 @@ const COLUMN_GROUPS: { heading: string; links: { label: string; href: string }[]
     heading: 'The School',
     links: [
       { label: 'About Whitesands', href: '/about' },
-      { label: 'Our History', href: '/about#history' },
-      { label: 'Vision & Mission', href: '/about#vision-mission' },
-      { label: 'Educational Philosophy', href: '/about#educational-philosophy' },
+      { label: 'Our Story', href: '/about#story' },
+      { label: 'Who We Are', href: '/about#who-we-are' },
+      { label: 'Educational Philosophy', href: '/about#philosophy' },
       { label: '25th Anniversary', href: '/25th-anniversary' },
     ],
   },
@@ -257,6 +257,8 @@ export function Footer() {
                 key={label}
                 href={href}
                 aria-label={label}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-white hover:text-lemon transition-colors duration-200"
               >
                 <Icon size={20} />
@@ -271,11 +273,19 @@ export function Footer() {
       {/* ------------------------------------------------------------------ */}
       <div className="bg-deep">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span className="text-white/50 text-xs font-roboto">
+          <span className="text-white/70 text-xs font-roboto">
             &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </span>
-          <span className="text-white/50 text-xs font-roboto">
-            Designed &amp; developed by Chukwudi Ofoma
+          <span className="text-white/70 text-xs font-roboto">
+            Designed &amp; developed by{' '}
+            <a
+              href="https://www.greyform.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/90 hover:text-lemon underline underline-offset-2 transition-colors duration-200"
+            >
+              Greyform
+            </a>
           </span>
         </div>
       </div>

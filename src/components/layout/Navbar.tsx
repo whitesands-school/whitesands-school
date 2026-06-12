@@ -27,6 +27,7 @@ const NAV_LINKS = [
   { label: 'What We Offer', href: '/what-we-offer' },
   { label: 'Our People', href: '/our-people' },
   { label: 'Admissions', href: '/admissions' },
+  { label: 'Fees', href: '/fees-portal' },
   { label: 'News', href: '/news' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -56,9 +57,13 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
-  useEffect(() => {
+  // Close the mobile menu on route change. Doing this during render (rather
+  // than in an effect) avoids a flash of the open menu on the new page.
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
     setMobileOpen(false);
-  }, [pathname]);
+  }
 
   function isActive(href: string) {
     if (href === '/') return pathname === '/';
@@ -172,7 +177,7 @@ export function Navbar() {
               <button
                 onClick={() => setMobileOpen((v) => !v)}
                 className={[
-                  'lg:hidden p-2 rounded transition-colors duration-200',
+                  'lg:hidden p-3 -mr-1 rounded transition-colors duration-200',
                   scrolled
                     ? 'text-deep hover:bg-deep/10'
                     : 'text-white hover:bg-white/10',
@@ -253,7 +258,7 @@ export function Navbar() {
                 </Link>
                 <div className="mt-6 flex justify-center gap-6 font-roboto text-sm text-white/60">
                   <Link href="/fees-portal" className="hover:text-lemon transition-colors">
-                    Parent Portal
+                    Pay School Fees
                   </Link>
                   <span className="text-white/20">·</span>
                   <Link href="/25th-anniversary" className="hover:text-lemon transition-colors">

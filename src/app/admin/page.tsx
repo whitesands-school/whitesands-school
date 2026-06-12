@@ -11,7 +11,9 @@ import {
   Bell,
   Plus,
   ArrowRight,
+  Inbox,
 } from 'lucide-react';
+import { readInbox } from '@/lib/inbox';
 import type {
   NewsPost,
   StaffMember,
@@ -43,6 +45,7 @@ export default function AdminDashboard() {
   const testimonials = readJson<Testimonial>('testimonials.json');
   const popovers = readJson<SitePopover>('popover.json');
 
+  const inbox = readInbox();
   const activeAnnouncement = announcements.find((a) => a.active);
   const activePopover = popovers.find((p) => p.active);
   const currentMonth = new Date().toLocaleString('en-US', { month: 'long' });
@@ -82,6 +85,19 @@ export default function AdminDashboard() {
   ];
 
   const liveTiles: LiveTileProps[] = [
+    {
+      eyebrow: 'Inbox',
+      title:
+        inbox.length === 0
+          ? 'No new enquiries'
+          : `${inbox.length} enquir${inbox.length === 1 ? 'y' : 'ies'} waiting`,
+      meta: inbox.length
+        ? `Latest from ${inbox[0].name}`
+        : 'Visit requests and messages land here',
+      isOn: inbox.length > 0,
+      href: '/admin/inbox',
+      icon: Inbox,
+    },
     {
       eyebrow: 'Announcement bar',
       title: activeAnnouncement
@@ -151,7 +167,7 @@ export default function AdminDashboard() {
         >
           Live across the site
         </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {liveTiles.map((t) => (
             <LiveTile key={t.eyebrow} {...t} />
           ))}

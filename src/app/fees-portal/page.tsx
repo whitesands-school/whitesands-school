@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Tabs from '@radix-ui/react-tabs';
-import { Building2, CreditCard, UserRound, Eye, EyeOff } from 'lucide-react';
-import { AnimatedSection, SectionLabel, Button } from '@/components/ui';
+import { Smartphone, Receipt, BadgeCheck, ArrowUpRight } from 'lucide-react';
+import { AnimatedSection, SectionLabel } from '@/components/ui';
 import { PageHero } from '@/components/sections/PageHero';
 import { media } from '@/lib/media';
+import { SITE } from '@/lib/site';
 
 // ---------------------------------------------------------------------------
 // Fee data
@@ -15,11 +16,6 @@ import { media } from '@/lib/media';
 type TermRow = { term: string; tuition: string; levies: string; total: string };
 
 const FEE_DATA: Record<string, TermRow[]> = {
-  primary: [
-    { term: 'First Term',  tuition: '₦380,000', levies: '₦45,000', total: '₦425,000' },
-    { term: 'Second Term', tuition: '₦380,000', levies: '₦38,000', total: '₦418,000' },
-    { term: 'Third Term',  tuition: '₦380,000', levies: '₦32,000', total: '₦412,000' },
-  ],
   jss: [
     { term: 'First Term',  tuition: '₦480,000', levies: '₦55,000', total: '₦535,000' },
     { term: 'Second Term', tuition: '₦480,000', levies: '₦48,000', total: '₦528,000' },
@@ -32,34 +28,32 @@ const FEE_DATA: Record<string, TermRow[]> = {
   ],
 };
 
-const TAB_LABELS: { value: string; label: string }[] = [
-  { value: 'primary', label: 'Primary School' },
-  { value: 'jss',     label: 'Junior Secondary' },
-  { value: 'sss',     label: 'Senior Secondary' },
+const TAB_LABELS: { value: string; label: string; sub: string }[] = [
+  { value: 'jss', label: 'Junior Secondary', sub: 'JS1 – JS3' },
+  { value: 'sss', label: 'Senior Secondary', sub: 'SS1 – SS3' },
 ];
 
 // ---------------------------------------------------------------------------
-// Payment options
+// PixPay — the school's only payment channel
 // ---------------------------------------------------------------------------
 
-const PAYMENT_OPTIONS = [
+const PIXPAY_URL = 'https://pixpay.africa/pay-school-fees-whitesands-school.html';
+
+const PIXPAY_STEPS = [
   {
-    Icon: Building2,
-    method: 'Bank Transfer',
-    instructions: 'Transfer directly to our dedicated school account. Use your ward\'s full name and admission number as the payment reference.',
-    detail: 'First Bank of Nigeria — Account No: 3012345678 — Whitesands School Ltd',
+    Icon: Smartphone,
+    title: 'Open PixPay',
+    body: 'Visit the Whitesands payment page on PixPay, or download the PixPay app from the App Store or Google Play.',
   },
   {
-    Icon: CreditCard,
-    method: 'Online Payment',
-    instructions: 'Pay securely via card, bank transfer, or USSD through our Remita-powered portal. A receipt is generated instantly.',
-    detail: 'Visit: portal.whitesandsschool.edu.ng/pay',
+    Icon: BadgeCheck,
+    title: 'Identify your son',
+    body: "Search for Whitesands School and enter your son's full name, class, and admission number so the payment is matched correctly.",
   },
   {
-    Icon: UserRound,
-    method: 'Visit the Bursar',
-    instructions: 'Cash and cheque payments are accepted at the Bursary office during school hours. Please collect an official receipt.',
-    detail: 'Bursary Office — Main Admin Block, Ground Floor. Mon–Fri, 8:00 am – 3:00 pm',
+    Icon: Receipt,
+    title: 'Pay & get your receipt',
+    body: 'Pay securely with your card or bank account. An official receipt is generated instantly and emailed to you.',
   },
 ];
 
@@ -68,36 +62,24 @@ const PAYMENT_OPTIONS = [
 // ---------------------------------------------------------------------------
 
 export default function FeesPortalPage() {
-  const [activeTab, setActiveTab] = useState('primary');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [loginState, setLoginState] = useState<'idle' | 'loading'>('idle');
-
-  function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setLoginState('loading');
-    setTimeout(() => setLoginState('idle'), 1500);
-  }
-
-  const fieldClass =
-    'w-full bg-transparent border-b border-gray-300 focus:border-deep outline-none py-3 font-sans text-dark placeholder:text-muted text-base transition-colors duration-200';
+  const [activeTab, setActiveTab] = useState('jss');
 
   return (
     <>
       <PageHero
-        eyebrow="Fees Portal"
+        eyebrow="School Fees"
         title={<>Honest fees, <span className="italic text-lemon">clearly published</span>.</>}
-        subtitle="Termly fee schedules, multiple payment options, and a parent portal for managing payments and receipts."
+        subtitle="Termly fee schedules for Junior and Senior Secondary, payable securely online through PixPay."
         image={media('/images/students/students-in-computer-lab.JPG')}
         size="short"
       />
 
       {/* ── FEE SCHEDULE TABLE ───────────────────────────────── */}
-      <section className="bg-white py-16">
-        <div className="max-w-5xl mx-auto px-6">
+      <section className="bg-white py-16 lg:py-24">
+        <div className="max-w-5xl mx-auto px-6 sm:px-10 lg:px-12">
           <AnimatedSection className="mb-10">
-            <SectionLabel label="Fee Schedule 2024/2025" className="mb-4" />
-            <h2 className="font-serif text-3xl font-bold text-dark mt-2">Annual Fee Breakdown</h2>
+            <SectionLabel label="Fee Schedule · 2026/2027 Session" className="mb-4" />
+            <h2 className="font-serif text-3xl lg:text-4xl font-bold text-dark mt-2">Annual Fee Breakdown</h2>
             <p className="font-sans text-muted text-base mt-3 max-w-2xl">
               All fees are quoted in Nigerian Naira and are payable per term. Levies cover learning materials, sport, and co-curricular activities.
             </p>
@@ -105,18 +87,19 @@ export default function FeesPortalPage() {
 
           <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
             {/* Tab list */}
-            <Tabs.List className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-8 w-full">
-              {TAB_LABELS.map(({ value, label }) => (
+            <Tabs.List className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-8 w-full max-w-xl">
+              {TAB_LABELS.map(({ value, label, sub }) => (
                 <Tabs.Trigger
                   key={value}
                   value={value}
                   className={[
-                    'flex-1 py-2.5 px-4 rounded-md font-roboto font-medium text-sm transition-all duration-200 cursor-pointer',
-                    'data-[state=active]:bg-deep data-[state=active]:text-white',
+                    'flex-1 py-3 px-4 rounded-md font-roboto font-medium text-sm transition-all duration-200 cursor-pointer',
+                    'data-[state=active]:bg-deep data-[state=active]:text-white data-[state=active]:shadow-sm',
                     'data-[state=inactive]:text-muted data-[state=inactive]:hover:text-dark',
                   ].join(' ')}
                 >
-                  {label}
+                  <span className="block">{label}</span>
+                  <span className="mt-0.5 block text-[11px] font-normal opacity-70">{sub}</span>
                 </Tabs.Trigger>
               ))}
             </Tabs.List>
@@ -133,8 +116,8 @@ export default function FeesPortalPage() {
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.15 }}
                     >
-                      <div className="rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-                        <table className="w-full">
+                      <div className="rounded-xl overflow-x-auto border border-gray-100 shadow-sm">
+                        <table className="w-full min-w-140">
                           <thead>
                             <tr className="bg-deep text-white">
                               {['Term', 'Tuition', 'Levies', 'Total'].map((h) => (
@@ -190,125 +173,83 @@ export default function FeesPortalPage() {
         </div>
       </section>
 
-      {/* ── PAYMENT OPTIONS ──────────────────────────────────── */}
-      <section className="bg-offwhite py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection className="mb-10">
+      {/* ── HOW TO PAY — PIXPAY ──────────────────────────────── */}
+      <section className="bg-offwhite py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+          <AnimatedSection className="mb-12 max-w-2xl">
             <SectionLabel label="How to Pay" className="mb-4" />
-            <h2 className="font-serif text-3xl font-bold text-dark mt-2">Payment Methods</h2>
+            <h2 className="font-serif text-3xl lg:text-4xl font-bold text-dark mt-2">
+              All fees are paid through <span className="italic text-deep">PixPay</span>
+            </h2>
+            <p className="font-sans text-muted text-base mt-3">
+              PixPay is the school&apos;s official payment partner. Every payment is matched to your son&apos;s record automatically and receipted instantly — no transfers, no queues.
+            </p>
           </AnimatedSection>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {PAYMENT_OPTIONS.map(({ Icon, method, instructions, detail }) => (
+            {PIXPAY_STEPS.map(({ Icon, title, body }, i) => (
               <motion.div
-                key={method}
+                key={title}
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 border-t-4 border-t-white hover:border-t-deep hover:shadow-md transition-shadow duration-200"
+                className="relative bg-white rounded-xl p-8 shadow-sm border border-gray-100 border-t-4 border-t-white hover:border-t-deep hover:shadow-md transition-shadow duration-200"
               >
+                <span
+                  className="absolute top-6 right-7 font-serif text-4xl text-deep/10 select-none"
+                  aria-hidden
+                >
+                  {i + 1}
+                </span>
                 <div className="w-11 h-11 bg-deep/8 rounded-lg flex items-center justify-center mb-5">
                   <Icon size={22} className="text-deep" />
                 </div>
-                <h3 className="font-roboto font-bold text-dark text-lg mb-3">{method}</h3>
-                <p className="font-sans text-muted text-sm leading-relaxed mb-4">{instructions}</p>
-                <p className="font-roboto text-xs text-deep bg-deep/5 rounded px-3 py-2 leading-relaxed">{detail}</p>
+                <h3 className="font-roboto font-bold text-dark text-lg mb-3">{title}</h3>
+                <p className="font-sans text-muted text-sm leading-relaxed">{body}</p>
               </motion.div>
             ))}
           </div>
+
+          <AnimatedSection className="mt-10">
+            <a
+              href={PIXPAY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 bg-deep text-white font-roboto uppercase text-sm px-8 py-3.5 rounded-sm hover:bg-bold transition-colors duration-200"
+              style={{ letterSpacing: '0.12em' }}
+            >
+              Pay School Fees on PixPay
+              <ArrowUpRight
+                size={16}
+                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </a>
+            <p className="mt-4 font-sans text-sm text-muted">
+              Prefer your phone? Download the <span className="font-medium text-dark">PixPay app</span> on the App Store or Google Play and search for Whitesands School.
+            </p>
+          </AnimatedSection>
         </div>
       </section>
 
-      {/* ── MAKE A PAYMENT CTA ───────────────────────────────── */}
-      <section className="bg-bold py-12 text-white text-center">
+      {/* ── PAYMENT CTA ──────────────────────────────────────── */}
+      <section className="bg-bold py-14 text-white text-center">
         <AnimatedSection>
-          <h2 className="font-serif font-bold text-white mb-6" style={{ fontSize: '40px', lineHeight: 1.15 }}>
-            Ready to Make a Payment?
+          <h2 className="font-serif font-bold text-white mb-5" style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)', lineHeight: 1.15 }}>
+            Ready to make a payment?
           </h2>
-          <p className="font-sans text-white/80 text-base mb-8 max-w-md mx-auto">
-            Our secure online portal accepts all major cards and bank transfers — available 24 hours a day.
+          <p className="font-sans text-white/85 text-base mb-8 max-w-md mx-auto">
+            PixPay is secure, instant, and available 24 hours a day — on the web or in the app.
           </p>
-          <Button variant="secondary" size="lg">
-            Make a Payment Online →
-          </Button>
+          <a
+            href={PIXPAY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-white text-bold font-roboto uppercase text-sm px-8 py-3.5 rounded-sm hover:bg-lemon hover:text-deep transition-colors duration-200"
+            style={{ letterSpacing: '0.12em' }}
+          >
+            Pay with PixPay
+            <ArrowUpRight size={16} />
+          </a>
         </AnimatedSection>
-      </section>
-
-      {/* ── PARENT LOGIN ─────────────────────────────────────── */}
-      <section className="bg-offwhite py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-sm mx-auto">
-            <AnimatedSection className="mb-8 text-center">
-              <SectionLabel label="Parent Portal" className="justify-center mb-4" />
-              <h2 className="font-serif text-2xl font-bold text-dark mt-2">Login to Your Account</h2>
-              <p className="font-sans text-muted text-sm mt-2">
-                Access fee statements, receipts, and payment history.
-              </p>
-            </AnimatedSection>
-
-            <div className="bg-white rounded-xl p-8 shadow-sm">
-              <form onSubmit={handleLogin} className="space-y-7">
-                {/* Email */}
-                <div>
-                  <label className="block font-roboto font-bold text-xs text-dark uppercase tracking-wider mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    value={loginData.email}
-                    onChange={(e) => setLoginData((p) => ({ ...p, email: e.target.value }))}
-                    placeholder="parent@example.com"
-                    className={fieldClass}
-                    required
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="block font-roboto font-bold text-xs text-dark uppercase tracking-wider mb-2">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      value={loginData.password}
-                      onChange={(e) => setLoginData((p) => ({ ...p, password: e.target.value }))}
-                      placeholder="••••••••"
-                      className={[fieldClass, 'pr-10'].join(' ')}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-muted hover:text-dark transition-colors"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="md"
-                  className="w-full justify-center"
-                  disabled={loginState === 'loading'}
-                >
-                  {loginState === 'loading' ? 'Signing in…' : 'Login to Parent Account'}
-                </Button>
-              </form>
-
-              <div className="text-center mt-5">
-                <a
-                  href="#"
-                  className="font-sans text-sm text-muted hover:text-deep underline underline-offset-4 transition-colors"
-                >
-                  Forgot password?
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ── CONTACT STRIP ────────────────────────────────────── */}
@@ -316,14 +257,17 @@ export default function FeesPortalPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10">
           <p className="font-sans text-white/70 text-sm">
             <span className="font-roboto font-bold text-white">Payment Enquiries:</span>{' '}
-            <a href="mailto:accounts@whitesandsschool.edu.ng" className="hover:text-lemon transition-colors underline underline-offset-2">
-              accounts@whitesandsschool.edu.ng
+            <a
+              href="mailto:accounts@whitesands.org.ng"
+              className="hover:text-lemon transition-colors underline underline-offset-2"
+            >
+              accounts@whitesands.org.ng
             </a>
           </p>
           <span className="hidden sm:block w-px h-5 bg-white/20" />
           <p className="font-sans text-white/70 text-sm">
-            <a href="tel:+2348030000003" className="hover:text-lemon transition-colors">
-              +234 (0) 803 000 0003
+            <a href={`tel:${SITE.phoneTel}`} className="hover:text-lemon transition-colors">
+              {SITE.phone}
             </a>
           </p>
         </div>

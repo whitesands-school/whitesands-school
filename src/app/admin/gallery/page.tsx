@@ -14,6 +14,7 @@ import {
   LoadingState,
   EmptyState,
   inputClass,
+  ImageUploadField,
 } from '@/components/admin/ui';
 import { media } from '@/lib/media';
 import type { GalleryImage } from '@/types';
@@ -119,20 +120,15 @@ export default function GalleryPage() {
         </p>
         <form onSubmit={addImage} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
           <div className="md:col-span-5">
-            <Field
-              label="Image path"
-              hint="e.g. /images/students/choir-in-chapel.jpg"
+            <ImageUploadField
+              label="Image"
+              hint="Upload a photo or paste a URL"
               required
-            >
-              <input
-                type="text"
-                value={form.src}
-                onChange={(e) => setForm((f) => ({ ...f, src: e.target.value }))}
-                placeholder="/images/..."
-                required
-                className={`${inputClass} font-mono text-xs`}
-              />
-            </Field>
+              folder="gallery"
+              value={form.src}
+              onChange={(src) => setForm((f) => ({ ...f, src }))}
+              showPreview={false}
+            />
           </div>
           <div className="md:col-span-4">
             <Field label="Alt text" hint="Describes the image for screen readers">

@@ -5,7 +5,7 @@
     "name": "Mrs. Amos-Penda",
     "role": "Whitesands Parent",
     "type": "parent",
-    "videoUrl": "/videos/Mrs. Amos-Penda Parents Review.mp4",
+    "videoUrl": "https://res.cloudinary.com/dud5owpai/video/upload/q_auto,vc_h264/parent-review-amos-penda.mp4",
     "posterUrl": "/videos/web/poster-mrs-amos-penda-parents-review.jpg"
   },
   {
@@ -14,8 +14,8 @@
     "name": "Engineer Shok Julius",
     "role": "Whitesands Parent",
     "type": "parent",
-    "videoUrl": "/videos/Engineer Shok Julius Parents Review.mp4",
-    "posterUrl": "/videos/web/poster-engineer-shok-julius-parents-review.jpg"
+    "videoUrl": "https://res.cloudinary.com/dud5owpai/video/upload/q_auto,vc_h264/parent-review-shok-julius.mp4",
+    "posterUrl": "/videos/web/poster-engineer-shok-julius-parents-review.jpg?tr=cm-extract,x-0,y-50,w-800,h-1374"
   },
   {
     "id": "testimonial-parent-abu",
@@ -23,7 +23,7 @@
     "name": "Mr. & Mrs. Abu",
     "role": "Whitesands Parents",
     "type": "parent",
-    "videoUrl": "/videos/Mr. & Mrs. Abu Parents Review.mp4",
+    "videoUrl": "https://res.cloudinary.com/dud5owpai/video/upload/q_auto,vc_h264/parent-review-abu.mp4",
     "posterUrl": "/videos/web/poster-mr-mrs-abu-parents-review.jpg"
   },
   {
@@ -32,19 +32,19 @@
     "name": "Whitesands Parents",
     "role": "Parents as the First Educators",
     "type": "parent",
-    "videoUrl": "/videos/Parents as the 1st Educators.mp4",
+    "videoUrl": "https://res.cloudinary.com/dud5owpai/video/upload/q_auto,vc_h264/parents-first-educators.mp4",
     "posterUrl": "/videos/web/poster-parents-as-the-1st-educators.jpg"
   },
   {
     "id": "testimonial-student-001",
     "quote": "Whitesands didn't just prepare me for university — it formed me as a person. The values I carry into my career were shaped right there in those classrooms and in that chapel.",
-    "name": "Dr. Chisom Eze",
+    "name": "Dr. Nnamdi Eze",
     "role": "Cardiologist · Class of 2005",
     "type": "student"
   },
   {
     "id": "testimonial-student-002",
-    "quote": "I came into Year 7 thinking I hated science. By Year 9, I was building a water-filtration robot. Now I'm reading Engineering at the University of Lagos.",
+    "quote": "I came into JS1 thinking I hated science. By JS3, I was building a water-filtration robot. Now I'm reading Engineering at the University of Lagos.",
     "name": "Chukwudi Obi",
     "role": "Class of 2024",
     "type": "student"
@@ -52,14 +52,14 @@
   {
     "id": "testimonial-student-003",
     "quote": "I graduated twelve years ago and I still come back every year for the Carol Service. That tells you everything.",
-    "name": "Adaora Mensah",
+    "name": "Chidi Mensah",
     "role": "Architect · Class of 2014",
     "type": "student"
   },
   {
     "id": "testimonial-staff-001",
     "quote": "I have taught at three schools in my career, and Whitesands is singular. The culture of excellence is real — not performative. Students want to learn, and that makes teaching here a joy.",
-    "name": "Mrs. Blessing Okwu",
+    "name": "Mr. Emmanuel Okwu",
     "role": "Head of English & Literature",
     "type": "staff"
   },

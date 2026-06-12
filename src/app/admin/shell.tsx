@@ -18,6 +18,8 @@ import {
   X,
   ExternalLink,
   ShieldCheck,
+  KeyRound,
+  Inbox,
 } from 'lucide-react';
 import { media } from '@/lib/media';
 
@@ -29,7 +31,10 @@ const NAV_GROUPS: {
 }[] = [
   {
     heading: 'Overview',
-    items: [{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard }],
+    items: [
+      { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/admin/inbox', label: 'Inbox', icon: Inbox },
+    ],
   },
   {
     heading: 'Content',
@@ -116,12 +121,6 @@ export function AdminShell({
               className="h-9 w-auto"
             />
             <div>
-              <p
-                className="font-roboto text-[10px] uppercase text-lemon"
-                style={{ letterSpacing: '0.3em' }}
-              >
-                Whitesands
-              </p>
               <p
                 className="mt-0.5 font-roboto text-[10px] uppercase text-white/45"
                 style={{ letterSpacing: '0.28em' }}
@@ -213,6 +212,13 @@ export function AdminShell({
               Super admin
             </Link>
           )}
+          <Link
+            href="/admin/account"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-sm font-sans text-sm text-white/65 hover:text-white hover:bg-white/3 transition-colors"
+          >
+            <KeyRound size={16} strokeWidth={1.75} />
+            My account
+          </Link>
           <Link
             href="/"
             target="_blank"

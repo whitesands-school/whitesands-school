@@ -17,8 +17,8 @@ const SPORTS = [
     caption: 'Athletics',
   },
   {
-    src: '/images/students/races.jpg',
-    alt: 'Inter-house relay on the school field',
+    src: '/images/students/high-jump-yellow-house.jpg',
+    alt: 'High jump at the inter-house championships',
     caption: 'Track & Field',
   },
   {
@@ -134,7 +134,7 @@ export default function ExtracurricularPage() {
               >
                 <div className="relative aspect-4/5 overflow-hidden rounded-sm bg-deep/5">
                   <Image
-                    src={s.src}
+                    src={media(s.src)}
                     alt={s.alt}
                     fill
                     sizes="(max-width: 640px) 100vw, 33vw"

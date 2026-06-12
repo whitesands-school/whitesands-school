@@ -15,9 +15,14 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // /admin/login renders standalone (no sidebar, no auth gate).
+  // Auth pages render standalone (no sidebar, no auth gate). Keep in sync
+  // with PUBLIC_ADMIN_PATHS in src/proxy.ts.
   const pathname = (await headers()).get('x-pathname') ?? '';
-  if (pathname === '/admin/login') {
+  const isAuthPage =
+    pathname === '/admin/login' ||
+    pathname === '/admin/forgot-password' ||
+    pathname === '/admin/reset-password';
+  if (isAuthPage) {
     return <>{children}</>;
   }
 

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Fees Portal',
-  description: 'View tuition fees for Primary, Junior Secondary, and Senior Secondary levels, and access the parent payment portal.',
+  description: 'View termly tuition fees for Junior and Senior Secondary, and pay securely online with PixPay.',
 };
 
 export default function FeesPortalLayout({ children }: { children: React.ReactNode }) {

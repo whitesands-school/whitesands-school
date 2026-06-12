@@ -4,13 +4,17 @@ import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
-import { media } from '@/lib/media';
+import { video } from '@/lib/media';
 
 /**
  * SVG turbulence noise — encoded inline to avoid an extra request. Sits
  * over the hero at low opacity (0.04) with mix-blend-overlay for a soft
  * film-grain feel.
  */
+/** Right-sized CDN rendition of the poster — the raw original is multi-MB. */
+const HERO_POSTER =
+  'https://ik.imagekit.io/chewdee/greyform/whitesands/public/videos/web/hero-graduation-poster.jpg?tr=w-1920,q-70,f-auto'
+
 const NOISE_SVG =
   "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.85 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
 
@@ -34,14 +38,19 @@ export function HeroVideo() {
 
   return (
     <section className="relative -mt-28 h-screen min-h-[680px] overflow-hidden bg-deep">
+      {/* The poster paints before the video streams in — it is the page's LCP
+          element, so fetch a right-sized CDN rendition with high priority.
+          React hoists the <link> into <head>. */}
+      <link rel="preload" as="image" href={HERO_POSTER} fetchPriority="high" />
+
       {/* ── Background: video + gradients + grain ───────────────────── */}
       <div className="absolute inset-0">
         {!reduceMotion && (
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
-            src={media('/videos/web/hero-graduation.mp4')}
-            poster={media('/videos/web/hero-graduation-poster.jpg')}
+            src={video('hero-graduation_e31v6t')}
+            poster={HERO_POSTER}
             autoPlay
             muted={muted}
             loop
@@ -53,7 +62,7 @@ export function HeroVideo() {
         {reduceMotion && (
           <picture>
             <img
-              src={media('/videos/web/hero-graduation-poster.jpg')}
+              src={HERO_POSTER}
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
@@ -122,7 +131,7 @@ export function HeroVideo() {
 
             {/* Body */}
             <p className="mt-5 sm:mt-6 max-w-xl font-sans text-base sm:text-lg text-white/85 leading-relaxed">
-              Twenty-five years of forming boys in Lekki for what comes next.
+              Twenty-five years of forming boys for what comes next.
             </p>
 
             {/* CTAs — stack on mobile, side-by-side on sm+ */}

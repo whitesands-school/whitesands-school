@@ -412,7 +412,7 @@ export default function AboutPage() {
               >
                 <div className="relative aspect-3/2 overflow-hidden rounded-sm bg-deep/5">
                   <Image
-                    src={c.src}
+                    src={media(c.src)}
                     alt={c.alt}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
@@ -508,7 +508,7 @@ function SubNav({ active }: { active: string }) {
   };
 
   return (
-    <nav className="sticky top-28 z-30 bg-white/85 backdrop-blur supports-backdrop-filter:bg-white/70 border-b border-deep/10">
+    <nav className="sticky top-[calc(7rem+var(--ws-banner-h,0px))] z-30 bg-white/85 backdrop-blur supports-backdrop-filter:bg-white/70 border-b border-deep/10">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {SUB_NAV.map(({ label, id }) => (
           <a

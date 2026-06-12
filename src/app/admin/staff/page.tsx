@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   PageHeader,
   Button,
-  Card,
   Field,
   Toggle,
   Toast,
@@ -17,6 +16,7 @@ import {
   EmptyState,
   inputClass,
   textareaClass,
+  ImageUploadField,
 } from '@/components/admin/ui';
 import { media } from '@/lib/media';
 import type { StaffMember } from '@/types';
@@ -519,30 +519,14 @@ function StaffDrawer({
                   description="Leadership members appear first under the Leadership filter."
                 />
 
-                <Field
-                  label="Photo path"
-                  hint="A path under /public, e.g. /images/staff-portrait/Name.JPG"
-                >
-                  <input
-                    type="text"
-                    value={form.photo}
-                    onChange={(e) => setF('photo', e.target.value)}
-                    placeholder="/images/staff-portrait/..."
-                    className={`${inputClass} font-mono text-xs`}
-                  />
-                </Field>
-
-                {form.photo && (
-                  <div className="relative aspect-3/4 w-32 overflow-hidden rounded-sm bg-deep/5 border border-deep/10">
-                    <Image
-                      src={media(form.photo)}
-                      alt={form.name || 'Preview'}
-                      fill
-                      sizes="128px"
-                      className="object-cover object-top"
-                    />
-                  </div>
-                )}
+                <ImageUploadField
+                  label="Photo"
+                  hint="Upload a portrait or paste a URL"
+                  folder="staff"
+                  value={form.photo}
+                  onChange={(photo) => setF('photo', photo)}
+                  previewAspect="aspect-3/4"
+                />
 
                 <Field label="Short bio" hint="optional">
                   <textarea

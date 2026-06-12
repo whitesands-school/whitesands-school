@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PlayCircle, X } from 'lucide-react';
-import { media } from '@/lib/media';
+import { media, video } from '@/lib/media';
 
 interface ParentTestimonial {
   id: string;
@@ -19,29 +19,29 @@ const parents: ParentTestimonial[] = [
   {
     id: 'abu',
     name: 'Mr. & Mrs. Abu',
-    sonYear: 'Year 12',
+    sonYear: 'SS3',
     quote:
       'What surprised us was how well the teachers know our son — not just his grades, but his temperament.',
     poster: '/videos/web/poster-mr-mrs-abu-parents-review.jpg',
-    video: '/videos/Mr. & Mrs. Abu Parents Review.mp4',
+    video: video('parent-review-abu'),
   },
   {
     id: 'shok',
     name: 'Engineer Shok Julius',
-    sonYear: 'Year 10',
+    sonYear: 'SS1',
     quote:
       'The formation is serious. Our son comes home with conviction, not just homework.',
-    poster: '/videos/web/poster-engineer-shok-julius-parents-review.jpg',
-    video: '/videos/Engineer Shok Julius Parents Review.mp4',
+    poster: '/videos/web/poster-engineer-shok-julius-parents-review.jpg?tr=cm-extract,x-0,y-50,w-800,h-1374',
+    video: video('parent-review-shok-julius'),
   },
   {
     id: 'amos-penda',
     name: 'Mrs. Amos-Penda',
-    sonYear: 'Year 8',
+    sonYear: 'JS2',
     quote:
       'The school treats parents like partners. We are consulted, kept close, and respected.',
     poster: '/videos/web/poster-mrs-amos-penda-parents-review.jpg',
-    video: '/videos/Mrs. Amos-Penda Parents Review.mp4',
+    video: video('parent-review-amos-penda'),
   },
 ];
 
