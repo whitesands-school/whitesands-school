@@ -357,7 +357,7 @@ function CreateUserModal({
             onChange={(e) => setEmail(e.target.value)}
             required
             autoFocus
-            placeholder="name@whitesandsschool.edu.ng"
+            placeholder="name@whitesands.org.ng"
             className={inputClass}
           />
         </Field>
