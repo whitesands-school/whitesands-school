@@ -1,5 +1,3 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import Link from 'next/link';
 import {
   FileText,
@@ -14,6 +12,7 @@ import {
   Inbox,
 } from 'lucide-react';
 import { readInbox } from '@/lib/inbox';
+import { readContent } from '@/lib/content-store';
 import type {
   NewsPost,
   StaffMember,
@@ -26,26 +25,18 @@ import type {
 
 export const dynamic = 'force-dynamic';
 
-function readJson<T>(filename: string): T[] {
-  try {
-    return JSON.parse(
-      readFileSync(join(process.cwd(), `src/content/${filename}`), 'utf-8')
-    );
-  } catch {
-    return [];
-  }
-}
-
-export default function AdminDashboard() {
-  const news = readJson<NewsPost>('news.json');
-  const staff = readJson<StaffMember>('staff.json');
-  const announcements = readJson<Announcement>('announcements.json');
-  const gallery = readJson<GalleryImage>('gallery.json');
-  const virtues = readJson<VirtueOfMonth>('virtue.json');
-  const testimonials = readJson<Testimonial>('testimonials.json');
-  const popovers = readJson<SitePopover>('popover.json');
-
-  const inbox = readInbox();
+export default async function AdminDashboard() {
+  const [news, staff, announcements, gallery, virtues, testimonials, popovers, inbox] =
+    await Promise.all([
+      readContent<NewsPost[]>('news'),
+      readContent<StaffMember[]>('staff'),
+      readContent<Announcement[]>('announcements'),
+      readContent<GalleryImage[]>('gallery'),
+      readContent<VirtueOfMonth[]>('virtue'),
+      readContent<Testimonial[]>('testimonials'),
+      readContent<SitePopover[]>('popover'),
+      readInbox(),
+    ]);
   const activeAnnouncement = announcements.find((a) => a.active);
   const activePopover = popovers.find((p) => p.active);
   const currentMonth = new Date().toLocaleString('en-US', { month: 'long' });

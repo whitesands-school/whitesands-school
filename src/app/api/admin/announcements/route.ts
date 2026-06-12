@@ -1,19 +1,12 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { readContent, writeContent } from '@/lib/content-store'
 import type { Announcement } from '@/types'
 
-const filePath = join(process.cwd(), 'src/content/announcements.json')
-
-function read(): Announcement[] {
-  return JSON.parse(readFileSync(filePath, 'utf-8'))
-}
-
 export async function GET() {
-  return Response.json(read())
+  return Response.json(await readContent<Announcement[]>('announcements'))
 }
 
 export async function PUT(request: Request) {
-  const body = await request.json()
-  writeFileSync(filePath, JSON.stringify(body, null, 2))
+  const body = (await request.json()) as Announcement[]
+  await writeContent('announcements', body)
   return Response.json({ ok: true })
 }

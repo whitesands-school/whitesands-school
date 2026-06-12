@@ -50,6 +50,18 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next({ request: { headers: requestHeaders } })
   }
 
+  // A deploy without the Supabase env vars would crash here and surface as a
+  // bare "Internal Server Error" — fail with a message that names the fix.
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  ) {
+    return new NextResponse(
+      'Admin unavailable: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are not set in this deployment’s environment variables. Add them (plus SUPABASE_SERVICE_ROLE_KEY) and redeploy.',
+      { status: 503, headers: { 'content-type': 'text/plain' } }
+    )
+  }
+
   // Build a response we can mutate (Supabase needs to write refreshed cookies
   // back onto it during getUser()).
   const response = NextResponse.next({ request: { headers: requestHeaders } })

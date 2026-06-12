@@ -1,14 +1,11 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
 import { randomUUID } from 'crypto';
+import { readContent, writeContent } from '@/lib/content-store';
 
 /**
  * Website form submissions (contact messages + visit requests) are persisted
- * here so nothing is lost even when outbound email isn't configured. The
- * admin reads them at /admin/inbox.
- *
- * Storage matches the rest of the admin content system: a JSON file under
- * src/content/.
+ * in the `site-content` storage bucket so nothing is lost even when outbound
+ * email isn't configured — and so they survive serverless deploys, where the
+ * filesystem is read-only. The admin reads them at /admin/inbox.
  */
 
 export type InboxEntryType = 'contact' | 'visit';
@@ -26,30 +23,27 @@ export interface InboxEntry {
   preferredWeek?: string;
 }
 
-const INBOX_PATH = join(process.cwd(), 'src/content/inbox.json');
-
-export function readInbox(): InboxEntry[] {
-  if (!existsSync(INBOX_PATH)) return [];
+export async function readInbox(): Promise<InboxEntry[]> {
   try {
-    return JSON.parse(readFileSync(INBOX_PATH, 'utf-8'));
+    return await readContent<InboxEntry[]>('inbox');
   } catch {
     return [];
   }
 }
 
-export function writeInbox(entries: InboxEntry[]): void {
-  writeFileSync(INBOX_PATH, JSON.stringify(entries, null, 2) + '\n');
+export async function writeInbox(entries: InboxEntry[]): Promise<void> {
+  await writeContent('inbox', entries);
 }
 
-export function appendInboxEntry(
+export async function appendInboxEntry(
   entry: Omit<InboxEntry, 'id' | 'receivedAt'>
-): InboxEntry {
+): Promise<InboxEntry> {
   const full: InboxEntry = {
     id: randomUUID(),
     receivedAt: new Date().toISOString(),
     ...entry,
   };
   // Newest first — that's the order the admin reads them in.
-  writeInbox([full, ...readInbox()]);
+  await writeInbox([full, ...(await readInbox())]);
   return full;
 }

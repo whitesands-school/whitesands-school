@@ -1,19 +1,12 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { readContent, writeContent } from '@/lib/content-store'
 import type { StaffMember } from '@/types'
-
-const filePath = join(process.cwd(), 'src/content/staff.json')
-
-function read(): StaffMember[] {
-  return JSON.parse(readFileSync(filePath, 'utf-8'))
-}
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const member = read().find((s) => s.id === id)
+  const member = (await readContent<StaffMember[]>('staff')).find((s) => s.id === id)
   if (!member) return Response.json({ error: 'Not found' }, { status: 404 })
   return Response.json(member)
 }
@@ -24,11 +17,11 @@ export async function PUT(
 ) {
   const { id } = await params
   const body: StaffMember = await request.json()
-  const staff = read()
+  const staff = await readContent<StaffMember[]>('staff')
   const idx = staff.findIndex((s) => s.id === id)
   if (idx === -1) return Response.json({ error: 'Not found' }, { status: 404 })
   staff[idx] = body
-  writeFileSync(filePath, JSON.stringify(staff, null, 2))
+  await writeContent('staff', staff)
   return Response.json(body)
 }
 
@@ -37,7 +30,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const staff = read().filter((s) => s.id !== id)
-  writeFileSync(filePath, JSON.stringify(staff, null, 2))
+  const staff = (await readContent<StaffMember[]>('staff')).filter((s) => s.id !== id)
+  await writeContent('staff', staff)
   return Response.json({ ok: true })
 }

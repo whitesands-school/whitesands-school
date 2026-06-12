@@ -1,21 +1,14 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { readContent, writeContent } from '@/lib/content-store'
 import type { StaffMember } from '@/types'
 
-const filePath = join(process.cwd(), 'src/content/staff.json')
-
-function read(): StaffMember[] {
-  return JSON.parse(readFileSync(filePath, 'utf-8'))
-}
-
 export async function GET() {
-  return Response.json(read())
+  return Response.json(await readContent<StaffMember[]>('staff'))
 }
 
 export async function POST(request: Request) {
   const body: StaffMember = await request.json()
-  const staff = read()
+  const staff = await readContent<StaffMember[]>('staff')
   staff.push(body)
-  writeFileSync(filePath, JSON.stringify(staff, null, 2))
+  await writeContent('staff', staff)
   return Response.json(body, { status: 201 })
 }

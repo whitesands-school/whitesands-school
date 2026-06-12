@@ -8,8 +8,14 @@ import { StatsStrip } from '@/components/sections/StatsStrip';
 import { LatestNews } from '@/components/sections/LatestNews';
 import { CommunityTestimonials } from '@/components/sections/CommunityTestimonials';
 import { SchoolJsonLd } from '@/components/seo/SchoolJsonLd';
+import { readContent } from '@/lib/content-store';
+import type { NewsPost } from '@/types';
 
-export default function Home() {
+export default async function Home() {
+  const news = (await readContent<NewsPost[]>('news'))
+    .filter((p) => p.published)
+    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+
   return (
     <>
       <SchoolJsonLd />
@@ -20,7 +26,7 @@ export default function Home() {
       <PillarsStrip />
       <LifeAtSchool />
       <StatsStrip />
-      <LatestNews />
+      <LatestNews posts={news} />
       <CommunityTestimonials />
       {/*
         CTAStrip intentionally omitted — the global Footer's first row

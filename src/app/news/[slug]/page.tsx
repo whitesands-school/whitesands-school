@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getNews, getNewsBySlug } from '@/lib/content';
+import { readContent } from '@/lib/content-store';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { media } from '@/lib/media';
 import type { NewsPost } from '@/types';
@@ -38,13 +38,15 @@ function formatShortMeta(category: string, iso: string) {
 // Static params + metadata
 // ---------------------------------------------------------------------------
 
-export async function generateStaticParams() {
-  return getNews().map((post) => ({ slug: post.slug }));
+async function getPublishedNews() {
+  return (await readContent<NewsPost[]>('news'))
+    .filter((p) => p.published)
+    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getNewsBySlug(slug);
+  const post = (await getPublishedNews()).find((p) => p.slug === slug);
   if (!post) return {};
   return {
     title: post.title,
@@ -65,10 +67,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function NewsPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getNewsBySlug(slug);
+  const post = (await getPublishedNews()).find((p) => p.slug === slug);
   if (!post) notFound();
 
-  const related = getNews()
+  const related = (await getPublishedNews())
     .filter((p) => p.slug !== post.slug)
     .slice(0, 3);
 

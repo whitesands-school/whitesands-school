@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { PT_Serif, PT_Sans, Roboto } from "next/font/google";
 import { headers } from "next/headers";
 import { connection } from "next/server";
-import { readFileSync } from "fs";
-import { join } from "path";
 import { SITE } from "@/lib/site";
+import { readContent } from "@/lib/content-store";
 import "./globals.css";
 
 export const dynamic = 'force-dynamic';
@@ -100,14 +99,10 @@ export default async function RootLayout({
   let popover: SitePopover | undefined
 
   if (!isAdmin) {
-    const announcements: Announcement[] = JSON.parse(
-      readFileSync(join(process.cwd(), 'src/content/announcements.json'), 'utf-8')
-    )
+    const announcements = await readContent<Announcement[]>('announcements')
     announcement = announcements.find((a) => a.active)
 
-    const popovers: SitePopover[] = JSON.parse(
-      readFileSync(join(process.cwd(), 'src/content/popover.json'), 'utf-8')
-    )
+    const popovers = await readContent<SitePopover[]>('popover')
     const now = new Date()
     popover = popovers.find(
       (p) => p.active && (!p.expiresAt || new Date(p.expiresAt) >= now)
