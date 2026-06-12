@@ -212,7 +212,7 @@ function Opening() {
         <div className="mt-10 space-y-6 font-serif text-lg text-dark/85 leading-[1.65]">
           <p>
             The road outside was not yet tarred. The chapel was furnished
-            before the offices. A group of Catholic parents had spent four
+            before the offices. A group of parents had spent four
             years preparing this. On the first morning of school in 2000,
             those parents handed over their sons to a small staff who had
             already decided what the school would and would not be.
