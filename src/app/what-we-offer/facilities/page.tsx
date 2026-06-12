@@ -186,7 +186,7 @@ export default function FacilitiesPage() {
                 <figure>
                   <div className="relative aspect-3/2 overflow-hidden rounded-sm bg-deep/5">
                     <Image
-                      src={f.image}
+                      src={media(f.image)}
                       alt={f.alt}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

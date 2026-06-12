@@ -6,10 +6,10 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
   images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'ik.imagekit.io' },
-    ],
+    // All resizing/format conversion happens on ImageKit's CDN — see the
+    // loader for details. Non-ImageKit URLs (Supabase uploads) pass through.
+    loader: 'custom',
+    loaderFile: './src/lib/image-loader.ts',
   },
 };
 

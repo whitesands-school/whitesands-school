@@ -93,7 +93,7 @@ export default function WhatWeOfferPage() {
                   className="group block relative overflow-hidden rounded-sm bg-deep aspect-4/3 lg:aspect-3/2"
                 >
                   <Image
-                    src={tile.image}
+                    src={media(tile.image)}
                     alt={tile.alt}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"

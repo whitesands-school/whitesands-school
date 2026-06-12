@@ -2,8 +2,15 @@
 
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, AlertCircle, Loader2 } from 'lucide-react';
-import { useEffect, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { Check, AlertCircle, Loader2, UploadCloud } from 'lucide-react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from 'react';
+import { media } from '@/lib/media';
 
 // ---------------------------------------------------------------------------
 // Page header — eyebrow + title + actions row
@@ -244,6 +251,145 @@ export function Field({
       )}
     </label>
   );
+}
+
+// ---------------------------------------------------------------------------
+// ImageUploadField — path/URL input + direct upload + live preview
+// ---------------------------------------------------------------------------
+
+/**
+ * One field for every image in the admin: paste a path/URL, or click Upload
+ * (or drop a file) to push it to storage and have the URL filled in for you.
+ */
+export function ImageUploadField({
+  label,
+  value,
+  onChange,
+  folder = 'uploads',
+  hint,
+  required,
+  previewAspect = 'aspect-video',
+  showPreview = true,
+}: {
+  label: string;
+  value: string;
+  onChange: (next: string) => void;
+  /** Storage folder the upload lands in, e.g. 'staff', 'news', 'gallery'. */
+  folder?: string;
+  hint?: string;
+  required?: boolean;
+  previewAspect?: string;
+  /** Set false when the form already renders its own preview. */
+  showPreview?: boolean;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState('');
+
+  async function upload(file: File) {
+    setError('');
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      form.append('folder', folder);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: form });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || 'Upload failed.');
+      onChange(body.url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Upload failed.');
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  return (
+    <div className="flex flex-col">
+      <FieldLabel hint={hint} required={required}>{label}</FieldLabel>
+
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) upload(file);
+        }}
+        className={`rounded-sm transition-colors ${
+          dragOver ? 'outline-2 outline-dashed outline-deep/40 bg-deep/3' : ''
+        }`}
+      >
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Paste a URL, or upload →"
+            className={inputClass}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className="shrink-0 inline-flex items-center gap-2 border border-deep/20 text-deep hover:border-deep hover:bg-deep/5 rounded-sm px-3.5 font-roboto uppercase text-[10px] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ letterSpacing: '0.16em' }}
+          >
+            {uploading ? (
+              <Loader2 size={13} className="animate-spin" />
+            ) : (
+              <UploadCloud size={13} strokeWidth={1.75} />
+            )}
+            {uploading ? 'Uploading' : 'Upload'}
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) upload(file);
+            }}
+          />
+        </div>
+
+        {error && (
+          <p className="mt-1.5 font-sans text-xs text-bold">{error}</p>
+        )}
+
+        {showPreview && value && (
+          <div
+            className={`relative mt-3 ${previewAspect} max-w-60 overflow-hidden rounded-sm border border-deep/10 bg-deep/5`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary
+                admin-pasted URLs can't be whitelisted for next/image */}
+            <img
+              src={previewUrl(media(value))}
+              alt="Preview"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * ImageKit originals are multi-megabyte camera files; ask the CDN for a small
+ * preview rendition instead. Non-ImageKit URLs are returned untouched.
+ */
+function previewUrl(url: string): string {
+  if (!url.startsWith('https://ik.imagekit.io/')) return url;
+  if (url.includes('?tr=')) return `${url}:w-480,q-70,f-auto`;
+  return `${url}${url.includes('?') ? '&' : '?'}tr=w-480,q-70,f-auto`;
 }
 
 // ---------------------------------------------------------------------------

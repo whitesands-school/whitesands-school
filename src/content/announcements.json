@@ -12,7 +12,7 @@
     "message": "Open Day — Saturday 19 April 2026. Tour the campus and meet our faculty.",
     "color": "yellow",
     "linkText": "Register to Attend",
-    "linkUrl": "/admissions#open-day",
+    "linkUrl": "/admissions#visit",
     "active": false
   },
   {
@@ -20,7 +20,7 @@
     "message": "25th Anniversary Gala recap and photos are now available in the News section.",
     "color": "blue",
     "linkText": "View Photos",
-    "linkUrl": "/news/25th-anniversary-gala",
+    "linkUrl": "/news",
     "active": false
   },
   {
@@ -36,7 +36,7 @@
     "message": "New STEM Innovation Hub is now open to all students. Book a lab session today.",
     "color": "red",
     "linkText": "Learn More",
-    "linkUrl": "/what-we-offer#stem-hub",
+    "linkUrl": "/what-we-offer/facilities",
     "active": false
   }
 ]

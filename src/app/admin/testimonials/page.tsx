@@ -15,6 +15,7 @@ import {
   EmptyState,
   inputClass,
   textareaClass,
+  ImageUploadField,
 } from '@/components/admin/ui';
 import type { Testimonial } from '@/types';
 import { media } from '@/lib/media';
@@ -225,14 +226,14 @@ export default function TestimonialsPage() {
                             className={inputClass}
                           />
                         </Field>
-                        <Field label="Role" hint="Parent of Year 12, Class of 2018, etc.">
+                        <Field label="Role" hint="Parent of SS3, Class of 2018, etc.">
                           <input
                             type="text"
                             value={t.role}
                             onChange={(e) =>
                               update(t.id, { role: e.target.value })
                             }
-                            placeholder="Parents of Year 12"
+                            placeholder="Parents of SS3"
                             className={inputClass}
                           />
                         </Field>
@@ -265,20 +266,14 @@ export default function TestimonialsPage() {
                           className={`${inputClass} font-mono text-xs`}
                         />
                       </Field>
-                      <Field
-                        label="Poster path"
+                      <ImageUploadField
+                        label="Poster image"
                         hint="optional, shown before play"
-                      >
-                        <input
-                          type="text"
-                          value={t.posterUrl ?? ''}
-                          onChange={(e) =>
-                            update(t.id, { posterUrl: e.target.value })
-                          }
-                          placeholder="/videos/web/poster-...jpg"
-                          className={`${inputClass} font-mono text-xs`}
-                        />
-                      </Field>
+                        folder="testimonials"
+                        value={t.posterUrl ?? ''}
+                        onChange={(posterUrl) => update(t.id, { posterUrl })}
+                        showPreview={false}
+                      />
                     </div>
                   </div>
                 </Card>

@@ -13,6 +13,7 @@ import {
   useToast,
   inputClass,
   textareaClass,
+  ImageUploadField,
 } from '@/components/admin/ui';
 import { media } from '@/lib/media';
 import type { NewsPost } from '@/types';
@@ -251,18 +252,14 @@ export function NewsForm({ initial, mode }: NewsFormProps) {
                 </p>
               </div>
             )}
-            <Field
-              label="Image path"
-              hint="Path under /public on ImageKit, e.g. /images/students/graduands-walking.jpg"
-            >
-              <input
-                type="text"
-                value={form.coverImage}
-                onChange={(e) => set('coverImage', e.target.value)}
-                placeholder="/images/students/..."
-                className={`${inputClass} font-mono text-xs`}
-              />
-            </Field>
+            <ImageUploadField
+              label="Cover image"
+              hint="Upload a photo or paste a URL"
+              folder="news"
+              value={form.coverImage}
+              onChange={(coverImage) => set('coverImage', coverImage)}
+              showPreview={false}
+            />
           </Card>
         </div>
       </div>

@@ -168,7 +168,7 @@ export default function PersonalFormationPage() {
                 confidential.
               </p>
               <p>
-                Twice a term the advisor meets with the boy's parents to
+                Twice a term the advisor meets with the boy&rsquo;s parents to
                 share what he is seeing, hear what they are seeing, and
                 close the loop between home and school.
               </p>

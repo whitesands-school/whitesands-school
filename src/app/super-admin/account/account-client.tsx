@@ -122,8 +122,10 @@ export function AccountClient({ email }: { email: string }) {
           </p>
           <hr className="my-5 border-deep/10" />
           <p className="font-sans text-xs text-muted leading-relaxed">
-            Forgot your current password? Ask another super-admin to reset it from{' '}
-            <span className="text-deep">Users &amp; roles</span>.
+            Forgot your current password? Use{' '}
+            <span className="text-deep">Forgot password</span> on the sign-in
+            page to email yourself a reset link, or ask another super-admin to
+            reset it from <span className="text-deep">Users &amp; roles</span>.
           </p>
         </Card>
       </div>

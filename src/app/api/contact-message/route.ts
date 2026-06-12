@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { SITE } from '@/lib/site';
+import { appendInboxEntry } from '@/lib/inbox';
 
 const MessageSchema = z.object({
   name: z.string().min(2).max(120),
@@ -33,6 +34,19 @@ export async function POST(request: Request) {
   }
 
   const msg = parsed.data;
+
+  // Persist to the admin inbox first — email is best-effort on top.
+  try {
+    appendInboxEntry({
+      type: 'contact',
+      name: msg.name,
+      email: msg.email,
+      subject: msg.subject,
+      message: msg.message,
+    });
+  } catch (err) {
+    console.error('[contact-message] inbox write failed', err);
+  }
 
   console.info('[contact-message]', {
     receivedAt: new Date().toISOString(),

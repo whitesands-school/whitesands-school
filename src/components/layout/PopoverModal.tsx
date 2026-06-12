@@ -1,93 +1,157 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { X } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { X, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { AnimatePresence, motion } from 'framer-motion'
 import type { SitePopover } from '@/types'
 import { media } from '@/lib/media'
 
-// Shown once per session — dismissed state lives in sessionStorage
+// Shown once per session — dismissed state lives in sessionStorage (survives
+// reloads within the tab; resets when the parent comes back another day).
 const SESSION_KEY = 'ws_popover_dismissed'
 
 export function PopoverModal({ popover }: { popover: SitePopover }) {
   const [visible, setVisible] = useState(false)
+  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (sessionStorage.getItem(SESSION_KEY) === popover.id) return
-    // Small delay so the page paints first
-    const t = setTimeout(() => setVisible(true), 1200)
+    // Let the page paint and settle before interrupting.
+    const t = setTimeout(() => setVisible(true), 2200)
     return () => clearTimeout(t)
   }, [popover.id])
+
+  // Scroll lock + Escape + move focus into the dialog while it's open.
+  useEffect(() => {
+    if (!visible) return
+    const prevFocus = document.activeElement as HTMLElement | null
+    document.body.style.overflow = 'hidden'
+    panelRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+      prevFocus?.focus?.()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible])
 
   function dismiss() {
     sessionStorage.setItem(SESSION_KEY, popover.id)
     setVisible(false)
   }
 
-  if (!visible) return null
-
   return (
-    <div
-      className="fixed inset-0 z-200 flex items-center justify-center p-4"
-      onClick={dismiss}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-
-      {/* Card */}
-      <div
-        className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close */}
-        <button
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-200 flex items-center justify-center p-4 sm:p-6"
           onClick={dismiss}
-          aria-label="Dismiss"
-          className="absolute top-4 right-4 p-1.5 rounded-full text-muted hover:text-dark hover:bg-gray-100 transition z-10"
         >
-          <X size={16} />
-        </button>
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-deep/60 backdrop-blur-sm" />
 
-        {/* Optional image */}
-        {popover.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={media(popover.imageUrl)}
-            alt={popover.title}
-            className="w-full h-44 object-cover"
-          />
-        )}
-
-        <div className="p-7">
-          {/* Accent line */}
-          <div className="w-8 h-1 bg-lemon rounded mb-4" />
-
-          <h2 className="font-roboto font-bold text-xl text-dark mb-3">
-            {popover.title}
-          </h2>
-          <p className="font-sans text-sm text-muted leading-relaxed mb-6">
-            {popover.body}
-          </p>
-
-          <div className="flex items-center gap-3">
-            {popover.ctaUrl && popover.ctaLabel && (
-              <Link
-                href={popover.ctaUrl}
-                onClick={dismiss}
-                className="px-5 py-2.5 bg-deep text-white font-roboto font-semibold text-sm rounded-lg hover:bg-deep/90 transition"
-              >
-                {popover.ctaLabel}
-              </Link>
-            )}
+          {/* Card */}
+          <motion.div
+            ref={panelRef}
+            tabIndex={-1}
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.98 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="relative bg-white rounded-md shadow-[0_32px_80px_-24px_rgba(26,21,48,0.55)] max-w-md w-full overflow-hidden outline-none"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={popover.title}
+          >
+            {/* Close */}
             <button
               onClick={dismiss}
-              className="px-5 py-2.5 text-sm font-roboto text-muted hover:text-dark transition"
+              aria-label="Dismiss"
+              className={[
+                'absolute top-3 right-3 p-2.5 rounded-full transition-colors z-10 cursor-pointer',
+                popover.imageUrl
+                  ? 'text-white/90 hover:text-white hover:bg-black/20'
+                  : 'text-muted hover:text-dark hover:bg-gray-100',
+              ].join(' ')}
             >
-              Dismiss
+              <X size={16} />
             </button>
-          </div>
-        </div>
-      </div>
-    </div>
+
+            {/* Optional image with brand gradient anchoring it to the card */}
+            {popover.imageUrl && (
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={media(popover.imageUrl)}
+                  alt=""
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-deep/50 via-transparent to-deep/20" />
+              </div>
+            )}
+
+            <div className="p-7 sm:p-8">
+              <p
+                className="font-roboto text-[10px] uppercase text-deep"
+                style={{ letterSpacing: '0.3em' }}
+              >
+                Whitesands School
+              </p>
+
+              <h2
+                className="mt-3 font-serif text-deep"
+                style={{
+                  fontSize: 'clamp(1.5rem, 4vw, 1.875rem)',
+                  lineHeight: 1.12,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                {popover.title}
+              </h2>
+
+              <p className="mt-4 font-sans text-sm text-dark/70 leading-relaxed">
+                {popover.body}
+              </p>
+
+              <div className="mt-7 flex flex-col sm:flex-row sm:items-center gap-3">
+                {popover.ctaUrl && popover.ctaLabel && (
+                  <Link
+                    href={popover.ctaUrl}
+                    onClick={dismiss}
+                    className="group inline-flex items-center justify-center gap-2 bg-deep text-white font-roboto uppercase text-xs px-7 py-3.5 rounded-sm hover:bg-bold transition-colors duration-200"
+                    style={{ letterSpacing: '0.16em' }}
+                  >
+                    {popover.ctaLabel}
+                    <ArrowRight
+                      size={14}
+                      className="transition-transform duration-200 group-hover:translate-x-0.5"
+                    />
+                  </Link>
+                )}
+                <button
+                  onClick={dismiss}
+                  className="font-sans text-sm text-muted hover:text-deep underline underline-offset-4 transition-colors cursor-pointer text-center"
+                >
+                  Maybe later
+                </button>
+              </div>
+            </div>
+
+            {/* Lemon base rule — the brand signature */}
+            <div className="h-1 bg-lemon" aria-hidden />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

@@ -97,7 +97,7 @@ const GALLERY = [
   { src: '/images/students/high-jump-yellow-house.jpg', alt: 'Inter-house athletics' },
   { src: '/images/students/priest-preaching.JPG', alt: 'Chapel service' },
   { src: '/images/students/cultural-dance.JPG', alt: 'Cultural day performance' },
-  { src: '/images/students/congratulating-purple-house.jpg', alt: 'House celebrations' },
+  { src: '/images/students/purple-house-salute.jpg', alt: 'House celebrations' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -409,7 +409,7 @@ function Gallery() {
                 className="group block w-full relative overflow-hidden rounded-sm bg-deep/5 cursor-pointer"
               >
                 <Image
-                  src={g.src}
+                  src={media(g.src)}
                   alt={g.alt}
                   width={800}
                   height={i % 3 === 0 ? 1000 : i % 3 === 1 ? 640 : 800}
@@ -474,7 +474,7 @@ function Gallery() {
               onClick={(e) => e.stopPropagation()}
             >
               <Image
-                src={GALLERY[open].src}
+                src={media(GALLERY[open].src)}
                 alt={GALLERY[open].alt}
                 fill
                 sizes="100vw"

@@ -15,6 +15,7 @@ import {
   EmptyState,
   inputClass,
   textareaClass,
+  ImageUploadField,
 } from '@/components/admin/ui';
 import type { SitePopover } from '@/types';
 
@@ -167,21 +168,15 @@ export default function PopoverPage() {
                   />
                 </Field>
 
-                <Field
-                  label="Image path"
-                  hint="optional, path under /public"
-                  className="mb-5"
-                >
-                  <input
-                    type="text"
+                <div className="mb-5">
+                  <ImageUploadField
+                    label="Image"
+                    hint="optional"
+                    folder="popover"
                     value={pop.imageUrl ?? ''}
-                    onChange={(e) =>
-                      update(pop.id, { imageUrl: e.target.value })
-                    }
-                    placeholder="/images/students/..."
-                    className={`${inputClass} font-mono text-xs`}
+                    onChange={(imageUrl) => update(pop.id, { imageUrl })}
                   />
-                </Field>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                   <Field label="Button label" hint="optional">

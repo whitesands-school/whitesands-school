@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PlayCircle, X } from 'lucide-react';
 import { PageHero } from '@/components/sections/PageHero';
 import { getAllStaff } from '@/lib/content';
-import { media } from '@/lib/media';
+import { media, video } from '@/lib/media';
 import type { StaffMember } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -43,30 +43,30 @@ const PARENT_VIDEOS: ParentVideo[] = [
   {
     id: 'abu',
     name: 'Mr. & Mrs. Abu',
-    role: 'Parents · Year 12',
+    role: 'Parents · SS3',
     poster: '/videos/web/poster-mr-mrs-abu-parents-review.jpg',
-    video: '/videos/Mr. & Mrs. Abu Parents Review.mp4',
+    video: video('parent-review-abu'),
   },
   {
     id: 'shok',
     name: 'Engineer Shok Julius',
-    role: 'Parent · Year 10',
-    poster: '/videos/web/poster-engineer-shok-julius-parents-review.jpg',
-    video: '/videos/Engineer Shok Julius Parents Review.mp4',
+    role: 'Parent · SS1',
+    poster: '/videos/web/poster-engineer-shok-julius-parents-review.jpg?tr=cm-extract,x-0,y-50,w-800,h-1374',
+    video: video('parent-review-shok-julius'),
   },
   {
     id: 'amos-penda',
     name: 'Mrs. Amos-Penda',
-    role: 'Parent · Year 8',
+    role: 'Parent · JS2',
     poster: '/videos/web/poster-mrs-amos-penda-parents-review.jpg',
-    video: '/videos/Mrs. Amos-Penda Parents Review.mp4',
+    video: video('parent-review-amos-penda'),
   },
   {
     id: 'first-educators',
     name: 'Whitesands Parents',
     role: 'Parents as the First Educators',
     poster: '/videos/web/poster-parents-as-the-1st-educators.jpg',
-    video: '/videos/Parents as the 1st Educators.mp4',
+    video: video('parents-first-educators'),
   },
 ];
 
@@ -162,7 +162,7 @@ function TabBar({ active }: { active: TabValue }) {
   return (
     <Tabs.List
       aria-label="Our people"
-      className="sticky top-28 z-30 bg-white/85 backdrop-blur supports-backdrop-filter:bg-white/70 border-b border-deep/10"
+      className="sticky top-[calc(7rem+var(--ws-banner-h,0px))] z-30 bg-white/85 backdrop-blur supports-backdrop-filter:bg-white/70 border-b border-deep/10"
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((tab) => {
@@ -231,7 +231,7 @@ function ParentsPanel() {
             </p>
             <p>
               In practice this means an ongoing conversation. Parents meet
-              with their son's mentor twice a term. They are invited to
+              with their son&rsquo;s mentor twice a term. They are invited to
               monthly formation sessions on the topics the boys are studying
               in their personal formation. They sit on committees that shape
               the life of the school.
@@ -287,7 +287,9 @@ function ParentsPanel() {
                     type="button"
                     onClick={() => setActive(p)}
                     aria-label={`Play testimonial from ${p.name}`}
-                    className="relative block aspect-video w-full overflow-hidden rounded-sm cursor-pointer bg-deep/5"
+                    // Posters are vertical 9:16 phone videos — the frame must
+                    // match or faces get cropped out on small screens.
+                    className="relative block aspect-9/16 w-full overflow-hidden rounded-sm cursor-pointer bg-deep/5"
                   >
                     <Image
                       src={media(p.poster)}
@@ -338,7 +340,7 @@ function ParentsPanel() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.96, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-4xl"
+              className="relative flex flex-col items-center w-auto max-h-[85vh]"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -355,9 +357,9 @@ function ParentsPanel() {
                 controls
                 autoPlay
                 playsInline
-                className="w-full aspect-video bg-black rounded-sm shadow-2xl"
+                className="h-[80vh] max-h-180 w-auto aspect-9/16 bg-black rounded-sm shadow-2xl"
               />
-              <div className="mt-4 text-white">
+              <div className="mt-4 text-white text-center">
                 <p className="font-serif text-lg">{active.name}</p>
                 <p
                   className="mt-1 font-roboto text-xs uppercase text-white/60"

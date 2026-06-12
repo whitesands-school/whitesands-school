@@ -81,9 +81,9 @@ export function AnnouncementBanner({
         type="button"
         onClick={() => setDismissed(true)}
         aria-label="Dismiss banner"
-        className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 p-1 opacity-60 hover:opacity-100 transition-opacity"
+        className="absolute right-1.5 sm:right-3 top-1/2 -translate-y-1/2 p-2.5 opacity-60 hover:opacity-100 transition-opacity"
       >
-        <X size={12} strokeWidth={2} />
+        <X size={14} strokeWidth={2} />
       </button>
     </div>
   );

@@ -377,7 +377,7 @@ function Field({
       </span>
       {input}
       {error && (
-        <span className="font-sans text-xs text-bold mt-1">{error}</span>
+        <span role="alert" className="font-sans text-sm text-bold mt-1">{error}</span>
       )}
     </label>
   );
