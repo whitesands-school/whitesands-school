@@ -135,60 +135,62 @@ function FooterLinks({ links }: { links: { label: string; href: string }[] }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export function Footer() {
+export function Footer({ showClosingCta = true }: { showClosingCta?: boolean }) {
   return (
     <footer>
       {/* ------------------------------------------------------------------ */}
       {/* ROW 0 — Closing call to action                                      */}
       {/* ------------------------------------------------------------------ */}
-      <div className="bg-deep">
-        <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 py-24 lg:py-32 text-center">
-          <p
-            className="font-roboto text-xs uppercase text-lemon"
-            style={{ letterSpacing: '0.28em' }}
-          >
-            Come and see
-          </p>
-
-          <h2
-            className="mt-5 font-serif text-offwhite"
-            style={{
-              fontSize: 'clamp(2rem, 4.4vw, 3rem)',
-              lineHeight: 1.12,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            The best way to understand Whitesands is to{' '}
-            <span className="italic">visit.</span>
-          </h2>
-
-          <p className="mt-6 font-sans text-base sm:text-lg text-offwhite/70 leading-relaxed max-w-xl mx-auto">
-            Walk the corridors during a school day. We will arrange a visit
-            for a date that suits you.
-          </p>
-
-          <div className="mt-10 flex flex-col items-center gap-5">
-            <Link
-              href="/admissions#visit"
-              className="inline-flex items-center justify-center bg-lemon text-deep font-roboto uppercase text-sm px-10 py-4 hover:bg-white transition-colors"
-              style={{ letterSpacing: '0.18em' }}
+      {showClosingCta && (
+        <div className="bg-deep">
+          <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12 py-24 lg:py-32 text-center">
+            <p
+              className="font-roboto text-xs uppercase text-lemon"
+              style={{ letterSpacing: '0.28em' }}
             >
-              Book a visit
-            </Link>
+              Come and see
+            </p>
 
-            <Link
-              href="/admissions"
-              className="group inline-flex items-center gap-2 font-roboto uppercase text-xs text-offwhite/70 hover:text-lemon transition-colors"
-              style={{ letterSpacing: '0.22em' }}
+            <h2
+              className="mt-5 font-serif text-offwhite"
+              style={{
+                fontSize: 'clamp(2rem, 4.4vw, 3rem)',
+                lineHeight: 1.12,
+                letterSpacing: '-0.02em',
+              }}
             >
-              Or read the 2026 admissions process
-              <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
+              The best way to understand Whitesands is to{' '}
+              <span className="italic">visit.</span>
+            </h2>
+
+            <p className="mt-6 font-sans text-base sm:text-lg text-offwhite/70 leading-relaxed max-w-xl mx-auto">
+              Walk the corridors during a school day. We will arrange a visit
+              for a date that suits you.
+            </p>
+
+            <div className="mt-10 flex flex-col items-center gap-5">
+              <Link
+                href="/admissions#visit"
+                className="inline-flex items-center justify-center bg-lemon text-deep font-roboto uppercase text-sm px-10 py-4 hover:bg-white transition-colors"
+                style={{ letterSpacing: '0.18em' }}
+              >
+                Book a visit
+              </Link>
+
+              <Link
+                href="/admissions"
+                className="group inline-flex items-center gap-2 font-roboto uppercase text-xs text-offwhite/70 hover:text-lemon transition-colors"
+                style={{ letterSpacing: '0.22em' }}
+              >
+                Or read the 2026 admissions process
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* ------------------------------------------------------------------ */}
       {/* ROW 1 — Identity                                                    */}

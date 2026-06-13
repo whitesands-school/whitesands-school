@@ -166,7 +166,7 @@ export default async function RootLayout({
             </main>
           </BfcacheFix>
         )}
-        {!isAdmin && <Footer />}
+        {!isAdmin && <Footer showClosingCta={pathname !== '/fees-portal'} />}
         {!isAdmin && <BookVisitTab />}
         {popover && <PopoverModal popover={popover} />}
       </body>

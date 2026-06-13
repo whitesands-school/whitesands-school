@@ -11,9 +11,16 @@ import type { ImageLoaderProps } from 'next/image';
  * URLs that already carry a `?tr=` transform (e.g. a baked-in crop) get the
  * resize chained after it with ImageKit's `:` syntax.
  *
- * Anything not on ImageKit (Supabase Storage uploads, external URLs) is
- * served as-is.
+ * Supabase Storage uploads (admin-uploaded staff photos, gallery images) are
+ * routed through Supabase's own image-transform endpoint so the
+ * several-hundred-KB phone originals are resized at the edge. This also
+ * implements `width`, which next/image requires of a custom loader — without
+ * it every srcset entry resolves identically and Next warns in dev.
+ *
+ * Anything else (external URLs, data: URIs) is served as-is.
  */
+const SUPABASE_OBJECT_PATH = '/storage/v1/object/public/';
+
 export default function imageLoader({ src, width, quality }: ImageLoaderProps): string {
   if (src.startsWith('https://ik.imagekit.io/')) {
     // Staff portraits etc. have literal spaces in their filenames. A raw
@@ -28,5 +35,17 @@ export default function imageLoader({ src, width, quality }: ImageLoaderProps): 
     const sep = encoded.includes('?') ? '&' : '?';
     return `${encoded}${sep}tr=${resize}`;
   }
+
+  if (src.includes(SUPABASE_OBJECT_PATH)) {
+    const rendered = src.replace(
+      SUPABASE_OBJECT_PATH,
+      '/storage/v1/render/image/public/'
+    );
+    const sep = rendered.includes('?') ? '&' : '?';
+    // resize=contain keeps the full image (no crop) — components apply their
+    // own object-cover for display framing.
+    return `${rendered}${sep}width=${width}&quality=${quality ?? 75}&resize=contain`;
+  }
+
   return src;
 }
