@@ -19,20 +19,10 @@ import {
   ImageUploadField,
 } from '@/components/admin/ui';
 import { media } from '@/lib/media';
+import { STAFF_CATEGORIES } from '@/lib/staff-categories';
 import type { StaffMember } from '@/types';
 
-const DEPARTMENTS = [
-  'Leadership',
-  'Faculty',
-  'Mathematics',
-  'Sciences',
-  'Humanities',
-  'Social Studies',
-  'Creative Arts',
-  'Sports',
-  'Technology',
-  'Pastoral',
-];
+const DEPARTMENTS = [...STAFF_CATEGORIES];
 
 const EMPTY: Omit<StaffMember, 'id'> = {
   name: '',
@@ -295,7 +285,7 @@ function StaffCard({
             className="absolute top-2 left-2 bg-deep text-white font-roboto text-[9px] uppercase px-2 py-0.5 rounded-sm"
             style={{ letterSpacing: '0.22em' }}
           >
-            Leadership
+            Management
           </span>
         )}
       </div>
@@ -323,7 +313,7 @@ function FilterPills({
 }) {
   const items: { value: FilterKey; label: string; count: number }[] = [
     { value: 'all', label: 'All', count: counts.all },
-    { value: 'leadership', label: 'Leadership', count: counts.leadership },
+    { value: 'leadership', label: 'Management Team', count: counts.leadership },
     { value: 'faculty', label: 'Faculty', count: counts.faculty },
   ];
   return (
@@ -478,7 +468,10 @@ function StaffDrawer({
                       onChange={(e) => setF('department', e.target.value)}
                       className={inputClass}
                     >
-                      {departments.map((d) => (
+                      {(departments.includes(form.department)
+                        ? departments
+                        : [form.department, ...departments]
+                      ).map((d) => (
                         <option key={d}>{d}</option>
                       ))}
                     </select>
@@ -515,8 +508,8 @@ function StaffDrawer({
                 <Toggle
                   checked={form.isLeadership}
                   onChange={(v) => setF('isLeadership', v)}
-                  label="Show in Leadership group"
-                  description="Leadership members appear first under the Leadership filter."
+                  label="Show in Management Team"
+                  description="Management Team members get a badge and appear first. Set their department to “Management Team” too so they show under that filter on Our People."
                 />
 
                 <ImageUploadField

@@ -55,7 +55,7 @@ export default async function AdminDashboard() {
     {
       label: 'Staff',
       value: String(staff.length),
-      sub: `${staff.filter((s) => s.isLeadership).length} in leadership`,
+      sub: `${staff.filter((s) => s.isLeadership).length} in management`,
       href: '/admin/staff',
       icon: Users,
     },

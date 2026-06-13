@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PlayCircle, X } from 'lucide-react';
 import { PageHero } from '@/components/sections/PageHero';
 import { media, video } from '@/lib/media';
+import { STAFF_CATEGORIES } from '@/lib/staff-categories';
 import type { StaffMember } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -24,8 +25,8 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-  { value: 'parents', label: 'Parents', borderClass: 'bg-lemon', eyebrowClass: 'text-deep' },
   { value: 'staff', label: 'Staff', borderClass: 'bg-bold', eyebrowClass: 'text-bold' },
+  { value: 'parents', label: 'Parents', borderClass: 'bg-lemon', eyebrowClass: 'text-deep' },
   { value: 'students', label: 'Students', borderClass: 'bg-deep', eyebrowClass: 'text-deep' },
   { value: 'alumni', label: 'Alumni', borderClass: 'bg-deep/40', eyebrowClass: 'text-muted' },
 ];
@@ -104,14 +105,14 @@ const STUDENT_COLLAGE = [
   { src: '/images/students/student-drawing.JPG', alt: 'A student at work in the art block' },
 ];
 
-type StaffFilter = 'all' | 'leadership' | 'faculty';
+type StaffFilter = 'all' | (typeof STAFF_CATEGORIES)[number];
 
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 export function OurPeopleClient({ staff }: { staff: StaffMember[] }) {
-  const [active, setActive] = useState<TabValue>('parents');
+  const [active, setActive] = useState<TabValue>('staff');
 
   return (
     <>
@@ -383,22 +384,35 @@ function StaffPanel({ staff }: { staff: StaffMember[] }) {
   const allStaff = staff;
   const [filter, setFilter] = useState<StaffFilter>('all');
 
-  const filtered = useMemo(() => {
-    if (filter === 'all') return allStaff;
-    if (filter === 'leadership') {
-      return allStaff.filter((s) => s.isLeadership);
-    }
-    return allStaff.filter((s) => !s.isLeadership);
-  }, [allStaff, filter]);
-
-  const counts = useMemo(
-    () => ({
-      all: allStaff.length,
-      leadership: allStaff.filter((s) => s.isLeadership).length,
-      faculty: allStaff.filter((s) => !s.isLeadership).length,
-    }),
+  // Only surface the categories that actually have members, in canonical
+  // order. Assigning a staff member to a department in the admin makes that
+  // category appear here automatically.
+  const categories = useMemo(
+    () =>
+      STAFF_CATEGORIES.filter((c) =>
+        allStaff.some((s) => s.department === c)
+      ),
     [allStaff]
   );
+
+  const counts = useMemo(() => {
+    const map: Record<string, number> = { all: allStaff.length };
+    for (const c of categories) {
+      map[c] = allStaff.filter((s) => s.department === c).length;
+    }
+    return map;
+  }, [allStaff, categories]);
+
+  // Guard against a stale selection if its category empties out.
+  const activeFilter =
+    filter === 'all' || categories.includes(filter as (typeof categories)[number])
+      ? filter
+      : 'all';
+
+  const filtered = useMemo(() => {
+    if (activeFilter === 'all') return allStaff;
+    return allStaff.filter((s) => s.department === activeFilter);
+  }, [allStaff, activeFilter]);
 
   return (
     <section className="bg-white py-24 lg:py-28 scroll-mt-40">
@@ -422,21 +436,18 @@ function StaffPanel({ staff }: { staff: StaffMember[] }) {
           <FilterButton
             label="All"
             count={counts.all}
-            active={filter === 'all'}
+            active={activeFilter === 'all'}
             onClick={() => setFilter('all')}
           />
-          <FilterButton
-            label="Leadership"
-            count={counts.leadership}
-            active={filter === 'leadership'}
-            onClick={() => setFilter('leadership')}
-          />
-          <FilterButton
-            label="Faculty"
-            count={counts.faculty}
-            active={filter === 'faculty'}
-            onClick={() => setFilter('faculty')}
-          />
+          {categories.map((c) => (
+            <FilterButton
+              key={c}
+              label={c}
+              count={counts[c]}
+              active={activeFilter === c}
+              onClick={() => setFilter(c)}
+            />
+          ))}
         </div>
 
         {/* Grid */}
