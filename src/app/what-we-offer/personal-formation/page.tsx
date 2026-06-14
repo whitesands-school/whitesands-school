@@ -1,57 +1,48 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import { PageHero } from '@/components/sections/PageHero';
 import { media } from '@/lib/media';
+import { readContent } from '@/lib/content-store';
+import type { VirtueOfMonth } from '@/types';
+import { VirtueGrid, JobsGrid, type VirtueCard } from './grids';
 
 // ---------------------------------------------------------------------------
-// Data
+// Virtue ordering — academic year (September first), then calendar tail.
 // ---------------------------------------------------------------------------
 
-interface Virtue {
-  month: string;
-  name: string;
-  line: string;
+const MONTH_ORDER = [
+  'September',
+  'October',
+  'November',
+  'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+];
+
+function orderVirtues(virtues: VirtueOfMonth[]): VirtueCard[] {
+  return [...virtues]
+    .sort(
+      (a, b) =>
+        MONTH_ORDER.indexOf(a.month) - MONTH_ORDER.indexOf(b.month)
+    )
+    .map((v) => ({
+      month: v.month,
+      name: v.virtue,
+      line: v.definition,
+    }));
 }
-
-const VIRTUES: Virtue[] = [
-  { month: 'September', name: 'Integrity', line: 'Doing what is right even when no one is watching.' },
-  { month: 'October', name: 'Gratitude', line: 'Recognising the goodness already in your life.' },
-  { month: 'November', name: 'Courage', line: 'Acting rightly in the face of fear or difficulty.' },
-  { month: 'December', name: 'Generosity', line: 'Freely giving your time, talents, and resources.' },
-  { month: 'January', name: 'Discipline', line: 'Consistent self-control in service of a higher end.' },
-  { month: 'February', name: 'Kindness', line: 'Choosing warmth and concern for those around you.' },
-  { month: 'March', name: 'Perseverance', line: 'Continuing steadfastly despite difficulty.' },
-  { month: 'April', name: 'Humility', line: 'An honest, accurate view of yourself before God and others.' },
-  { month: 'May', name: 'Hope', line: 'Trusting that the work of formation will bear fruit.' },
-  { month: 'June', name: 'Wisdom', line: 'Knowing how to apply knowledge well, in the moment.' },
-  { month: 'July', name: 'Magnanimity', line: 'The greatness of soul to launch into the deep.' },
-];
-
-const JOBS = [
-  {
-    title: 'Class Captain',
-    body: 'Each class elects a captain who keeps the room ordered, leads opening and closing prayer, and represents the class at student leadership meetings.',
-  },
-  {
-    title: 'Chapel Sacristan',
-    body: 'A senior boy who prepares the chapel for daily Mass: vestments, lectionary, candles. Quiet, regular, and important.',
-  },
-  {
-    title: 'House Prefect',
-    body: 'Selected senior boys lead each house through the year, organising the inter-house competitions and looking out for the younger members.',
-  },
-  {
-    title: 'Library and Lab Monitors',
-    body: 'Boys keep their own learning spaces in order. The library and laboratories are run with their help, not in spite of them.',
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
-export default function PersonalFormationPage() {
+export default async function PersonalFormationPage() {
+  const virtues = orderVirtues(await readContent<VirtueOfMonth[]>('virtue'));
+
   return (
     <>
       <PageHero
@@ -108,36 +99,7 @@ export default function PersonalFormationPage() {
             </p>
           </div>
 
-          <ul className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
-            {VIRTUES.map((v, i) => (
-              <motion.li
-                key={v.month}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{
-                  duration: 0.5,
-                  delay: i * 0.04,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                <article className="h-full bg-white p-7 rounded-sm border-t-2 border-lemon">
-                  <p
-                    className="font-roboto text-[10px] uppercase text-muted"
-                    style={{ letterSpacing: '0.28em' }}
-                  >
-                    {v.month}
-                  </p>
-                  <h3 className="mt-3 font-serif text-2xl text-deep leading-tight">
-                    {v.name}
-                  </h3>
-                  <p className="mt-3 font-sans text-sm text-dark/75 leading-relaxed">
-                    {v.line}
-                  </p>
-                </article>
-              </motion.li>
-            ))}
-          </ul>
+          <VirtueGrid virtues={virtues} />
         </div>
       </section>
 
@@ -193,28 +155,7 @@ export default function PersonalFormationPage() {
             </p>
           </div>
 
-          <div className="mt-14 grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-12">
-            {JOBS.map((job, i) => (
-              <motion.div
-                key={job.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.55,
-                  delay: i * 0.07,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                <h3 className="font-serif text-xl lg:text-2xl text-deep leading-snug">
-                  {job.title}
-                </h3>
-                <p className="mt-3 font-sans text-base text-dark/75 leading-relaxed">
-                  {job.body}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+          <JobsGrid />
         </div>
       </section>
     </>
