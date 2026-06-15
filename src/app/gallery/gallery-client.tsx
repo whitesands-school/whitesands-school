@@ -101,6 +101,9 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
               width={800}
               height={600}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              // Prioritise the first row so the above-the-fold gallery image
+              // isn't an un-prioritised LCP candidate on taller viewports.
+              priority={i < 3}
               className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
           </motion.button>

@@ -48,6 +48,7 @@ export default function ForgotPasswordPage() {
             alt="Whitesands School"
             width={600}
             height={189}
+            priority
             sizes="220px"
             style={{ width: 'auto' }}
             className="h-14 w-auto"

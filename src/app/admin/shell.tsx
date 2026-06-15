@@ -101,7 +101,7 @@ export function AdminShell({
 
       <aside
         className={[
-          'fixed lg:sticky top-0 inset-y-0 left-0 z-50 lg:z-auto',
+          'fixed top-0 inset-y-0 left-0 z-50',
           'w-64 shrink-0 bg-deep flex flex-col',
           'h-screen lg:h-screen',
           'transform transition-transform duration-300 lg:transform-none',
@@ -116,6 +116,7 @@ export function AdminShell({
               alt="Whitesands School"
               width={600}
               height={189}
+              priority
               sizes="120px"
               style={{ width: 'auto' }}
               className="h-9 w-auto"
@@ -240,7 +241,7 @@ export function AdminShell({
       </aside>
 
       {/* Main */}
-      <main className="flex-1 min-w-0 min-h-screen">
+      <main className="flex-1 min-w-0 min-h-screen lg:pl-64">
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-14 pt-16 pb-20 lg:pt-12">
           {children}
         </div>
