@@ -62,7 +62,8 @@ interface Virtue {
   line: string;
 }
 
-const VIRTUES: Virtue[] = [
+// Shown until the live virtue content loads (and on a fresh/offline environment).
+const FALLBACK_VIRTUES: Virtue[] = [
   { month: 'September', name: 'Integrity', line: 'Doing what is right even when no one is watching.' },
   { month: 'October', name: 'Gratitude', line: 'Recognising the goodness already in your life.' },
   { month: 'November', name: 'Courage', line: 'Acting rightly in the face of fear or difficulty.' },
@@ -75,6 +76,19 @@ const VIRTUES: Virtue[] = [
   { month: 'June', name: 'Wisdom', line: 'Knowing how to apply knowledge well, in the moment.' },
   { month: 'July', name: 'Magnanimity', line: 'The greatness of soul to launch into the deep.' },
 ];
+
+// Academic-year order so the grid reads September-first regardless of how the
+// rows are stored.
+const MONTH_ORDER = [
+  'September', 'October', 'November', 'December', 'January', 'February',
+  'March', 'April', 'May', 'June', 'July', 'August',
+];
+
+interface StoredVirtue {
+  month: string;
+  virtue: string;
+  definition: string;
+}
 
 interface CampusTile {
   src: string;
@@ -111,6 +125,30 @@ const CAMPUS: CampusTile[] = [
 
 export default function AboutPage() {
   const [active, setActive] = useState<string>('story');
+  const [virtues, setVirtues] = useState<Virtue[]>(FALLBACK_VIRTUES);
+
+  // Pull the live "Virtue of the month" content from the admin editor so edits
+  // appear here too. Falls back to the seed list above if the fetch fails.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/content/virtue')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data: StoredVirtue[]) => {
+        if (cancelled || !Array.isArray(data) || data.length === 0) return;
+        setVirtues(
+          [...data]
+            .sort(
+              (a, b) =>
+                MONTH_ORDER.indexOf(a.month) - MONTH_ORDER.indexOf(b.month)
+            )
+            .map((v) => ({ month: v.month, name: v.virtue, line: v.definition }))
+        );
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -348,7 +386,7 @@ export default function AboutPage() {
               className="flex lg:grid lg:grid-cols-4 gap-4 lg:gap-5 px-6 sm:px-10 lg:px-0"
               style={{ scrollSnapType: 'x mandatory' }}
             >
-              {VIRTUES.map((v, i) => (
+              {virtues.map((v, i) => (
                 <motion.li
                   key={v.month}
                   initial={{ opacity: 0, y: 16 }}

@@ -45,6 +45,7 @@ const COLUMN_GROUPS: { heading: string; links: { label: string; href: string }[]
       { label: 'Apply for admission', href: '/admissions' },
       { label: 'Fees Portal', href: '/fees-portal' },
       { label: 'News & Stories', href: '/news' },
+      { label: 'Photo Gallery', href: '/gallery' },
       { label: 'Contact', href: '/contact' },
     ],
   },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -306,8 +306,39 @@ function Timeline() {
 // ---------------------------------------------------------------------------
 
 function Tributes() {
+  const [tributes, setTributes] = useState<Tribute[]>(TRIBUTES);
   const [active, setActive] = useState(0);
-  const tribute = TRIBUTES[active];
+
+  // Pull live alumni quotes from the Testimonials editor (Student / Alumni).
+  // Falls back to the seed tributes above if none are set or the fetch fails.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/content/testimonials')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then(
+        (
+          data: { type: string; quote: string; name: string; role: string }[]
+        ) => {
+          if (cancelled || !Array.isArray(data)) return;
+          const alumni = data
+            .filter((t) => t.type === 'student' && t.quote)
+            .map((t) => ({
+              quote: t.quote,
+              attribution: t.role ? `${t.name} · ${t.role}` : t.name,
+            }));
+          if (alumni.length > 0) {
+            setTributes(alumni);
+            setActive(0);
+          }
+        }
+      )
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const tribute = tributes[active];
 
   return (
     <section className="bg-white py-24 lg:py-32">
@@ -344,7 +375,7 @@ function Tributes() {
 
         {/* Pager dots */}
         <div className="mt-10 flex items-center justify-center gap-2">
-          {TRIBUTES.map((_, i) => {
+          {tributes.map((_, i) => {
             const isActive = i === active;
             return (
               <button

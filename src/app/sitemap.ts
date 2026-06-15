@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { SITE } from '@/lib/site';
-import { getNews } from '@/lib/content';
+import { readContent } from '@/lib/content-store';
+import type { NewsPost } from '@/types';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE.url.replace(/\/$/, '');
   const now = new Date();
 
@@ -18,12 +19,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/our-people', priority: 0.85, freq: 'monthly' },
     { path: '/alumni-prizes', priority: 0.7, freq: 'yearly' },
     { path: '/news', priority: 0.75, freq: 'weekly' },
+    { path: '/gallery', priority: 0.6, freq: 'monthly' },
     { path: '/contact', priority: 0.8, freq: 'monthly' },
     { path: '/fees-portal', priority: 0.6, freq: 'yearly' },
     { path: '/25th-anniversary', priority: 0.6, freq: 'yearly' },
   ];
 
-  const news = getNews().map((post) => ({
+  const news = (await readContent<NewsPost[]>('news'))
+    .filter((post) => post.published)
+    .map((post) => ({
     url: `${base}/news/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: 'monthly' as const,

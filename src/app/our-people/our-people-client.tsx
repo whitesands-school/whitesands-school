@@ -9,7 +9,8 @@ import { PlayCircle, X } from 'lucide-react';
 import { PageHero } from '@/components/sections/PageHero';
 import { media, video } from '@/lib/media';
 import { STAFF_CATEGORIES } from '@/lib/staff-categories';
-import type { StaffMember } from '@/types';
+import type { ParentVideoTestimonial } from '@/lib/testimonials';
+import type { StaffMember, Testimonial } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -39,7 +40,8 @@ interface ParentVideo {
   video: string;
 }
 
-const PARENT_VIDEOS: ParentVideo[] = [
+// Shown only if the Testimonials editor has no parent videos yet.
+const FALLBACK_PARENT_VIDEOS: ParentVideo[] = [
   {
     id: 'abu',
     name: 'Mr. & Mrs. Abu',
@@ -111,7 +113,17 @@ type StaffFilter = 'all' | (typeof STAFF_CATEGORIES)[number];
 // Page
 // ---------------------------------------------------------------------------
 
-export function OurPeopleClient({ staff }: { staff: StaffMember[] }) {
+export function OurPeopleClient({
+  staff,
+  parentVideos,
+  alumniQuotes,
+  staffQuotes,
+}: {
+  staff: StaffMember[];
+  parentVideos: ParentVideoTestimonial[];
+  alumniQuotes: Testimonial[];
+  staffQuotes: Testimonial[];
+}) {
   const [active, setActive] = useState<TabValue>('staff');
 
   return (
@@ -138,16 +150,16 @@ export function OurPeopleClient({ staff }: { staff: StaffMember[] }) {
         <TabBar active={active} />
 
         <Tabs.Content value="parents" forceMount hidden={active !== 'parents'}>
-          <ParentsPanel />
+          <ParentsPanel videos={parentVideos} />
         </Tabs.Content>
         <Tabs.Content value="staff" forceMount hidden={active !== 'staff'}>
-          <StaffPanel staff={staff} />
+          <StaffPanel staff={staff} quotes={staffQuotes} />
         </Tabs.Content>
         <Tabs.Content value="students" forceMount hidden={active !== 'students'}>
           <StudentsPanel />
         </Tabs.Content>
         <Tabs.Content value="alumni" forceMount hidden={active !== 'alumni'}>
-          <AlumniPanel />
+          <AlumniPanel quotes={alumniQuotes} />
         </Tabs.Content>
       </Tabs.Root>
     </>
@@ -197,7 +209,8 @@ function TabBar({ active }: { active: TabValue }) {
 // PARENTS
 // ---------------------------------------------------------------------------
 
-function ParentsPanel() {
+function ParentsPanel({ videos }: { videos: ParentVideoTestimonial[] }) {
+  const items = videos.length > 0 ? videos : FALLBACK_PARENT_VIDEOS;
   const [active, setActive] = useState<ParentVideo | null>(null);
 
   useEffect(() => {
@@ -274,13 +287,13 @@ function ParentsPanel() {
           <div className="max-w-3xl mb-14">
             <Eyebrow className="text-deep">In their own words</Eyebrow>
             <h2 className="mt-5 font-serif text-deep" style={H2}>
-              Four families on the{' '}
+              Families on the{' '}
               <span className="italic">partnership.</span>
             </h2>
           </div>
 
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
-            {PARENT_VIDEOS.map((p) => (
+            {items.map((p) => (
               <li key={p.id}>
                 <article className="group flex flex-col h-full">
                   <button
@@ -380,7 +393,13 @@ function ParentsPanel() {
 // STAFF
 // ---------------------------------------------------------------------------
 
-function StaffPanel({ staff }: { staff: StaffMember[] }) {
+function StaffPanel({
+  staff,
+  quotes,
+}: {
+  staff: StaffMember[];
+  quotes: Testimonial[];
+}) {
   const allStaff = staff;
   const [filter, setFilter] = useState<StaffFilter>('all');
 
@@ -415,6 +434,7 @@ function StaffPanel({ staff }: { staff: StaffMember[] }) {
   }, [allStaff, activeFilter]);
 
   return (
+    <>
     <section className="bg-white py-24 lg:py-28 scroll-mt-40">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
         {/* Header */}
@@ -466,6 +486,20 @@ function StaffPanel({ staff }: { staff: StaffMember[] }) {
         )}
       </div>
     </section>
+
+      {/* Staff voices — driven by the Testimonials editor (Staff) */}
+      <QuoteWall
+        eyebrow="In their own words"
+        accent="text-bold"
+        heading={
+          <>
+            From the{' '}
+            <span className="italic">staffroom.</span>
+          </>
+        }
+        quotes={quotes}
+      />
+    </>
   );
 }
 
@@ -636,7 +670,7 @@ function StudentsPanel() {
 // ALUMNI
 // ---------------------------------------------------------------------------
 
-function AlumniPanel() {
+function AlumniPanel({ quotes }: { quotes: Testimonial[] }) {
   return (
     <>
       <section className="bg-white py-24 lg:py-28 scroll-mt-40">
@@ -700,6 +734,19 @@ function AlumniPanel() {
           </div>
         </div>
       </section>
+
+      {/* Alumni voices — driven by the Testimonials editor (Student / Alumni) */}
+      <QuoteWall
+        eyebrow="In their own words"
+        accent="text-muted"
+        heading={
+          <>
+            What the old boys{' '}
+            <span className="italic">say.</span>
+          </>
+        }
+        quotes={quotes}
+      />
 
       {/* Notable destinations */}
       <section className="bg-white py-24 lg:py-28">
@@ -863,5 +910,62 @@ function Prose({ children }: { children: React.ReactNode }) {
     <div className="mt-8 space-y-5 font-serif text-lg text-dark/85 leading-[1.65]">
       {children}
     </div>
+  );
+}
+
+// A grid of text testimonials. Renders nothing when there are no quotes, so an
+// empty editor type never leaves a stranded heading on the page.
+function QuoteWall({
+  eyebrow,
+  heading,
+  accent,
+  quotes,
+}: {
+  eyebrow: string;
+  heading: React.ReactNode;
+  accent: string;
+  quotes: Testimonial[];
+}) {
+  if (quotes.length === 0) return null;
+  return (
+    <section className="bg-offwhite py-20 lg:py-24">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+        <div className="max-w-3xl mb-12">
+          <Eyebrow className={accent}>{eyebrow}</Eyebrow>
+          <h2 className="mt-5 font-serif text-deep" style={H2}>
+            {heading}
+          </h2>
+        </div>
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          {quotes.map((t, i) => (
+            <motion.li
+              key={t.id}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{
+                duration: 0.5,
+                delay: (i % 4) * 0.06,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="flex h-full flex-col bg-white p-7 lg:p-8 rounded-sm border-t-2 border-lemon"
+            >
+              <blockquote className="font-serif italic text-lg lg:text-xl text-deep leading-relaxed">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <div className="mt-6">
+                <p className="font-serif text-base text-deep">{t.name}</p>
+                <p
+                  className="mt-1 font-roboto text-[10px] uppercase text-muted"
+                  style={{ letterSpacing: '0.22em' }}
+                >
+                  {t.role}
+                </p>
+              </div>
+            </motion.li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }

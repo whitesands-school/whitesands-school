@@ -6,20 +6,22 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PlayCircle, X } from 'lucide-react';
 import { media, video } from '@/lib/media';
 
-interface ParentTestimonial {
+export interface ParentTestimonial {
   id: string;
   name: string;
-  sonYear: string;
+  role: string;
   quote: string;
   poster: string;
   video: string;
 }
 
-const parents: ParentTestimonial[] = [
+// Used only if the content store returns no parent video testimonials, so the
+// homepage still renders something on a fresh or unreachable environment.
+const FALLBACK_PARENTS: ParentTestimonial[] = [
   {
     id: 'abu',
     name: 'Mr. & Mrs. Abu',
-    sonYear: 'SS3',
+    role: 'Parent of SS3',
     quote:
       'What surprised us was how well the teachers know our son — not just his grades, but his temperament.',
     poster: '/videos/web/poster-mr-mrs-abu-parents-review.jpg',
@@ -28,7 +30,7 @@ const parents: ParentTestimonial[] = [
   {
     id: 'shok',
     name: 'Engineer Shok Julius',
-    sonYear: 'SS1',
+    role: 'Parent of SS1',
     quote:
       'The formation is serious. Our son comes home with conviction, not just homework.',
     poster: '/videos/web/poster-engineer-shok-julius-parents-review.jpg?tr=cm-extract,x-0,y-50,w-800,h-1374',
@@ -37,7 +39,7 @@ const parents: ParentTestimonial[] = [
   {
     id: 'amos-penda',
     name: 'Mrs. Amos-Penda',
-    sonYear: 'JS2',
+    role: 'Parent of JS2',
     quote:
       'The school treats parents like partners. We are consulted, kept close, and respected.',
     poster: '/videos/web/poster-mrs-amos-penda-parents-review.jpg',
@@ -45,7 +47,12 @@ const parents: ParentTestimonial[] = [
   },
 ];
 
-export function CommunityTestimonials() {
+export function CommunityTestimonials({
+  parents,
+}: {
+  parents?: ParentTestimonial[];
+}) {
+  const items = parents && parents.length > 0 ? parents : FALLBACK_PARENTS;
   const [active, setActive] = useState<ParentTestimonial | null>(null);
 
   useEffect(() => {
@@ -88,7 +95,7 @@ export function CommunityTestimonials() {
         {/* Cards — vertical 9:16 posters (source is 800×1420 phone videos).
             Constrained to max-w-5xl so the row reads cinematic, not oversized. */}
         <ul className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-          {parents.map((p, i) => (
+          {items.map((p, i) => (
             <motion.li
               key={p.id}
               initial={{ opacity: 0, y: 24 }}
@@ -133,7 +140,7 @@ export function CommunityTestimonials() {
                     className="mt-1 font-roboto text-[11px] uppercase text-muted"
                     style={{ letterSpacing: '0.22em' }}
                   >
-                    Parent of {p.sonYear}
+                    {p.role}
                   </p>
                   <blockquote className="mt-3 font-sans italic text-sm lg:text-base text-dark/75 leading-relaxed line-clamp-2">
                     &ldquo;{p.quote}&rdquo;
@@ -188,7 +195,7 @@ export function CommunityTestimonials() {
                   className="mt-1 font-roboto text-xs uppercase text-white/60"
                   style={{ letterSpacing: '0.22em' }}
                 >
-                  Parent of {active.sonYear}
+                  {active.role}
                 </p>
               </div>
             </motion.div>

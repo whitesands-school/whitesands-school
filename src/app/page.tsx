@@ -9,12 +9,19 @@ import { LatestNews } from '@/components/sections/LatestNews';
 import { CommunityTestimonials } from '@/components/sections/CommunityTestimonials';
 import { SchoolJsonLd } from '@/components/seo/SchoolJsonLd';
 import { readContent } from '@/lib/content-store';
-import type { NewsPost } from '@/types';
+import { toParentVideos } from '@/lib/testimonials';
+import type { NewsPost, Testimonial } from '@/types';
 
 export default async function Home() {
   const news = (await readContent<NewsPost[]>('news'))
     .filter((p) => p.published)
     .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+
+  // The homepage showcases parent *video* testimonials, driven by the admin
+  // Testimonials editor.
+  const parentTestimonials = toParentVideos(
+    await readContent<Testimonial[]>('testimonials')
+  );
 
   return (
     <>
@@ -27,7 +34,7 @@ export default async function Home() {
       <LifeAtSchool />
       <StatsStrip />
       <LatestNews posts={news} />
-      <CommunityTestimonials />
+      <CommunityTestimonials parents={parentTestimonials} />
       {/*
         CTAStrip intentionally omitted — the global Footer's first row
         ("Come and see · Book a visit", bg-deep) serves as the universal
