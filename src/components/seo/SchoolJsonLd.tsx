@@ -21,7 +21,7 @@ export function SchoolJsonLd() {
     foundingDate: '2000',
     slogan: SITE.motto,
     keywords:
-      'boys school Lekki, all-boys secondary school Lagos, Catholic school Lagos, JS1 admission Lagos',
+      'boys school Lekki, all-boys secondary school Lagos, Catholic education Lagos, JS1 admission Lagos',
     // All-boys school — helps "boys school" queries match.
     audience: {
       '@type': 'EducationalAudience',

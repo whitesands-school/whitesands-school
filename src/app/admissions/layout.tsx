@@ -3,7 +3,7 @@ import { SITE } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Admissions',
-  description: 'Apply to Whitesands School, an all-boys Catholic secondary school in Lekki, Lagos. Entry into JS1 with limited transfer places — see the process, dates, and how to book a visit.',
+  description: 'Apply to Whitesands School, an all-boys secondary school in Lekki, Lagos offering Catholic education. Entry into JS1 with limited transfer places — see the process, dates, and how to book a visit.',
 };
 
 // FAQPage structured data — answers the questions parents actually search,
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: 'Is Whitesands School a boys-only school?',
-    a: 'Yes. Whitesands School is an all-boys Catholic secondary school in Lekki Phase 1, Lagos, running Junior Secondary (JS1–JS3) and Senior Secondary (SS1–SS3).',
+    a: 'Yes. Whitesands School is an all-boys secondary school in Lekki Phase 1, Lagos offering Catholic education, running Junior Secondary (JS1–JS3) and Senior Secondary (SS1–SS3).',
   },
   {
     q: 'Which classes does Whitesands School admit into?',

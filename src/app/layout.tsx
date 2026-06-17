@@ -48,7 +48,8 @@ export const metadata: Metadata = {
   keywords: [
     "boys school Lekki",
     "all-boys secondary school Lagos",
-    "Catholic school Lagos",
+    "Catholic education Lagos",
+    "school offering Catholic education Lagos",
     "Whitesands School",
     "best boys school in Nigeria",
     "secondary school Lekki Phase 1",
