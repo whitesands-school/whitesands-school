@@ -2,7 +2,7 @@ export const SITE = {
   name: 'Whitesands School',
   motto: 'Duc in Altum',
   description:
-    'Whitesands School is a Catholic secondary school for boys in Lekki, Lagos (JS1–SS3), committed to academic excellence and the formation of character, faith and grit since 2000.',
+    'Whitesands School is an all-boys secondary school in Lekki, Lagos (JS1–SS3) offering Catholic education, committed to academic excellence and the formation of character, faith and grit since 2000.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.whitesands.org.ng',
   email: 'info@whitesands.org.ng',
   admissionsEmail: 'admissions@whitesands.org.ng',

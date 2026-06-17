@@ -1,7 +1,7 @@
 [
   {
     "id": "testimonial-parent-amos-penda",
-    "quote": "Whitesands has been everything we hoped for as a Catholic school — academically serious, but also a community that takes the formation of our children personally.",
+    "quote": "Whitesands has been everything we hoped for — academically serious, but also a community that takes the Catholic formation of our children personally.",
     "name": "Mrs. Amos-Penda",
     "role": "Whitesands Parent",
     "type": "parent",
@@ -61,13 +61,6 @@
     "quote": "I have taught at three schools in my career, and Whitesands is singular. The culture of excellence is real — not performative. Students want to learn, and that makes teaching here a joy.",
     "name": "Mr. Emmanuel Okwu",
     "role": "Head of English & Literature",
-    "type": "staff"
-  },
-  {
-    "id": "testimonial-staff-002",
-    "quote": "Teaching here for ten years has been the privilege of my professional life. The students push me to be better every single day. That energy is rare.",
-    "name": "Fr. Patrick Umeh",
-    "role": "School Chaplain",
     "type": "staff"
   }
 ]

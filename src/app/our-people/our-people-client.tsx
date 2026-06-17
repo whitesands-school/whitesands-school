@@ -78,11 +78,11 @@ interface Destination {
 }
 
 const DESTINATIONS: Destination[] = [
-  { university: 'Harvard University', city: 'Cambridge, MA' },
-  { university: 'University of Oxford', city: 'Oxford, UK' },
+  { university: 'Pan-Atlantic University', city: 'Lagos, NG' },
+  { university: 'University of Lagos', city: 'Lagos, NG' },
+  { university: 'University of Ibadan', city: 'Ibadan, NG' },
   { university: 'Imperial College London', city: 'London, UK' },
-  { university: 'London School of Economics', city: 'London, UK' },
-  { university: 'MIT', city: 'Cambridge, MA' },
+  { university: 'Harvard University', city: 'Cambridge, MA' },
   { university: 'University of Toronto', city: 'Toronto, ON' },
 ];
 
@@ -94,7 +94,6 @@ interface AlumniStat {
 const ALUMNI_STATS: AlumniStat[] = [
   { value: '1,000+', label: 'Alumni' },
   { value: '18', label: 'Graduating Classes' },
-  { value: '70%', label: 'Studied Abroad' },
   { value: '25', label: 'Years' },
 ];
 
@@ -688,10 +687,12 @@ function AlumniPanel({ quotes }: { quotes: Testimonial[] }) {
               and across the world.
             </p>
             <p>
-              Over seventy percent of Whitesands boys continue their studies
-              abroad. Many return to Nigeria after, to build careers and
-              raise families. A growing number send their own sons back to
-              the school that formed them.
+              Whitesands boys go on to leading universities at home and
+              abroad — Pan-Atlantic University and the University of Lagos
+              here in Nigeria, and institutions across the United Kingdom,
+              the United States and Canada. Many build their careers in
+              Lagos, and a growing number send their own sons back to the
+              school that formed them.
             </p>
           </Prose>
         </div>
@@ -700,7 +701,7 @@ function AlumniPanel({ quotes }: { quotes: Testimonial[] }) {
       {/* Stats */}
       <section className="bg-offwhite py-20">
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 lg:divide-x lg:divide-deep/15">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-12 sm:divide-x sm:divide-deep/15">
             {ALUMNI_STATS.map((s, i) => (
               <motion.div
                 key={s.label}

@@ -33,9 +33,9 @@ export function OutcomesStatement() {
             letterSpacing: '-0.02em',
           }}
         >
-          Over seventy percent of Whitesands boys continue their studies{' '}
-          <span className="italic">abroad.</span> At Harvard, Imperial, Oxford,
-          LSE, MIT, and Toronto.
+          Whitesands boys go on to leading universities at home and{' '}
+          <span className="italic">abroad.</span> Pan-Atlantic, Lagos and
+          Ibadan in Nigeria; Harvard, Imperial and Toronto beyond.
         </motion.h2>
 
         <motion.p

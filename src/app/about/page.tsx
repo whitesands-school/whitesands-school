@@ -27,7 +27,7 @@ interface PhilosophyBlock {
 
 const PHILOSOPHY: PhilosophyBlock[] = [
   {
-    label: 'Integral Education',
+    label: 'Integral Formation',
     body: [
       'We educate the whole person, not isolated faculties. Intellect, character and faith are formed together, in the same school day, by the same staff.',
       'Academic excellence and a serious life of virtue belong together. Either one without the other is incomplete.',
@@ -47,12 +47,31 @@ const PHILOSOPHY: PhilosophyBlock[] = [
       'We work in close partnership with families through regular tutorials, mentoring conversations, and a shared formation programme. The home and the school pull in the same direction.',
     ],
   },
+];
+
+interface Protagonist {
+  label: string;
+  line: string;
+  accent: string;
+}
+
+// The three protagonists (actors) of the school's educational project, in the
+// order the school names them.
+const PROTAGONISTS: Protagonist[] = [
   {
-    label: 'School Personnel',
-    body: [
-      'Our staff are chosen for character as much as for credentials. The men who teach here are themselves committed to the formation we offer the boys.',
-      'A teacher who lives what he teaches is the most important resource the school has.',
-    ],
+    label: 'Parents',
+    line: 'The first and primary educators of their sons. The school works with them, never around them.',
+    accent: 'bg-lemon',
+  },
+  {
+    label: 'Teachers',
+    line: 'Mentors chosen for character as much as credentials, who live what they teach and know each boy by name.',
+    accent: 'bg-bold',
+  },
+  {
+    label: 'Students',
+    line: 'Young men formed to launch into the deep — intellectually capable, morally grounded, ready to lead.',
+    accent: 'bg-deep',
   },
 ];
 
@@ -258,15 +277,16 @@ export default function AboutPage() {
         <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12">
           <Eyebrow>Who we are</Eyebrow>
           <h2 className="mt-5 font-serif text-deep" style={SERIF_H}>
-            A Catholic school in{' '}
+            An all-boys school in{' '}
             <span className="italic">Lekki.</span>
           </h2>
 
           <Prose>
             <p>
-              Whitesands is a Catholic school for boys in Lekki, Lagos. It
-              exists to form young men who are intellectually capable,
-              morally grounded and prepared to lead, in that order.
+              Whitesands is an all-boys school in Lekki, Lagos, that offers
+              Catholic education. It exists to form young men who are
+              intellectually capable, morally grounded and prepared to lead,
+              in that order.
             </p>
             <p>
               Faith and reason belong together here. The classrooms are
@@ -299,6 +319,11 @@ export default function AboutPage() {
               venture into deeper waters. Deeper knowledge, deeper faith,
               deeper service.
             </p>
+            <p>
+              Boys of every background are welcome at Whitesands, whatever
+              their faith, culture or means. What the school asks of every
+              family is a shared commitment to the formation of their son.
+            </p>
           </Prose>
         </div>
       </section>
@@ -312,12 +337,12 @@ export default function AboutPage() {
           <div className="max-w-3xl">
             <Eyebrow>Educational philosophy</Eyebrow>
             <h2 className="mt-5 font-serif text-deep" style={SERIF_H}>
-              Four convictions hold the philosophy{' '}
+              Three pillars hold the philosophy{' '}
               <span className="italic">together.</span>
             </h2>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-14">
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-x-10 lg:gap-x-16 gap-y-14">
             {PHILOSOPHY.map((p, i) => (
               <motion.div
                 key={p.label}
@@ -343,6 +368,43 @@ export default function AboutPage() {
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* The three protagonists */}
+          <div className="mt-20 lg:mt-24 pt-16 border-t border-deep/10">
+            <div className="max-w-3xl">
+              <Eyebrow>The three protagonists</Eyebrow>
+              <h3 className="mt-5 font-serif text-deep text-2xl lg:text-3xl leading-tight">
+                Every formation has three actors:{' '}
+                <span className="italic">
+                  parents, teachers and students.
+                </span>
+              </h3>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-x-10 lg:gap-x-16 gap-y-10">
+              {PROTAGONISTS.map((p, i) => (
+                <motion.div
+                  key={p.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: i * 0.08,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <span className={`block h-1 w-10 ${p.accent} rounded-full`} />
+                  <p className="mt-5 font-serif text-xl text-deep">
+                    {p.label}
+                  </p>
+                  <p className="mt-3 font-sans text-base text-dark/75 leading-relaxed max-w-xs">
+                    {p.line}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

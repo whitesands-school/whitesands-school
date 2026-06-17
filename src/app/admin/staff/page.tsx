@@ -520,6 +520,14 @@ function StaffDrawer({
                   onChange={(photo) => setF('photo', photo)}
                   previewAspect="aspect-3/4"
                 />
+                <p className="-mt-2 font-sans text-xs text-muted leading-relaxed bg-deep/[0.03] border border-deep/10 rounded-sm px-3 py-2.5">
+                  <span className="font-medium text-deep">Photo guidance:</span>{' '}
+                  use a head-and-shoulders portrait against a plain
+                  background, shot in uniform. Crop so the face is centred and
+                  roughly the same size as the other staff portraits — the same
+                  routine used for the Whitesands yearbook. Consistent face
+                  sizes keep the Our People grid looking even.
+                </p>
 
                 <Field label="Short bio" hint="optional">
                   <textarea

@@ -11,18 +11,18 @@ interface Pillar {
 const pillars: Pillar[] = [
   {
     number: '01',
-    title: 'Parental involvement',
-    body: 'Parents are the first and primary educators of their children. At Whitesands, we work in close partnership with families — through regular tutorials, mentoring conversations and a shared formation programme — so that the school and the home pull in the same direction.',
-  },
-  {
-    number: '02',
-    title: 'Integral education',
+    title: 'Integral formation',
     body: 'We educate the whole person — intellect, character and faith — not in separate compartments, but as a single, coherent formation. Academic excellence, virtue, and a serious life of prayer belong together, and shape one another.',
   },
   {
-    number: '03',
+    number: '02',
     title: 'Personalised attention',
     body: 'Every boy meets one-on-one with a personal mentor throughout his time at the school. Class sizes stay small. Teachers know each child by name, and follow his growth closely — academically, personally and spiritually.',
+  },
+  {
+    number: '03',
+    title: 'Parental involvement',
+    body: 'Parents are the first and primary educators of their children. At Whitesands, we work in close partnership with families — through regular tutorials, mentoring conversations and a shared formation programme — so that the school and the home pull in the same direction.',
   },
 ];
 
