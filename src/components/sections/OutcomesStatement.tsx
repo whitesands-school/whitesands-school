@@ -34,8 +34,8 @@ export function OutcomesStatement() {
           }}
         >
           Whitesands boys go on to leading universities at home and{' '}
-          <span className="italic">abroad.</span> Pan-Atlantic, Lagos and
-          Ibadan in Nigeria; Harvard, Imperial and Toronto beyond.
+          <span className="italic">abroad.</span> PAU, UNILAG and
+          UI in Nigeria; Harvard, Imperial and Toronto beyond.
         </motion.h2>
 
         <motion.p
