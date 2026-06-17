@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Local AI assistant instructions — kept out of the repo
+CLAUDE.md
+
 # dependencies
 /node_modules
 /.pnp
