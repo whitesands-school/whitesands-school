@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/', priority: 1.0, freq: 'weekly' },
     { path: '/about', priority: 0.9, freq: 'monthly' },
     { path: '/admissions', priority: 0.95, freq: 'weekly' },
+    { path: '/book-list', priority: 0.7, freq: 'monthly' },
     { path: '/what-we-offer', priority: 0.85, freq: 'monthly' },
     { path: '/what-we-offer/academics', priority: 0.8, freq: 'monthly' },
     { path: '/what-we-offer/extracurricular', priority: 0.8, freq: 'monthly' },

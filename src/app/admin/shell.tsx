@@ -20,6 +20,8 @@ import {
   ShieldCheck,
   KeyRound,
   Inbox,
+  CalendarDays,
+  BookOpen,
 } from 'lucide-react';
 import { media } from '@/lib/media';
 
@@ -44,6 +46,8 @@ const NAV_GROUPS: {
       { href: '/admin/testimonials', label: 'Testimonials', icon: Quote },
       { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon },
       { href: '/admin/virtue', label: 'Virtue of the Month', icon: Star },
+      { href: '/admin/books', label: 'Book List', icon: BookOpen },
+      { href: '/admin/admissions', label: 'Admissions Dates', icon: CalendarDays },
     ],
   },
   {

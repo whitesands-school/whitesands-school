@@ -9,13 +9,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Compass, Cross, Users } from 'lucide-react';
 import { PageHero } from '@/components/sections/PageHero';
 import { media } from '@/lib/media';
+import type { AdmissionsInfo } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 const APPLICATIONS_URL = 'https://applications.whitesands.org.ng/';
-const APPLICATION_CLOSE_DATE = '9 May 2026';
+
+// Shown until the live admissions content loads, and on a fresh/offline
+// environment. Kept in sync with src/content/admissions.json.
+const FALLBACK_ADMISSIONS: AdmissionsInfo = {
+  academicYear: '2026/2027',
+  applicationCloseDate: '9 May 2026',
+  schedule: [
+    { id: 'js1', category: 'JS1', opens: '1 October 2025', exam: '9 May 2026' },
+    { id: 'transfer', category: 'Transfer', opens: '1 October 2025', exam: '9 May 2026' },
+  ],
+};
 
 const FIT_BULLETS = [
   {
@@ -78,11 +89,6 @@ const STEPS = [
   },
 ];
 
-const SCHEDULE = [
-  { category: 'JS1', opens: '1 October 2025', exam: '9 May 2026' },
-  { category: 'Transfer', opens: '1 October 2025', exam: '9 May 2026' },
-];
-
 const SON_CLASSES = ['JS1', 'JS2', 'JS3', 'SS1'];
 
 // ---------------------------------------------------------------------------
@@ -108,6 +114,25 @@ type VisitFormValues = z.infer<typeof VisitFormSchema>;
 // ---------------------------------------------------------------------------
 
 export default function AdmissionsPage() {
+  // Pull the live admissions dates from the admin editor so edits appear here
+  // without a deploy. Falls back to the seed values above if the fetch fails.
+  const [admissions, setAdmissions] =
+    useState<AdmissionsInfo>(FALLBACK_ADMISSIONS);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/content/admissions')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data: AdmissionsInfo) => {
+        if (cancelled || !data || !Array.isArray(data.schedule)) return;
+        setAdmissions(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <>
       {/* 1 ── PAGE HERO ─────────────────────────────────────── */}
@@ -118,7 +143,7 @@ export default function AdmissionsPage() {
         overlay={0.6}
         eyebrow="Admissions"
         title={<>Apply to <span className="italic text-lemon">Whitesands.</span></>}
-        subtitle={`Open for 2026/2027. Applications close ${APPLICATION_CLOSE_DATE}. Limited slots.`}
+        subtitle={`Open for ${admissions.academicYear}. Applications close ${admissions.applicationCloseDate}. Limited slots.`}
         ctas={
           <Link
             href="#visit"
@@ -274,7 +299,7 @@ export default function AdmissionsPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Key dates for 2026/2027.
+            Key dates for {admissions.academicYear}.
           </h2>
 
           <div className="mt-10 overflow-x-auto">
@@ -293,8 +318,8 @@ export default function AdmissionsPage() {
                 </tr>
               </thead>
               <tbody>
-                {SCHEDULE.map((row) => (
-                  <tr key={row.category} className="border-b border-deep/10">
+                {admissions.schedule.map((row) => (
+                  <tr key={row.id} className="border-b border-deep/10">
                     <td className="py-5 pr-6 font-serif text-lg text-deep">
                       {row.category}
                     </td>

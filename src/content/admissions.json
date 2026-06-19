@@ -1,0 +1,18 @@
+{
+  "academicYear": "2026/2027",
+  "applicationCloseDate": "9 May 2026",
+  "schedule": [
+    {
+      "id": "js1",
+      "category": "JS1",
+      "opens": "1 October 2025",
+      "exam": "9 May 2026"
+    },
+    {
+      "id": "transfer",
+      "category": "Transfer",
+      "opens": "1 October 2025",
+      "exam": "9 May 2026"
+    }
+  ]
+}

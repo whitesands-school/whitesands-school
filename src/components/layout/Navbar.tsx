@@ -27,6 +27,7 @@ const NAV_LINKS = [
   { label: 'What We Offer', href: '/what-we-offer' },
   { label: 'Our People', href: '/our-people' },
   { label: 'Admissions', href: '/admissions' },
+  { label: 'Book List', href: '/book-list' },
   { label: 'Fees', href: '/fees-portal' },
   { label: 'News', href: '/news' },
   { label: 'Contact', href: '/contact' },

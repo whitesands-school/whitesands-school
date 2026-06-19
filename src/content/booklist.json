@@ -1,0 +1,81 @@
+{
+  "intro": "The official book list for the coming session. Titles are grouped by class. Please buy the exact editions listed; the school bookshop stocks every title, or you may source them elsewhere.",
+  "categories": [
+    {
+      "id": "js1",
+      "name": "JS1",
+      "description": "Junior Secondary, Year 1",
+      "books": [
+        {
+          "id": "js1-eng",
+          "title": "New Concept English for JSS, Book 1",
+          "author": "M. Macaulay et al.",
+          "subject": "English Language"
+        },
+        {
+          "id": "js1-math",
+          "title": "New General Mathematics for JSS, Book 1",
+          "author": "M. F. Macrae et al.",
+          "subject": "Mathematics"
+        },
+        {
+          "id": "js1-bst",
+          "title": "STAN Basic Science and Technology for JSS, Book 1",
+          "author": "Science Teachers Association of Nigeria",
+          "subject": "Basic Science & Technology"
+        },
+        {
+          "id": "js1-lit",
+          "title": "The Drummer Boy",
+          "author": "Cyprian Ekwensi",
+          "subject": "Literature",
+          "note": "Set text"
+        }
+      ]
+    },
+    {
+      "id": "js2",
+      "name": "JS2",
+      "description": "Junior Secondary, Year 2",
+      "books": [
+        {
+          "id": "js2-eng",
+          "title": "New Concept English for JSS, Book 2",
+          "author": "M. Macaulay et al.",
+          "subject": "English Language"
+        },
+        {
+          "id": "js2-math",
+          "title": "New General Mathematics for JSS, Book 2",
+          "author": "M. F. Macrae et al.",
+          "subject": "Mathematics"
+        }
+      ]
+    },
+    {
+      "id": "ss1",
+      "name": "SS1",
+      "description": "Senior Secondary, Year 1",
+      "books": [
+        {
+          "id": "ss1-eng",
+          "title": "Exam Focus English Language for SSCE & UTME",
+          "author": "Various",
+          "subject": "English Language"
+        },
+        {
+          "id": "ss1-math",
+          "title": "New General Mathematics for SSS, Book 1",
+          "author": "M. F. Macrae et al.",
+          "subject": "Mathematics"
+        },
+        {
+          "id": "ss1-phy",
+          "title": "New School Physics for Senior Secondary Schools",
+          "author": "M. W. Anyakoha",
+          "subject": "Physics"
+        }
+      ]
+    }
+  ]
+}

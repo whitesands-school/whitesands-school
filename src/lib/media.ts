@@ -27,6 +27,14 @@ export function media(path: string | null | undefined): string {
 export const CLOUDINARY_VIDEO_BASE =
   'https://res.cloudinary.com/dud5owpai/video/upload'
 
-export function video(publicId: string): string {
-  return `${CLOUDINARY_VIDEO_BASE}/q_auto,vc_h264/${publicId}.mp4`
+export function video(
+  publicId: string,
+  opts?: { silent?: boolean }
+): string {
+  // `ac_none` drops the audio track from the delivered file entirely (not just
+  // muted in the player) — used for the hero, whose source clip carries a
+  // copyrighted backing track we must not serve.
+  const transforms = ['q_auto', 'vc_h264']
+  if (opts?.silent) transforms.push('ac_none')
+  return `${CLOUDINARY_VIDEO_BASE}/${transforms.join(',')}/${publicId}.mp4`
 }

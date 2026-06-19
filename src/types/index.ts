@@ -66,3 +66,36 @@ export interface SitePopover {
   active: boolean
   expiresAt?: string
 }
+
+export interface AdmissionsScheduleRow {
+  id: string
+  category: string
+  opens: string
+  exam: string
+}
+
+export interface AdmissionsInfo {
+  academicYear: string
+  applicationCloseDate: string
+  schedule: AdmissionsScheduleRow[]
+}
+
+export interface BookListItem {
+  id: string
+  title: string
+  author?: string
+  subject?: string
+  note?: string
+}
+
+export interface BookListCategory {
+  id: string
+  name: string
+  description?: string
+  books: BookListItem[]
+}
+
+export interface BookList {
+  intro?: string
+  categories: BookListCategory[]
+}

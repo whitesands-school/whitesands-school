@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import { video } from '@/lib/media';
 
 /**
@@ -20,7 +19,6 @@ const NOISE_SVG =
 
 export function HeroVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [muted, setMuted] = useState(true);
   const reduceMotion = useReducedMotion();
 
   // Safari pauses autoplay on bfcache restore; nudge it back on.
@@ -49,10 +47,10 @@ export function HeroVideo() {
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
-            src={video('hero-graduation_e31v6t')}
+            src={video('hero-graduation_e31v6t', { silent: true })}
             poster={HERO_POSTER}
             autoPlay
-            muted={muted}
+            muted
             loop
             playsInline
             preload="metadata"
@@ -208,26 +206,6 @@ export function HeroVideo() {
           />
         </span>
       </motion.a>
-
-      {/* ── Mute toggle — bottom-right, ghost background, lemon icon ─ */}
-      <motion.button
-        type="button"
-        onClick={() => {
-          const v = videoRef.current;
-          if (!v) return;
-          v.muted = !v.muted;
-          setMuted(v.muted);
-          if (!v.muted) v.play().catch(() => {});
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.9 }}
-        whileHover={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-        aria-label={muted ? 'Unmute hero video' : 'Mute hero video'}
-        className="absolute z-20 bottom-16 right-4 sm:bottom-6 sm:right-6 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/6 backdrop-blur-sm text-lemon hover:bg-white/12 transition-colors cursor-pointer"
-      >
-        {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-      </motion.button>
     </section>
   );
 }

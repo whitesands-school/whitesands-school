@@ -8,6 +8,8 @@ const PUBLIC_CONTENT = new Set<ContentName>([
   'virtue',
   'testimonials',
   'gallery',
+  'admissions',
+  'booklist',
 ])
 
 export async function GET(

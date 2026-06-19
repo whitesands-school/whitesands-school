@@ -1,4 +1,6 @@
+import admissionsFallback from '@/content/admissions.json'
 import announcementsFallback from '@/content/announcements.json'
+import booklistFallback from '@/content/booklist.json'
 import galleryFallback from '@/content/gallery.json'
 import inboxFallback from '@/content/inbox.json'
 import newsFallback from '@/content/news.json'
@@ -24,7 +26,9 @@ import virtueFallback from '@/content/virtue.json'
  */
 
 export type ContentName =
+  | 'admissions'
   | 'announcements'
+  | 'booklist'
   | 'gallery'
   | 'inbox'
   | 'news'
@@ -36,7 +40,9 @@ export type ContentName =
 const BUCKET = 'site-content'
 
 const FALLBACKS: Record<ContentName, unknown> = {
+  admissions: admissionsFallback,
   announcements: announcementsFallback,
+  booklist: booklistFallback,
   gallery: galleryFallback,
   inbox: inboxFallback,
   news: newsFallback,
