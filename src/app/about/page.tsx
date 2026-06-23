@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { PlayCircle } from 'lucide-react';
 import { PageHero } from '@/components/sections/PageHero';
 import { HouseTeamsScroll } from '@/components/sections/HouseTeamsScroll';
 import { media } from '@/lib/media';
@@ -14,6 +15,7 @@ import { media } from '@/lib/media';
 const SUB_NAV = [
   { label: 'Story', id: 'story' },
   { label: 'Who we are', id: 'who-we-are' },
+  { label: 'Vision & Mission', id: 'vision-mission' },
   { label: 'Philosophy', id: 'philosophy' },
   { label: 'Houses', id: 'houses' },
   { label: 'Virtues', id: 'virtues' },
@@ -23,6 +25,7 @@ const SUB_NAV = [
 interface PhilosophyBlock {
   label: string;
   body: string[];
+  video?: string;
 }
 
 const PHILOSOPHY: PhilosophyBlock[] = [
@@ -32,6 +35,7 @@ const PHILOSOPHY: PhilosophyBlock[] = [
       'We educate the whole person, not isolated faculties. Intellect, character and faith are formed together, in the same school day, by the same staff.',
       'Academic excellence and a serious life of virtue belong together. Either one without the other is incomplete.',
     ],
+    video: 'https://youtu.be/Bfv0ltLq0B4',
   },
   {
     label: 'Personalised Attention',
@@ -39,6 +43,7 @@ const PHILOSOPHY: PhilosophyBlock[] = [
       'Every boy meets one-on-one with a personal mentor throughout his time at the school. Class sizes are kept small. Teachers know each child by name and follow his growth closely.',
       'Formation is never a one-size-fits-all programme. It is tailored to the boy in front of us.',
     ],
+    video: 'https://youtu.be/pxhdT_qfCnI',
   },
   {
     label: 'Parental Involvement',
@@ -46,6 +51,7 @@ const PHILOSOPHY: PhilosophyBlock[] = [
       'Parents are the first and primary educators of their children. The school complements that work, it does not replace it.',
       'We work in close partnership with families through regular tutorials, mentoring conversations, and a shared formation programme. The home and the school pull in the same direction.',
     ],
+    video: 'https://youtu.be/jReRDNbXgKs',
   },
 ];
 
@@ -328,6 +334,62 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* 2b ── VISION & MISSION ─────────────────────────────── */}
+      <section id="vision-mission" className="scroll-mt-40">
+        {/* Vision — dark band */}
+        <div className="bg-deep py-24 lg:py-32">
+          <div className="max-w-4xl mx-auto px-6 sm:px-10 lg:px-12 text-center">
+            <p
+              className="font-roboto text-xs uppercase text-lemon"
+              style={{ letterSpacing: '0.28em' }}
+            >
+              Our Vision
+            </p>
+            <p
+              className="mt-8 font-serif italic text-white"
+              style={{
+                fontSize: 'clamp(1.75rem, 3.6vw, 2.75rem)',
+                lineHeight: 1.3,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              To be Nigeria&rsquo;s foremost school for the Catholic education
+              of boys &mdash; forming young men who are academically excellent,
+              morally grounded, and boldly prepared to serve.
+            </p>
+          </div>
+        </div>
+
+        {/* Mission */}
+        <div className="bg-offwhite py-24 lg:py-32">
+          <div className="max-w-3xl mx-auto px-6 sm:px-10 lg:px-12">
+            <Eyebrow>Our Mission</Eyebrow>
+            <Prose>
+              <p>
+                Whitesands School exists to provide a holistic,
+                faith-integrated education that equips boys to excel
+                academically, develop strong moral character, and contribute
+                meaningfully to society &mdash; through a rigorous curriculum, a
+                nurturing environment, and a community rooted in Catholic
+                values.
+              </p>
+              <p>
+                Our teachers are not merely instructors; they are mentors and
+                models of formation. Every lesson, every mentoring
+                conversation, and every activity on the field is ordered toward
+                one end: the full development of the human person.
+              </p>
+              <p>
+                We work with parents as the first educators of their sons,
+                recognising that the school&rsquo;s role is to complement and
+                extend the formation that begins at home. Student, school and
+                family move toward the same horizon.
+              </p>
+            </Prose>
+          </div>
+        </div>
+      </section>
+
       {/* 3 ── PHILOSOPHY ────────────────────────────────────── */}
       <section
         id="philosophy"
@@ -366,6 +428,22 @@ export default function AboutPage() {
                     <p key={j}>{para}</p>
                   ))}
                 </div>
+                {p.video && (
+                  <a
+                    href={p.video}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group mt-6 inline-flex items-center gap-2 font-roboto text-[11px] uppercase text-deep hover:text-bold transition-colors"
+                    style={{ letterSpacing: '0.22em' }}
+                  >
+                    <PlayCircle
+                      size={18}
+                      strokeWidth={1.75}
+                      className="text-bold"
+                    />
+                    Watch the film
+                  </a>
+                )}
               </motion.div>
             ))}
           </div>

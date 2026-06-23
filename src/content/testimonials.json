@@ -62,5 +62,12 @@
     "name": "Mr. Emmanuel Okwu",
     "role": "Head of English & Literature",
     "type": "staff"
+  },
+  {
+    "id": "testimonial-staff-002",
+    "quote": "Teaching here has been the privilege of my professional life. The students push me to be better every single day. That energy is rare.",
+    "name": "Eze Andrew Chinaemerem",
+    "role": "Member of Faculty",
+    "type": "staff"
   }
 ]

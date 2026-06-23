@@ -38,9 +38,12 @@ export default function BooksAdminPage() {
 
   useEffect(() => {
     fetch('/api/admin/books')
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('load'))))
       .then((d: BookList) => {
-        setData({ intro: d.intro ?? '', categories: d.categories ?? [] });
+        setData({
+          intro: d?.intro ?? '',
+          categories: Array.isArray(d?.categories) ? d.categories : [],
+        });
         setLoading(false);
       })
       .catch(() => {

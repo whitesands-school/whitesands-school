@@ -31,8 +31,11 @@ export default function AdmissionsAdminPage() {
 
   useEffect(() => {
     fetch('/api/admin/admissions')
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('load'))))
       .then((data: AdmissionsInfo) => {
+        if (!data || !Array.isArray(data.schedule)) {
+          throw new Error('Unexpected response shape');
+        }
         setInfo(data);
         setLoading(false);
       })
