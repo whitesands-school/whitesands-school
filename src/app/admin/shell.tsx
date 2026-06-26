@@ -22,6 +22,7 @@ import {
   Inbox,
   CalendarDays,
   BookOpen,
+  Images,
 } from 'lucide-react';
 import { media } from '@/lib/media';
 
@@ -48,6 +49,7 @@ const NAV_GROUPS: {
       { href: '/admin/virtue', label: 'Virtue of the Month', icon: Star },
       { href: '/admin/books', label: 'Book List', icon: BookOpen },
       { href: '/admin/admissions', label: 'Admissions Dates', icon: CalendarDays },
+      { href: '/admin/pageheaders', label: 'Page Headers', icon: Images },
     ],
   },
   {

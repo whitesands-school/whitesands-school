@@ -105,6 +105,8 @@ const VisitFormSchema = z.object({
   sonClass: z.string().min(1, 'Please select a class'),
   preferredWeek: z.string().min(1, 'Please pick a week'),
   message: z.string().max(2000).optional(),
+  // Honeypot — hidden from real users; bots tend to fill every field.
+  company: z.string().optional(),
 });
 
 type VisitFormValues = z.infer<typeof VisitFormSchema>;
@@ -508,6 +510,16 @@ function VisitForm() {
           noValidate
           className="bg-white/4 border border-white/10 rounded-md p-6 sm:p-10"
         >
+          {/* Honeypot — visually hidden, skipped by keyboard, ignored by humans */}
+          <input
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="hidden"
+            {...register('company')}
+          />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Field
               label="Parent name"

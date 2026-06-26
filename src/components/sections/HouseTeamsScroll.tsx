@@ -12,40 +12,40 @@ interface House {
 
 const houses: House[] = [
   {
-    name: 'Alps',
-    mascot: 'Ibex',
-    blurb: 'A house known for tenacity.',
-    barClass: 'bg-red-600',
+    name: 'Pyrenees',
+    mascot: 'Shark',
+    blurb: 'A house that moves with relentless purpose.',
+    barClass: 'bg-deep',
   },
   {
-    name: 'Appalachians',
-    mascot: 'Black Bear',
-    blurb: 'A house with deep roots and patient strength.',
+    name: 'Atlas',
+    mascot: 'Elephant',
+    blurb: 'A house that carries its weight, quietly.',
     barClass: 'bg-green-600',
   },
   {
     name: 'Andes',
-    mascot: 'Condor',
-    blurb: 'A house that runs long.',
-    barClass: 'bg-orange-500',
-  },
-  {
-    name: 'Atlas',
-    mascot: 'Lion',
-    blurb: 'A house that carries its weight, quietly.',
-    barClass: 'bg-lemon',
-  },
-  {
-    name: 'Himalayas',
-    mascot: 'Snow Leopard',
-    blurb: 'A house that climbs higher than the rest.',
+    mascot: 'Horse',
+    blurb: 'A house that runs long and never tires.',
     barClass: 'bg-blue-700',
   },
   {
-    name: 'Pyrenees',
-    mascot: 'Golden Eagle',
-    blurb: 'A house that holds its line.',
-    barClass: 'bg-deep',
+    name: 'Himalayas',
+    mascot: 'Tiger',
+    blurb: 'A house that stands together, never alone.',
+    barClass: 'bg-lemon',
+  },
+  {
+    name: 'Alps',
+    mascot: 'Eagle',
+    blurb: 'A house that climbs higher than the rest.',
+    barClass: 'bg-bold',
+  },
+  {
+    name: 'Appalachians',
+    mascot: 'Bear',
+    blurb: 'A house with deep roots and patient strength.',
+    barClass: 'bg-orange-500',
   },
 ];
 

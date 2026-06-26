@@ -28,8 +28,8 @@ export function OutcomesStatement() {
           }}
           className="mt-8 font-serif text-deep"
           style={{
-            fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-            lineHeight: 1.1,
+            fontSize: 'clamp(2.1rem, 5vw, 4rem)',
+            lineHeight: 1.12,
             letterSpacing: '-0.02em',
           }}
         >
@@ -47,7 +47,7 @@ export function OutcomesStatement() {
             delay: 0.3,
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="mt-12 font-roboto text-sm text-muted"
+          className="mt-12 font-roboto text-base text-muted"
           style={{ letterSpacing: '0.08em' }}
         >
           Eighteen graduating classes. More than one thousand alumni. Twenty-five

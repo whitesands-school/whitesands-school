@@ -99,3 +99,17 @@ export interface BookList {
   intro?: string
   categories: BookListCategory[]
 }
+
+/**
+ * Admin override for a page's hero band. `key` is the page's pathname
+ * (e.g. "/about"). Any blank field falls back to the value the page ships
+ * with, so an override can change just the image, or just the subtitle.
+ */
+export interface PageHeaderOverride {
+  key: string
+  eyebrow?: string
+  title?: string
+  titleAccent?: string
+  subtitle?: string
+  image?: string
+}

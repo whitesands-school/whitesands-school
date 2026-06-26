@@ -36,6 +36,7 @@ const COLUMN_GROUPS: { heading: string; links: { label: string; href: string }[]
       { label: 'Parents', href: '/our-people#parents' },
       { label: 'Alumni', href: '/our-people#alumni' },
       { label: 'Alumni Prizes', href: '/alumni-prizes' },
+      { label: 'Endowment Fund', href: '/endowment' },
     ],
   },
   {

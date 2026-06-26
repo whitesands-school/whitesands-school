@@ -9,9 +9,10 @@ import {
   useScroll,
   useMotionValueEvent,
 } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { media } from '@/lib/media';
+import { SiteSearchModal } from '@/components/layout/SiteSearchModal';
 
 // ---------------------------------------------------------------------------
 // Flat top-level navigation. No dropdowns — each link is a destination, and
@@ -38,10 +39,23 @@ export function Navbar() {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     setScrolled(latest > 60);
   });
+
+  // ⌘K / Ctrl-K opens search from anywhere.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => {
     const onShow = (e: PageTransitionEvent) => {
@@ -163,6 +177,19 @@ export function Navbar() {
 
             {/* CTA + mobile toggle */}
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSearchOpen(true)}
+                aria-label="Search"
+                className={[
+                  'hidden lg:inline-flex items-center justify-center p-2.5 rounded transition-colors duration-200',
+                  scrolled
+                    ? 'text-deep hover:bg-deep/10'
+                    : 'text-white hover:bg-white/10',
+                ].join(' ')}
+              >
+                <Search size={20} />
+              </button>
+
               <Link
                 href="/admissions#visit"
                 className={[
@@ -232,6 +259,18 @@ export function Navbar() {
               className="flex-1 overflow-y-auto px-6 py-8"
               aria-label="Mobile navigation"
             >
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  setSearchOpen(true);
+                }}
+                className="w-full flex items-center gap-3 mb-8 px-4 py-3.5 rounded-sm bg-white/10 text-white/70 hover:bg-white/15 transition-colors"
+              >
+                <Search size={18} />
+                <span className="font-roboto text-sm">Search the site</span>
+              </button>
+
               <ul className="flex flex-col divide-y divide-white/10">
                 {NAV_LINKS.map((item) => (
                   <li key={item.label}>
@@ -271,6 +310,8 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SiteSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

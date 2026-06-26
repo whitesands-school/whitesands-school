@@ -4,6 +4,7 @@ import booklistFallback from '@/content/booklist.json'
 import galleryFallback from '@/content/gallery.json'
 import inboxFallback from '@/content/inbox.json'
 import newsFallback from '@/content/news.json'
+import pageHeadersFallback from '@/content/pageheaders.json'
 import popoverFallback from '@/content/popover.json'
 import staffFallback from '@/content/staff.json'
 import testimonialsFallback from '@/content/testimonials.json'
@@ -32,6 +33,7 @@ export type ContentName =
   | 'gallery'
   | 'inbox'
   | 'news'
+  | 'pageheaders'
   | 'popover'
   | 'staff'
   | 'testimonials'
@@ -46,6 +48,7 @@ const FALLBACKS: Record<ContentName, unknown> = {
   gallery: galleryFallback,
   inbox: inboxFallback,
   news: newsFallback,
+  pageheaders: pageHeadersFallback,
   popover: popoverFallback,
   staff: staffFallback,
   testimonials: testimonialsFallback,

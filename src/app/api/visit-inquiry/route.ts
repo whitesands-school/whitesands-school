@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { SITE } from '@/lib/site';
 import { appendInboxEntry } from '@/lib/inbox';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 const InquirySchema = z.object({
   parentName: z.string().min(2).max(120),
@@ -14,6 +15,8 @@ const InquirySchema = z.object({
   sonClass: z.string().min(1),
   preferredWeek: z.string().min(1),
   message: z.string().max(2000).optional().default(''),
+  // Honeypot — hidden field; real users leave it empty.
+  company: z.string().optional(),
 });
 
 export type VisitInquiry = z.infer<typeof InquirySchema>;
@@ -24,6 +27,15 @@ const FROM_ADDRESS =
   `Whitesands Admissions <noreply@whitesands.org.ng>`;
 
 export async function POST(request: Request) {
+  // Rate limit: 5 submissions per 10 minutes per IP.
+  const rl = rateLimit(`visit:${clientIp(request)}`, 5, 10 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again shortly.' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+    );
+  }
+
   let payload: unknown;
   try {
     payload = await request.json();
@@ -40,6 +52,11 @@ export async function POST(request: Request) {
   }
 
   const inquiry = parsed.data;
+
+  // Honeypot tripped → pretend success and silently drop.
+  if (inquiry.company && inquiry.company.trim()) {
+    return NextResponse.json({ ok: true });
+  }
 
   // Persist to the admin inbox first — email is best-effort on top.
   try {

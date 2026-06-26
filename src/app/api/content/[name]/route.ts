@@ -10,6 +10,7 @@ const PUBLIC_CONTENT = new Set<ContentName>([
   'gallery',
   'admissions',
   'booklist',
+  'pageheaders',
 ])
 
 export async function GET(

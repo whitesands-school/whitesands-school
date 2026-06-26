@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Pencil, Plus, Search, Trash2, X } from 'lucide-react';
+import { Pencil, Plus, Search, Trash2, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PageHeader,
@@ -84,6 +84,53 @@ export default function StaffPage() {
     }),
     [staff]
   );
+
+  // ── Reordering ──────────────────────────────────────────────────────────
+  // The website shows staff in this list's order. The arrows on each card
+  // swap a person with their neighbour; the whole list is then renumbered and
+  // saved automatically (debounced so rapid clicks make a single write).
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function persistOrder(next: StaffMember[]) {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      setToast({ kind: 'saving' });
+      try {
+        const res = await fetch('/api/admin/staff', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(next),
+        });
+        if (!res.ok) throw new Error();
+        setToast({ kind: 'saved', message: 'Order saved' });
+      } catch {
+        setToast({ kind: 'error', message: 'Could not save the new order.' });
+      }
+    }, 600);
+  }
+
+  function move(id: string, dir: 'up' | 'down') {
+    const visible = filtered.map((s) => s.id);
+    const pos = visible.indexOf(id);
+    const neighbourPos = dir === 'up' ? pos - 1 : pos + 1;
+    if (neighbourPos < 0 || neighbourPos >= visible.length) return;
+    const neighbourId = visible[neighbourPos];
+
+    setStaff((prev) => {
+      const arr = [...prev];
+      const i = arr.findIndex((s) => s.id === id);
+      const j = arr.findIndex((s) => s.id === neighbourId);
+      if (i === -1 || j === -1) return prev;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+      // Renumber so `order` always matches the visible sequence (and so a list
+      // seeded with duplicate orders becomes well-defined after the first move).
+      const renumbered = arr.map((s, idx) => ({ ...s, order: idx }));
+      persistOrder(renumbered);
+      return renumbered;
+    });
+  }
+
+  const reorderable = !query.trim();
 
   function openAdd() {
     setEditing(null);
@@ -191,17 +238,37 @@ export default function StaffPage() {
           description="Try a different search or filter."
         />
       ) : (
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-8">
-          {filtered.map((member) => (
-            <li key={member.id}>
-              <StaffCard
-                member={member}
-                onEdit={() => openEdit(member)}
-                onDelete={() => setConfirmId(member.id)}
-              />
-            </li>
-          ))}
-        </ul>
+        <>
+          <p className="mb-6 font-sans text-sm text-muted leading-relaxed max-w-2xl">
+            {reorderable ? (
+              <>
+                Staff appear on the website in the order shown here. Use the{' '}
+                <ChevronUp size={13} className="inline -mt-0.5" strokeWidth={2} />
+                <ChevronDown size={13} className="inline -mt-0.5" strokeWidth={2} />{' '}
+                arrows on a card to move someone earlier or later. The new order
+                saves automatically.
+              </>
+            ) : (
+              'Clear the search to change the order staff appear in.'
+            )}
+          </p>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-8">
+            {filtered.map((member, idx) => (
+              <li key={member.id}>
+                <StaffCard
+                  member={member}
+                  onEdit={() => openEdit(member)}
+                  onDelete={() => setConfirmId(member.id)}
+                  showReorder={reorderable}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < filtered.length - 1}
+                  onMoveUp={() => move(member.id, 'up')}
+                  onMoveDown={() => move(member.id, 'down')}
+                />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <ConfirmInline
@@ -236,10 +303,20 @@ function StaffCard({
   member,
   onEdit,
   onDelete,
+  showReorder,
+  canMoveUp,
+  canMoveDown,
+  onMoveUp,
+  onMoveDown,
 }: {
   member: StaffMember;
   onEdit: () => void;
   onDelete: () => void;
+  showReorder: boolean;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
 }) {
   return (
     <article className="group">
@@ -289,15 +366,44 @@ function StaffCard({
           </span>
         )}
       </div>
-      <h3 className="mt-3 font-serif text-base text-deep leading-snug line-clamp-2">
-        {member.name}
-      </h3>
-      <p
-        className="mt-1 font-roboto text-[10px] uppercase text-muted leading-snug"
-        style={{ letterSpacing: '0.2em' }}
-      >
-        {member.title}
-      </p>
+      <div className="mt-3 flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <h3 className="font-serif text-base text-deep leading-snug line-clamp-2">
+            {member.name}
+          </h3>
+          <p
+            className="mt-1 font-roboto text-[10px] uppercase text-muted leading-snug"
+            style={{ letterSpacing: '0.2em' }}
+          >
+            {member.title}
+          </p>
+        </div>
+
+        {showReorder && (
+          <div className="shrink-0 flex flex-col gap-1">
+            <button
+              type="button"
+              onClick={onMoveUp}
+              disabled={!canMoveUp}
+              aria-label={`Move ${member.name} earlier`}
+              title="Move earlier"
+              className="p-1 rounded-sm border border-deep/15 text-deep hover:bg-deep/5 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            >
+              <ChevronUp size={14} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={onMoveDown}
+              disabled={!canMoveDown}
+              aria-label={`Move ${member.name} later`}
+              title="Move later"
+              className="p-1 rounded-sm border border-deep/15 text-deep hover:bg-deep/5 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            >
+              <ChevronDown size={14} strokeWidth={2} />
+            </button>
+          </div>
+        )}
+      </div>
     </article>
   );
 }

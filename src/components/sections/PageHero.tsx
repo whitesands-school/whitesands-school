@@ -2,7 +2,10 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState, type ReactNode } from 'react';
+import { media } from '@/lib/media';
+import type { PageHeaderOverride } from '@/types';
 
 interface PageHeroProps {
   /** Small uppercase label, e.g. "ADMISSIONS · 2026/2027" */
@@ -42,6 +45,43 @@ export function PageHero({
   overlay = 0.7,
   align = 'left',
 }: PageHeroProps) {
+  // Admin overrides are keyed by pathname, so a page only needs to render
+  // <PageHero …> as before — the matching override (if any) is merged here.
+  // Blank fields fall back to the values the page ships with.
+  const pathname = usePathname();
+  const [ov, setOv] = useState<PageHeaderOverride | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/content/pageheaders')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((list: PageHeaderOverride[]) => {
+        if (cancelled || !Array.isArray(list)) return;
+        setOv(list.find((o) => o.key === pathname) ?? null);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
+
+  const effEyebrow = ov?.eyebrow?.trim() ? ov.eyebrow : eyebrow;
+  const effSubtitle = ov?.subtitle?.trim() ? ov.subtitle : subtitle;
+  const effImage = ov?.image?.trim() ? media(ov.image) : image;
+  const effTitle: ReactNode = ov?.title?.trim() ? (
+    <>
+      {ov.title}
+      {ov.titleAccent?.trim() && (
+        <>
+          {' '}
+          <span className="italic text-lemon">{ov.titleAccent}</span>
+        </>
+      )}
+    </>
+  ) : (
+    title
+  );
+
   return (
     <section
       className={[
@@ -52,7 +92,7 @@ export function PageHero({
       {/* Backdrop */}
       <div className="absolute inset-0">
         <Image
-          src={image}
+          src={effImage}
           alt={imageAlt}
           fill
           sizes="100vw"
@@ -80,7 +120,7 @@ export function PageHero({
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className={align === 'center' ? 'max-w-3xl mx-auto' : 'max-w-3xl'}
         >
-          {eyebrow && (
+          {effEyebrow && (
             <span
               className={[
                 'inline-flex items-center gap-3 font-roboto text-[11px] tracking-[0.28em] uppercase text-lemon',
@@ -88,7 +128,7 @@ export function PageHero({
               ].join(' ')}
             >
               <span className="block h-px w-8 bg-lemon" />
-              {eyebrow}
+              {effEyebrow}
               {align === 'center' && <span className="block h-px w-8 bg-lemon" />}
             </span>
           )}
@@ -99,17 +139,17 @@ export function PageHero({
               'text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem]',
             ].join(' ')}
           >
-            {title}
+            {effTitle}
           </h1>
 
-          {subtitle && (
+          {effSubtitle && (
             <p
               className={[
                 'mt-6 font-sans text-base sm:text-lg text-white/80 leading-relaxed',
                 align === 'center' ? 'max-w-2xl mx-auto' : 'max-w-xl',
               ].join(' ')}
             >
-              {subtitle}
+              {effSubtitle}
             </p>
           )}
 

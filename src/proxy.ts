@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 // ---------------------------------------------------------------------------
 // proxy.ts (Next.js 16, formerly middleware.ts)
@@ -48,6 +49,24 @@ export async function proxy(request: NextRequest) {
 
   if (!needsAuth) {
     return NextResponse.next({ request: { headers: requestHeaders } })
+  }
+
+  // Basic rate limiting for admin/super-admin API routes — a cheap throttle on
+  // automated abuse of an authenticated session (100 requests / 10s per IP).
+  if (isAdminApi || isSuperAdminApi) {
+    const rl = rateLimit(`adminapi:${clientIp(request)}`, 100, 10_000)
+    if (!rl.ok) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Too many requests' }),
+        {
+          status: 429,
+          headers: {
+            'content-type': 'application/json',
+            'Retry-After': String(rl.retryAfter),
+          },
+        }
+      )
+    }
   }
 
   // A deploy without the Supabase env vars would crash here and surface as a

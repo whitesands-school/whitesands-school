@@ -19,6 +19,8 @@ const ContactSchema = z.object({
   email: z.email('Please enter a valid email'),
   subject: z.string().min(2, 'Please enter a subject'),
   message: z.string().min(10, 'Your message must be at least 10 characters'),
+  // Honeypot — hidden from real users; bots tend to fill every field.
+  company: z.string().optional(),
 });
 type ContactValues = z.infer<typeof ContactSchema>;
 
@@ -268,6 +270,16 @@ function ContactForm() {
           >
             Send a message
           </p>
+
+          {/* Honeypot — visually hidden, skipped by keyboard, ignored by humans */}
+          <input
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="hidden"
+            {...register('company')}
+          />
 
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Field
