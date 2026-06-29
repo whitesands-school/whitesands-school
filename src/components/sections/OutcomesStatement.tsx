@@ -28,8 +28,8 @@ export function OutcomesStatement() {
           }}
           className="mt-8 font-serif text-deep"
           style={{
-            fontSize: 'clamp(2.1rem, 5vw, 4rem)',
-            lineHeight: 1.12,
+            fontSize: 'clamp(1.85rem, 4.2vw, 3.25rem)',
+            lineHeight: 1.14,
             letterSpacing: '-0.02em',
           }}
         >

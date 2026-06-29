@@ -17,6 +17,7 @@ export interface SearchResult {
 // likely to search for. Kept here rather than crawled so results stay
 // predictable and fast.
 const PAGES: { title: string; subtitle: string; href: string; keywords: string }[] = [
+  { title: 'Home', subtitle: 'Whitesands School', href: '/', keywords: 'home whitesands school welcome lekki lagos boys' },
   { title: 'About', subtitle: 'Story, vision & mission, philosophy', href: '/about', keywords: 'about story history vision mission philosophy pillars houses virtues campus duc in altum' },
   { title: 'What We Offer', subtitle: 'Academics & programmes', href: '/what-we-offer', keywords: 'what we offer academics curriculum programmes subjects' },
   { title: 'Academics', subtitle: 'Curriculum & results', href: '/what-we-offer/academics', keywords: 'academics curriculum waec subjects results examinations' },
@@ -31,6 +32,7 @@ const PAGES: { title: string; subtitle: string; href: string; keywords: string }
   { title: 'Contact', subtitle: 'Reach the school', href: '/contact', keywords: 'contact address phone email location map visit directions' },
   { title: '25th Anniversary', subtitle: 'Silver jubilee', href: '/25th-anniversary', keywords: 'anniversary 25 silver jubilee celebration' },
   { title: 'Alumni Prizes', subtitle: 'Competitions for old boys', href: '/alumni-prizes', keywords: 'alumni prizes competition old boys awards submissions' },
+  { title: 'Endowment Fund', subtitle: 'Support the school', href: '/endowment', keywords: 'endowment fund donate donation give giving alumni scholarship scholarships contribute support fundraising appeal naira dollar account' },
 ]
 
 function scored<T>(items: T[], haystack: (t: T) => string, q: string) {

@@ -308,8 +308,8 @@ export default function AboutPage() {
             <p
               className="font-serif italic text-deep text-center"
               style={{
-                fontSize: 'clamp(1.5rem, 2.6vw, 2rem)',
-                lineHeight: 1.3,
+                fontSize: 'clamp(1.375rem, 2.2vw, 1.75rem)',
+                lineHeight: 1.35,
                 letterSpacing: '-0.01em',
               }}
             >
